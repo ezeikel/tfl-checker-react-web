@@ -13,7 +13,6 @@ class Status extends Component {
 
     render() {
         console.log(this.state.status);
-        this.st
         return (
             <div>
                 <div>Status component works!</div>
