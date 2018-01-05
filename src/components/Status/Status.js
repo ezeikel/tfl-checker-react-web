@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 
+import "./Status.css";
+
+import LineStatus from "./LineStatus/LineStatus";
+
 class Status extends Component {
     state = {
         status: {}
@@ -12,15 +16,16 @@ class Status extends Component {
     }
 
     render() {
-        console.log(this.state.status);
         return (
             <div>
-                <div>Status component works!</div>
-                {
-                    Object
-                        .keys(this.state.status)
-                        .map(line => <div key={this.state.status[line].id}><pre>{this.state.status[line].name}</pre></div>)
-                }
+                <h4>Status:</h4>
+                <ul className="tfl-lines">
+                    {
+                        Object
+                            .keys(this.state.status)
+                            .map(line => <LineStatus key={this.state.status[line].id} line={this.state.status[line]} />)
+                    }
+                </ul>
             </div>
         )
     }
