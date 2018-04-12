@@ -1,63 +1,63 @@
 .tfl-lines {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .line > span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 1rem;
 }
 
 .line > span:first-of-type {
-    color: #fff;
+  color: #fff;
 }
 
 .line > span:nth-of-type(2) {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 .bakerloo {
-    background-color: var(--bakerloo-color);
+  background-color: var(--bakerloo-color);
 }
 
 .central {
-    background-color: var(--central-color);
+  background-color: var(--central-color);
 }
 
 .circle {
-    background-color: var(--circle-color);
+  background-color: var(--circle-color);
 }
 
 .district {
-    background-color: var(--district-color);
+  background-color: var(--district-color);
 }
 
 .hammersmith-city {
-    background-color: var(--hammersmith-city-color);
+  background-color: var(--hammersmith-city-color);
 }
 
 .jubilee {
-    background-color: var(--jubilee-color);
+  background-color: var(--jubilee-color);
 }
 
 .metropolitan {
-    background-color: var(--metropolitan-color);
+  background-color: var(--metropolitan-color);
 }
 
 .northern {
-    background-color: var(--northern-color);
+  background-color: var(--northern-color);
 }
 
 .piccadilly {
-    background-color: var(--picadilly-color);
+  background-color: var(--picadilly-color);
 }
 
 .victoria {
-    background-color: var(--victoria-color);
+  background-color: var(--victoria-color);
 }
 
 .waterloo-city {
-    background-color: var(--waterloo-city-color);
+  background-color: var(--waterloo-city-color);
 }
