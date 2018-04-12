@@ -1,13 +1,20 @@
 import React from 'react';
-
-import Main from '../Main/Main';
+import styled from 'styled-components';
 import Header from '../Header/Header';
+import Main from '../Main/Main';
+
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 80px 1fr;
+  padding: var(--spacing-medium);
+`;
 
 const App = () => (
-  <div>
+  <Container>
     <Header />
     <Main />
-  </div>
+  </Container>
 )
 
 export default App;
