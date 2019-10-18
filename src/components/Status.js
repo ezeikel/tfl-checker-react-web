@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import TubeLine from "./TubeLine";
 
@@ -13,36 +13,33 @@ const Title = styled.h4`
   margin-bottom: 10px;
 `;
 
-class Status extends Component {
-  state = {
-    status: []
-  };
+const Status = () => {
+  const [ status, setStatus ] = useState([]);
 
-  async componentDidMount() {
-    const data = await fetch('https://api.tfl.gov.uk/line/mode/tube/status');
-    const json = await data.json();
+  useEffect(() => {
+    async function fetchData() {
+      const data = await fetch('https://api.tfl.gov.uk/line/mode/tube/status');
+      const json = await data.json();
+  
+      setStatus(json);
+    }
+    fetchData();
+  });
 
-    this.setState({
-      status: json
-    });
-  }
-
-  renderLines = () => (
-    this.state.status.map(line => (
+  const renderLines = () => (
+    status.map(line => (
       <TubeLine key={line.id} line={line} />
     ))
   );
 
-  render() {
-    return (
-      <React.Fragment>
-        <Title>Status:</Title>
-        <Lines>
-          {this.renderLines()}
-        </Lines>
-      </React.Fragment>
-    )
-  }
+  return (
+    <React.Fragment>
+      <Title>Status:</Title>
+      <Lines>
+        {renderLines()}
+      </Lines>
+    </React.Fragment>
+  )
 };
 
 export default Status;
