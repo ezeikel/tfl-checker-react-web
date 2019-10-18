@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import Header from '../Header/Header';
-import Main from '../Main/Main';
+import Header from './Header';
+import Main from './Main';
+import GlobalStyle from "../GlobalStyle";
 
 const Container = styled.div`
   display: grid;
@@ -11,10 +12,13 @@ const Container = styled.div`
 `;
 
 const App = () => (
-  <Container>
-    <Header />
-    <Main />
-  </Container>
-)
+  <React.Fragment>
+    <GlobalStyle />
+    <Container>
+      <Header />
+      <Main />
+    </Container>
+  </React.Fragment>
+);
 
 export default App;

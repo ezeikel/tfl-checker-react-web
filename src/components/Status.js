@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import TubeLine from "./TubeLine/TubeLine";
+import TubeLine from "./TubeLine";
 
 const Lines = styled.ul`
   display: flex;

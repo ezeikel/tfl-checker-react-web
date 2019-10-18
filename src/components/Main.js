@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Status from '../../components/Status/Status';
-import Planner from '../../components/Planner/Planner';
+import Status from './Status';
+import Planner from './Planner';
 
 const Main = () => (
   <main>
