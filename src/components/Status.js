@@ -24,7 +24,7 @@ const Status = () => {
       setStatus(json);
     }
     fetchData();
-  });
+  }, []);
 
   const renderLines = () => (
     status.map(line => (

@@ -12,13 +12,13 @@ const Container = styled.div`
 `;
 
 const App = () => (
-  <React.Fragment>
+  <>
     <GlobalStyle />
     <Container>
       <Header />
       <Main />
     </Container>
-  </React.Fragment>
+  </>
 );
 
 export default App;
