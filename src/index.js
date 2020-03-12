@@ -1,13 +1,13 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 
 const app = (
-    <BrowserRouter>
+    <Router basename={`${process.env.PUBLIC_URL}/`>
         <App />
-    </BrowserRouter>
+    </Router>
 );
 
 render(app, document.querySelector('#app'));

@@ -6,10 +6,14 @@ import Planner from './Planner';
 const Main = () => (
   <main>
     <Switch>
-      <Route exact path='/' component={Status} />
-      <Route exact path='/planner' component={Planner} />
+      <Route exact path='/'>
+        <Status />
+      </Route>
+      <Route path='/planner'>
+        <Planner />
+      </Route>
     </Switch>
   </main>
-)
+);
 
 export default Main;
