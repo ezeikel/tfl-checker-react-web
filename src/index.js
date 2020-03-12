@@ -5,7 +5,7 @@ import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 
 const app = (
-    <Router basename={`${process.env.PUBLIC_URL}/`>
+    <Router basename={`${process.env.PUBLIC_URL}/`}>
         <App />
     </Router>
 );
