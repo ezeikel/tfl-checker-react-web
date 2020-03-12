@@ -33,12 +33,12 @@ const Status = () => {
   );
 
   return (
-    <React.Fragment>
+    <>
       <Title>Status:</Title>
       <Lines>
         {renderLines()}
       </Lines>
-    </React.Fragment>
+    </>
   )
 };
 

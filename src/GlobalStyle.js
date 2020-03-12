@@ -11,7 +11,7 @@ export default createGlobalStyle`
     --jubilee-color: #A0A5A9;
     --metropolitan-color: #9B0056;
     --northern-color: #000000;
-    --picadilly-color: #003688;
+    --piccadilly-color: #003688;
     --victoria-color: #0098D4;
     --waterloo-city-color: #95CDBA;
 
