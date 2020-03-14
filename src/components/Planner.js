@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
+import GooglePlacesInput from './GooglePlacesInput';
 
-class Planner extends Component {
-  render() {
+const Planner = () => {
     return (
-      <div>Planner component works!</div>
-    )
-  }
+      <div>
+        <GooglePlacesInput />
+      </div>
+    );
 };
 
 export default Planner;
