@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
-const GooglePlacesInput = () => {
+const GooglePlacesInput = ({ coordinates, setCoordinates }) => {
   const [address, setAddress] = useState("");
-  const [coordinates, setCoordinates] = useState({
-    lat: null,
-    lng: null
-  });
 
   const handleSelect = async value => {
     const [results] = await geocodeByAddress(value);
@@ -16,12 +12,17 @@ const GooglePlacesInput = () => {
     setCoordinates(latLng);
   }
 
+  const searchOptions = {
+    componentRestrictions: {'country': ['gb']}
+  };
+
   return (
     <div>
       <PlacesAutocomplete
         value={address}
         onChange={setAddress}
         onSelect={handleSelect}
+        searchOptions={searchOptions}
       >
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
           <div>
