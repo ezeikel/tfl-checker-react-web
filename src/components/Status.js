@@ -18,9 +18,9 @@ const Status = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await fetch('https://api.tfl.gov.uk/line/mode/tube/status');
+      const data = await fetch('https://api.tfl.gov.uk/line/mode/tube/status?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5');
       const json = await data.json();
-  
+
       setStatus(json);
     }
     fetchData();

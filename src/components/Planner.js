@@ -4,7 +4,8 @@ import GooglePlacesInput from './GooglePlacesInput';
 import JourneyResults from './JourneyResults';
 
 const Wrapper = styled.section`
-  background-color: #ccdde8;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Planner = () => {

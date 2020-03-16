@@ -1,27 +1,86 @@
 import React from 'react';
 import styled from 'styled-components';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Wrapper = styled.section`
-  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
 `;
 
 const Journey = styled.div`
+  margin-bottom: 32px;
+  padding: 16px;
+  background-color: #fff;
+  .timing {
+    display: flex;
+    justify-content: space-between;
+  }
+`;
+
+const TimingFare = styled.div`
   margin-bottom: 32px;
 `;
 
 const Leg = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 16px;
+  .location-name {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .summary {
+    margin-bottom: 16px;
+    > svg {
+      margin-right: 16px;
+    }
+  }
+  .duration {
+    display: flex;
+    margin-bottom: 16px;
+    span {
+      &:first-of-type {
+        margin-right: 16px;
+        font-weight: bold;
+      }
+      &:nth-of-type(2) {
+        color: #2070b0;
+        text-decoration: underline;
+      }
+    }
+  }
 `;
 
 const Steps = styled.div`
-  margin: 16px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Step = styled.div`
   display: flex;
   flex-direction: column;
+  & + div {
+    margin-top: 16px;
+  }
+  span {
+    &:first-of-type {
+      margin-bottom: 8px;
+    }
+  }
 `;
+
+const addLeadingZero = value => value < 10 ? '0' + value : value;
+
+const covertDateToTime = dateString => {
+  const date = new Date(dateString);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  return `${addLeadingZero(hours)}:${addLeadingZero(minutes)}`;
+};
+
+const formatMoney = (value) => new Intl.NumberFormat('en-GB',  { style: 'currency', currency: 'GBP'}).format(value / 100);
 
 const JourneyResults = ({ results }) => {
     console.log({ results });
@@ -33,23 +92,74 @@ const JourneyResults = ({ results }) => {
         {
           journeys.map((journey, i) => (
             <Journey key={i}>
-              <span>Duration: {journey.duration}</span>
+              <TimingFare>
+                <div className="timing">
+                  <span>{covertDateToTime(journey.startDateTime)} - {covertDateToTime(journey.arrivalDateTime)}</span>
+                  <span>
+                    {journey.duration} min
+                  </span>
+                </div>
+                {journey.fare &&
+                  <span className="fare">
+                    {formatMoney(journey.fare.totalCost)}
+                  </span>
+                }
+              </TimingFare>
               {
                 journey.legs.map((leg, i) => (
                   <Leg key={i}>
-                    <span>Duration: {leg.duration}</span>
-                    <span>{leg.instruction.summary}</span>
-                    <Steps className="steps">
-                      {leg.instruction.steps.map((step, i) => (
-                        <Step className="step" key={i}>
-                          <span>{step.descriptionHeading}</span>
-                          <span>{step.description}</span>
-                        </Step>
-                      ))}
-                    </Steps>
+                    <span className="location-name">{`${leg.departurePoint.commonName} at ${covertDateToTime(leg.departureTime)}`}</span>
+                    <div className="summary">
+                      <FontAwesomeIcon
+                        icon={["fad", leg.mode.id]}
+                        color="var(--color-dark-grey)"
+                        size="2x"
+                      />
+                      <span>{leg.instruction.summary}</span>
+                    </div>
+                    <div className="duration">
+                      <span>{leg.duration} min</span>
+                      {leg.mode.id === "walking" &&
+                        <span>Hide directions</span>
+                      }
+                      {(leg.mode.id === "bus" || leg.mode.id === "tube") &&
+                        <span>Hide stops</span>
+                      }
+                    </div>
+                    {leg.mode.id === "walking" &&
+                      <Steps>
+                        {leg.instruction.steps.map((step, i) => (
+                          <Step key={i}>
+                            <span>{step.descriptionHeading}</span>
+                            <span>{step.description}</span>
+                          </Step>
+                        ))}
+                      </Steps>
+                    }
+                    {(leg.mode.id === "bus" || leg.mode.id === "tube") &&
+                      <Steps>
+                        {leg.path.stopPoints.map((stopPoint, i) => (
+                          <Step key={i}>
+                            <span>{stopPoint.name}</span>
+                          </Step>
+                        ))
+
+                        }
+                      </Steps>
+                    }
                   </Leg>
                 ))
               }
+              <Leg>
+                <div className="summary">
+                  <FontAwesomeIcon
+                    icon={["fad", "map-marker-alt"]}
+                    color="var(--color-dark-grey)"
+                    size="2x"
+                  />
+                  <span>{journey.legs[journey.legs.length -1].arrivalPoint.commonName}</span>
+                </div>
+              </Leg>
             </Journey>
           ))
 
