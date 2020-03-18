@@ -15,7 +15,7 @@ const Container = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: 80px 1fr;
   padding: var(--spacing-medium);
-  background-color: #ccdde8;
+  background-color: var(--color-background);
   min-height: 100vh;
 `;
 

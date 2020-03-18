@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import TubeLine from "./TubeLine";
+import Card from "./Card";
 
-const Lines = styled.ul`
-  display: flex;
+const Lines = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  grid-gap: 32px;
   flex-direction: column;
-`;
-
-const Title = styled.h4`
-  font-size: 18px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  justify-content: center;
+  background-color: var(--color-white);
+  padding: 32px;
 `;
 
 const Status = () => {
@@ -28,17 +27,14 @@ const Status = () => {
 
   const renderLines = () => (
     status.map(line => (
-      <TubeLine key={line.id} line={line} />
+      <Card key={line.id} line={line} />
     ))
   );
 
   return (
-    <>
-      <Title>Status:</Title>
-      <Lines>
-        {renderLines()}
-      </Lines>
-    </>
+    <Lines>
+      {renderLines()}
+    </Lines>
   )
 };
 
