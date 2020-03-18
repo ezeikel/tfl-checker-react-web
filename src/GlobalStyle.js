@@ -19,7 +19,7 @@ export default createGlobalStyle`
     --color-victoria: #1EA2E0;
     --color-waterloo-city: #7DCFBD;
 
-    --color-text: #3B3B3B;
+    --color-text: #4D4D4D;
     --color-background: #00BCD4;
     --color-white: #FFFFFF;
     --color-delay-background: #FAF5E2;
@@ -69,7 +69,8 @@ export default createGlobalStyle`
     padding: 0;
     margin: 0;
     font-family: var(--primary-font-family);
-    color: var(--color-black);
+    color: var(--color-text);
+    line-height: 1.5;
   }
 
   img {
@@ -87,12 +88,12 @@ export default createGlobalStyle`
   }
 
   ::-moz-selection {
-    background-color: tomato;
+    background-color: var(--color-background);
     color: var(--color-white);
   }
 
   ::selection {
-    background: tomato;
+    background: var(--color-background);
     color: var(--color-white);
   }
 

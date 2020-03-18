@@ -4,10 +4,9 @@ import Card from "./Card";
 
 const Lines = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 32px;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   background-color: var(--color-white);
   padding: 32px;
 `;

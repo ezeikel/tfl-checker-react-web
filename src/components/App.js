@@ -13,8 +13,8 @@ library.add(fab, faWalking, faBicycle, faBus, faTrain, faSubway, faTram, faShip,
 const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 80px 1fr;
-  padding: var(--spacing-medium);
+  grid-template-rows: auto 1fr;
+  padding: var(--spacing-huge);
   background-color: var(--color-background);
   min-height: 100vh;
 `;

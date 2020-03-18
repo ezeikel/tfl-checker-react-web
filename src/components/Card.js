@@ -4,10 +4,7 @@ import styled from 'styled-components';
 const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
-  width: 300px;
   height: 300px;
-  max-width: 300px;
-  max-height: 300px;
   box-shadow: var(--box-shadow);
   border-radius: var(--border-radius);
 `;
@@ -25,7 +22,6 @@ const Name = styled.div`
   font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
 `;
 
 const Status = styled.div`
