@@ -38,7 +38,7 @@ const NavList = styled.ul`
         }
     }
     li + li {
-        margin-left: var(--spacing-medium);
+        margin-left: var(--spacing-large);
     }
 `;
 

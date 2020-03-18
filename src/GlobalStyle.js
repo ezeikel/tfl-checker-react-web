@@ -1,6 +1,9 @@
 import { createGlobalStyle } from "styled-components";
+import { normalize } from 'styled-normalize';
 
 export default createGlobalStyle`
+  ${normalize}
+
   :root {
     /*Colors */
     --color-bakerloo: #874E29;
@@ -85,6 +88,18 @@ export default createGlobalStyle`
     list-style-type: none;
     margin: 0;
     padding: 0;
+  }
+
+  button {
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  hr {
+    border: 0;
   }
 
   ::-moz-selection {
