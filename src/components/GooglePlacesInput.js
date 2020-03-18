@@ -25,6 +25,19 @@ const Input = styled.input`
   }
 `;
 
+const SuggestionsWrapper = styled.div`
+  margin-top: 8px;
+`;
+
+const Suggestion = styled.div`
+  font-family: var(--primary-font-family);
+  font-size: 1.6rem;
+  background-color: ${props => `var(--color-${props.active ? 'background' : 'white'})`};
+  color: ${props => `var(--color-${props.active ? 'white' : 'black'})`};
+  cursor: pointer;
+  padding: 8px;
+`;
+
 const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
   const [address, setAddress] = useState("");
 
@@ -54,21 +67,17 @@ const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <>
           <Input {...getInputProps({ placeholder })} />
-          <div>
+          <SuggestionsWrapper>
             { loading ? <div>...loading</div> : null}
 
             { suggestions.map(suggestion => {
-              const style = {
-                backgroundColor: suggestion.active ? "#41b6e6" : "#fff"
-              };
-
               return (
-                <div {...getSuggestionItemProps(suggestion, { style })}>
+                <Suggestion active={suggestion.active} {...getSuggestionItemProps(suggestion)}>
                   {suggestion.description}
-                </div>
+                </Suggestion>
               );
             })}
-          </div>
+          </SuggestionsWrapper>
         </>
       )}
     </PlacesAutocomplete>
