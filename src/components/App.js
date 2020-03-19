@@ -5,10 +5,10 @@ import Main from './Main';
 import GlobalStyle from "../GlobalStyle";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faWalking, faBicycle, faBus, faTrain, faSubway, faTram, faShip, faMapMarkerAlt, faExclamationTriangle, faRoute } from "@fortawesome/pro-duotone-svg-icons";
+import { faWalking, faBicycle, faBus, faTrain, faSubway, faTram, faShip, faMapMarkerAlt, faExclamationTriangle, faRoute, faSpinnerThird, faChevronRight, faCircle } from "@fortawesome/pro-duotone-svg-icons";
 
 
-library.add(fab, faWalking, faBicycle, faBus, faTrain, faSubway, faTram, faShip, faMapMarkerAlt, faExclamationTriangle, faRoute);
+library.add(fab, faWalking, faBicycle, faBus, faTrain, faSubway, faTram, faShip, faMapMarkerAlt, faExclamationTriangle, faRoute, faSpinnerThird, faChevronRight, faCircle);
 
 const Container = styled.div`
   display: grid;

@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, keyframes } from "styled-components";
 import { normalize } from 'styled-normalize';
 
 export default createGlobalStyle`
@@ -139,5 +139,14 @@ export default createGlobalStyle`
   /* Hide fonts until webfonts have loaded to avoid FOUT */
   .wf-loading {
     visibility: hidden;
+  }
+`;
+
+export const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 `;

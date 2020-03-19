@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 import styled from 'styled-components';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { rotate } from "../GlobalStyle";
 
 const Input = styled.input`
   font-size: 1.6rem;
@@ -25,8 +27,19 @@ const Input = styled.input`
   }
 `;
 
+const Loading = styled.div`
+  display: flex;
+  padding: 8px 0;
+  animation: ${rotate} 1.2s linear infinite;
+  align-self: flex-start;
+`;
+
 const SuggestionsWrapper = styled.div`
-  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  [aria-expanded="true"] + & {
+    margin-top: 8px;
+  }
 `;
 
 const Suggestion = styled.div`
@@ -67,8 +80,16 @@ const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <>
           <Input {...getInputProps({ placeholder })} />
-          <SuggestionsWrapper>
-            { loading ? <div>...loading</div> : null}
+          <SuggestionsWrapper loading={loading}>
+            { loading ? (
+            <Loading>
+              <FontAwesomeIcon
+                icon={["fad", "spinner-third"]}
+                color="var(--color-background)"
+                size="2x"
+              />
+            </Loading>
+            ) : null}
 
             { suggestions.map(suggestion => {
               return (
