@@ -51,6 +51,24 @@ const Suggestion = styled.div`
   padding: 8px;
 `;
 
+const PlacesByGoogle = styled.div`
+  font-size: 11px;
+  background-color: white;
+  padding: 8px;
+  display: none;
+  &:not(:only-child) {
+    display: block;
+  }
+`;
+
+const List = styled.div`
+  > div {
+    & + div {
+      border-top: 1px solid #eeeeee;
+    }
+  }
+`;
+
 const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
   const [address, setAddress] = useState("");
 
@@ -90,14 +108,16 @@ const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
               />
             </Loading>
             ) : null}
-
-            { suggestions.map(suggestion => {
-              return (
-                <Suggestion active={suggestion.active} {...getSuggestionItemProps(suggestion)}>
-                  {suggestion.description}
-                </Suggestion>
-              );
-            })}
+            <List>
+              { suggestions.map(suggestion => {
+                return (
+                  <Suggestion active={suggestion.active} {...getSuggestionItemProps(suggestion)}>
+                    {suggestion.description}
+                  </Suggestion>
+                );
+              })}
+              <PlacesByGoogle>Places by <strong>Google</strong></PlacesByGoogle>
+            </List>
           </SuggestionsWrapper>
         </>
       )}

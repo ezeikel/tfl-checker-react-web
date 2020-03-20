@@ -26,7 +26,7 @@ const Summary = styled.section`
     cursor: pointer;
   }
   & + section {
-    border-top: 1px solid #f6f6f6;
+    border-top: 1px solid #eeeeee;
   }
   .timing {
     display: flex;
@@ -83,7 +83,12 @@ const Duration = styled.div`
 
 const formatMoney = (value) => new Intl.NumberFormat('en-GB',  { style: 'currency', currency: 'GBP'}).format(value / 100);
 
-const renderOptions = leg => leg.routeOptions.map((option, i) => <span key={i}>{option.name}</span>);
+const renderOptions = leg => leg.routeOptions.map((option, i) => (
+  <span key={i}>
+    {option.name}
+    {i < leg.routeOptions.length -1 ? <span>/</span> : ""}
+  </span>
+));
 
 const RouteSummary = ({ results }) => {
     console.log({ results });
@@ -102,6 +107,7 @@ const RouteSummary = ({ results }) => {
                     journey.legs.map((leg, i) => {
                       if (leg.mode.id === "walking") {
                         return (
+                          /* TODO: Do one for 'overground' */
                           <Route key={i}>
                             {
                               <FontAwesomeIcon
