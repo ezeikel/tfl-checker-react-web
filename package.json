@@ -2,7 +2,6 @@
   "name": "tfl-checker-react-web",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ezeikel.github.io/tfl-checker-react-web",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
     "@fortawesome/free-brands-svg-icons": "^5.12.1",
@@ -23,12 +22,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0",
     "styled-components": "^5.0.1"
   },
   "browserslist": {
