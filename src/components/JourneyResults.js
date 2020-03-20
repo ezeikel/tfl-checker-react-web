@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
-  padding: 32px;
 `;
 
 const Journey = styled.div`

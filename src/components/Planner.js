@@ -3,13 +3,21 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GooglePlacesInput from './GooglePlacesInput';
 import JourneyResults from './JourneyResults';
+import RouteSummary from './RouteSummary';
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const JourneyInput = styled.section`
   display: flex;
   flex-direction: column;
   padding: 32px;
   background-color: var(--color-white);
   border-radius: var(--border-radius);
+  max-width: 600px;
+  margin-bottom: 64px;
 
   hr {
     background-color: #AEB8C3;
@@ -26,19 +34,13 @@ const Heading = styled.span`
   font-weight: bold;
 `;
 
-const InputsWrapper = styled.div`
+const FormWrapper = styled.div`
   background-color: var(--color-input-background);
   padding: 16px;
   margin-bottom: 32px;
   display: flex;
-
-  section {
-    :first-of-type {
-
-    }
-    :last-of-type {
-      flex: 1 0 auto;
-    }
+  form {
+    flex: 1 0 auto;
   }
 `;
 
@@ -114,44 +116,47 @@ const Planner = () => {
 
   return (
     <Wrapper>
-      <Heading>Let's take a trip!</Heading>
-      <InputsWrapper>
-        <StartEnd>
+      <JourneyInput>
+        <Heading>Let's take a trip!</Heading>
+        <FormWrapper>
+          <StartEnd>
+            <FontAwesomeIcon
+              icon={["fad", "circle"]}
+              color="var(--color-green)"
+              size="2x"
+            />
+            <VerticalLine />
+            <FontAwesomeIcon
+              icon={["fad", "circle"]}
+              color="var(--color-background)"
+              size="2x"
+            />
+          </StartEnd>
+          <form>
+            <InputWrapper>
+              <label>From</label>
+              <GooglePlacesInput coordinates={fromCoordinates} setCoordinates={setFromCoordinates} placeholder="Where are you coming from?" />
+            </InputWrapper>
+            <hr />
+            <InputWrapper>
+              <label>To</label>
+              <GooglePlacesInput coordinates={toCoordinates} setCoordinates={setToCoordinates} placeholder="Where are you going to?" />
+            </InputWrapper>
+          </form>
+        </FormWrapper>
+        <Leaving>
+          Leaving now
           <FontAwesomeIcon
-            icon={["fad", "circle"]}
-            color="var(--color-green)"
-            size="2x"
-          />
-          <VerticalLine />
-          <FontAwesomeIcon
-            icon={["fad", "circle"]}
+            icon={["fad", "chevron-right"]}
             color="var(--color-background)"
             size="2x"
           />
-        </StartEnd>
-        <section>
-          <InputWrapper>
-            <label>From</label>
-            <GooglePlacesInput coordinates={fromCoordinates} setCoordinates={setFromCoordinates} placeholder="Where are you coming from?" />
-          </InputWrapper>
-          <hr />
-          <InputWrapper>
-            <label>To</label>
-            <GooglePlacesInput coordinates={toCoordinates} setCoordinates={setToCoordinates} placeholder="Where are you going to?" />
-          </InputWrapper>
-        </section>
-      </InputsWrapper>
-      <Leaving>
-        Leaving now
-        <FontAwesomeIcon
-          icon={["fad", "chevron-right"]}
-          color="var(--color-background)"
-          size="2x"
-        />
-      </Leaving>
-      <Button onClick={handleSubmit}>Go</Button>
+        </Leaving>
+        <Button onClick={handleSubmit}>Search</Button>
+      </JourneyInput>
       {
-        journeyResults && <JourneyResults results={journeyResults} />
+        // journeyResults && <JourneyResults results={journeyResults} />
+        journeyResults && <RouteSummary results={journeyResults} />
       }
     </Wrapper>
   );
