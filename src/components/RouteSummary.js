@@ -164,7 +164,7 @@ const RouteSummary = ({ results }) => {
                   }
                 </Legs>
                 <TotalFare>
-                  {formatMoney(journey.fare.totalCost)}
+                  {formatMoney(journey.fare ? journey.fare.totalCost : 0)}
                 </TotalFare>
                 <Duration>
                   <span>
