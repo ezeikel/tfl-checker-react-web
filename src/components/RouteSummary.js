@@ -83,6 +83,8 @@ const Duration = styled.div`
 
 const formatMoney = (value) => new Intl.NumberFormat('en-GB',  { style: 'currency', currency: 'GBP'}).format(value / 100);
 
+const renderOptions = leg => leg.routeOptions.map((option, i) => <span key={i}>{option.name}</span>);
+
 const RouteSummary = ({ results }) => {
     console.log({ results });
     const { journeys } = results;
@@ -97,10 +99,10 @@ const RouteSummary = ({ results }) => {
               <Summary key={i}>
                 <Legs>
                   {
-                    journey.legs.map(leg => {
+                    journey.legs.map((leg, i) => {
                       if (leg.mode.id === "walking") {
                         return (
-                          <Route>
+                          <Route key={i}>
                             {
                               <FontAwesomeIcon
                                 icon={["fad", "walking"]}
@@ -112,7 +114,7 @@ const RouteSummary = ({ results }) => {
                         );
                       } else if (leg.mode.id === "bus") {
                         return (
-                          <Route>
+                          <Route key={i}>
                             {
                               <>
                                 <FontAwesomeIcon
@@ -120,14 +122,14 @@ const RouteSummary = ({ results }) => {
                                   color="#C83638"
                                   size="lg"
                                 />
-                                {leg.routeOptions.map(option => <span>{option.name}</span>)}
+                                {renderOptions(leg)}
                               </>
                             }
                           </Route>
                         );
                       } else if (leg.mode.id === "tube") {
                         return (
-                          <Route>
+                          <Route key={i}>
                             {
                               <>
                                 <FontAwesomeIcon
@@ -135,14 +137,14 @@ const RouteSummary = ({ results }) => {
                                   color="#34495E"
                                   size="lg"
                                 />
-                                {leg.routeOptions.map(option => <span>{option.name}</span>)}
+                                {renderOptions(leg)}
                               </>
                             }
                           </Route>
                         );
                       } else if (leg.mode.id === "national-rail") {
                         return (
-                          <Route>
+                          <Route key={i}>
                             {
                               <>
                                 <FontAwesomeIcon
@@ -150,7 +152,7 @@ const RouteSummary = ({ results }) => {
                                   color="#34495E"
                                   size="lg"
                                 />
-                                {leg.routeOptions.map(option => <span>{option.name}</span>)}
+                                {renderOptions(leg)}
                               </>
                             }
                           </Route>

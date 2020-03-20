@@ -80,7 +80,7 @@ const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <>
           <Input {...getInputProps({ placeholder })} />
-          <SuggestionsWrapper loading={loading}>
+          <SuggestionsWrapper>
             { loading ? (
             <Loading>
               <FontAwesomeIcon

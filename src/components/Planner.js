@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GooglePlacesInput from './GooglePlacesInput';
-import JourneyResults from './JourneyResults';
 import RouteSummary from './RouteSummary';
+import { rotate } from "../GlobalStyle";
 
 const Wrapper = styled.div`
   display: flex;
@@ -85,6 +85,7 @@ const Leaving = styled.span`
 
 const Button = styled.button`
   display: flex;
+  align-items: center;
   justify-content: center;
   background-color: var(--color-green);
   color: var(--color-white);
@@ -92,6 +93,10 @@ const Button = styled.button`
   font-weight: bold;
   padding: 16px 0;
   border-radius: var(--border-radius);
+  svg {
+    margin-left: 16px;
+    animation: ${rotate} 1.2s linear infinite;
+  }
 `;
 
 const Planner = () => {
@@ -108,10 +113,14 @@ const Planner = () => {
 
   const [journeyResults, setJourneyResults] = useState();
 
+  const [isThinking, setIsThinking] = useState(false);
+
   const handleSubmit = async () => {
+    setIsThinking(true);
     const resultsJson = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
     const results = await resultsJson.json();
     setJourneyResults(results);
+    setIsThinking(false);
   };
 
   return (
@@ -152,7 +161,18 @@ const Planner = () => {
             size="2x"
           />
         </Leaving>
-        <Button onClick={handleSubmit}>Search</Button>
+        <Button onClick={handleSubmit}>
+          { `Search${isThinking ? "ing" : ""}` }
+          {
+            isThinking && (
+              <FontAwesomeIcon
+                icon={["fad", "spinner-third"]}
+                color="var(--color-white)"
+                size="lg"
+              />
+            )
+          }
+        </Button>
       </JourneyInput>
       {
         // journeyResults && <JourneyResults results={journeyResults} />
