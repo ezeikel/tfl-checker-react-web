@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GooglePlacesInput from './GooglePlacesInput';
-import RouteSummary from './RouteSummary';
+import JourneySummary from './JourneySummary';
 import { rotate } from "../GlobalStyle";
 
 const Wrapper = styled.div`
@@ -119,7 +119,8 @@ const Planner = () => {
     setIsThinking(true);
     const resultsJson = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
     const results = await resultsJson.json();
-    setJourneyResults(results);
+    debugger;
+    setJourneyResults(results.journeys);
     setIsThinking(false);
   };
 
@@ -176,7 +177,7 @@ const Planner = () => {
       </JourneyInput>
       {
         // journeyResults && <JourneyResults results={journeyResults} />
-        journeyResults && <RouteSummary results={journeyResults} />
+        journeyResults && <JourneySummary journeys={journeyResults} />
       }
     </Wrapper>
   );

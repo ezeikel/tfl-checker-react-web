@@ -90,18 +90,16 @@ const renderOptions = leg => leg.routeOptions.map((option, i) => (
   </span>
 ));
 
-const RouteSummary = ({ results }) => {
-    console.log({ results });
-    const { journeys } = results;
-
+const RouteSummary = ({ journeys }) => {
     if (!journeys) return <div>Empty.</div>
+    debugger;
     return (
       <Wrapper>
         <span>Suggested</span>
         <div>
           {
             journeys.map((journey, i) => (
-              <Summary key={i}>
+              <Summary key={i} data-index={i}>
                 <Legs>
                   {
                     journey.legs.map((leg, i) => {
