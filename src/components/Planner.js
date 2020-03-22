@@ -119,7 +119,7 @@ const Planner = () => {
     setIsThinking(true);
     const resultsJson = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
     const results = await resultsJson.json();
-    debugger;
+
     setJourneyResults(results.journeys);
     setIsThinking(false);
   };

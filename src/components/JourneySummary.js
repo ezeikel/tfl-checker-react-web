@@ -92,7 +92,7 @@ const renderOptions = leg => leg.routeOptions.map((option, i) => (
 
 const RouteSummary = ({ journeys }) => {
     if (!journeys) return <div>Empty.</div>
-    debugger;
+
     return (
       <Wrapper>
         <span>Suggested</span>
