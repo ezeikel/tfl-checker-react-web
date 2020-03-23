@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from "react-redux";
 import styled from 'styled-components';
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -24,8 +25,10 @@ const App = () => (
   <Provider store={store}>
     <GlobalStyle />
     <Container>
-      <Header />
-      <Main />
+      <Router>
+        <Header />
+        <Main />
+      </Router>
     </Container>
   </Provider>
 );

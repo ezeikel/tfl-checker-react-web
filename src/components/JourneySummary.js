@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -20,10 +21,15 @@ const Summary = styled.section`
   padding: 32px;
   background-color: #fff;
   flex: 0 0 auto;
-  align-items: center;
   &:hover {
     background-color: #F2F2F2;
     cursor: pointer;
+  }
+  a {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    color: var(--color-text);
   }
   & + section {
     border-top: 1px solid #eeeeee;
@@ -100,86 +106,88 @@ const RouteSummary = ({ journeys }) => {
           {
             journeys.map((journey, i) => (
               <Summary key={i} data-index={i}>
-                <Legs>
-                  {
-                    journey.legs.map((leg, i) => {
-                      if (leg.mode.id === "walking") {
-                        return (
-                          /* TODO: Do one for 'overground' */
-                          <Route key={i}>
-                            {
-                              <FontAwesomeIcon
-                                icon={["fad", "walking"]}
-                                color="#34495E"
-                                size="lg"
-                              />
-                            }
-                          </Route>
-                        );
-                      } else if (leg.mode.id === "bus") {
-                        return (
-                          <Route key={i}>
-                            {
-                              <>
+                <Link to="/result">
+                  <Legs>
+                    {
+                      journey.legs.map((leg, i) => {
+                        if (leg.mode.id === "walking") {
+                          return (
+                            /* TODO: Do one for 'overground' */
+                            <Route key={i}>
+                              {
                                 <FontAwesomeIcon
-                                  icon={["fad", "bus"]}
-                                  color="#C83638"
-                                  size="lg"
-                                />
-                                {renderOptions(leg)}
-                              </>
-                            }
-                          </Route>
-                        );
-                      } else if (leg.mode.id === "tube") {
-                        return (
-                          <Route key={i}>
-                            {
-                              <>
-                                <FontAwesomeIcon
-                                  icon={["fad", "subway"]}
+                                  icon={["fad", "walking"]}
                                   color="#34495E"
                                   size="lg"
                                 />
-                                {renderOptions(leg)}
-                              </>
-                            }
-                          </Route>
-                        );
-                      } else if (leg.mode.id === "national-rail") {
-                        return (
-                          <Route key={i}>
-                            {
-                              <>
-                                <FontAwesomeIcon
-                                  icon={["fad", "train"]}
-                                  color="#34495E"
-                                  size="lg"
-                                />
-                                {renderOptions(leg)}
-                              </>
-                            }
-                          </Route>
-                        );
-                      } else {
-                        return (
-                          <div>WRONG</div>
-                        )
-                      }
-                    })
-                  }
-                </Legs>
-                <TotalFare>
-                  {formatMoney(journey.fare ? journey.fare.totalCost : 0)}
-                </TotalFare>
-                <Duration>
-                  <span>
-                    {journey.duration}
-                  </span>
-                  <span>
-                    min
-                  </span>
-                </Duration>
+                              }
+                            </Route>
+                          );
+                        } else if (leg.mode.id === "bus") {
+                          return (
+                            <Route key={i}>
+                              {
+                                <>
+                                  <FontAwesomeIcon
+                                    icon={["fad", "bus"]}
+                                    color="#C83638"
+                                    size="lg"
+                                  />
+                                  {renderOptions(leg)}
+                                </>
+                              }
+                            </Route>
+                          );
+                        } else if (leg.mode.id === "tube") {
+                          return (
+                            <Route key={i}>
+                              {
+                                <>
+                                  <FontAwesomeIcon
+                                    icon={["fad", "subway"]}
+                                    color="#34495E"
+                                    size="lg"
+                                  />
+                                  {renderOptions(leg)}
+                                </>
+                              }
+                            </Route>
+                          );
+                        } else if (leg.mode.id === "national-rail") {
+                          return (
+                            <Route key={i}>
+                              {
+                                <>
+                                  <FontAwesomeIcon
+                                    icon={["fad", "train"]}
+                                    color="#34495E"
+                                    size="lg"
+                                  />
+                                  {renderOptions(leg)}
+                                </>
+                              }
+                            </Route>
+                          );
+                        } else {
+                          return (
+                            <div>WRONG</div>
+                          )
+                        }
+                      })
+                    }
+                  </Legs>
+                  <TotalFare>
+                    {formatMoney(journey.fare ? journey.fare.totalCost : 0)}
+                  </TotalFare>
+                  <Duration>
+                    <span>
+                      {journey.duration}
+                    </span>
+                    <span>
+                      min
+                    </span>
+                  </Duration>
+                </Link>
               </Summary>
             ))
           }
