@@ -1,4 +1,4 @@
-import { 
+import {
   FETCH_SUGGESTIONS_START,
   FETCH_SUGGESTIONS_SUCCESS,
   CLEAR_SUGGESTIONS,
@@ -23,7 +23,7 @@ export default function(state = initialState, action) {
     case FETCH_SUGGESTIONS_SUCCESS: {
       return {
         ...state,
-        results: action.results,
+        results: action.journeys,
         loading: false
       };
     }

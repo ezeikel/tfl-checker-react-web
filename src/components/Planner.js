@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { connect } from "react-redux";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { fetchSuggestion, setFromLocation, setToLocation } from "../redux/actions";
 import GooglePlacesInput from './GooglePlacesInput';
 import JourneySummary from './JourneySummary';
 import { rotate } from "../GlobalStyle";
@@ -99,29 +101,19 @@ const Button = styled.button`
   }
 `;
 
-const Planner = () => {
-  const API_ENDPOINT = "https://api.tfl.gov.uk/"
-  const [fromCoordinates, setFromCoordinates] = useState({
-    lat: null,
-    lng: null
-  });
-
-  const [toCoordinates, setToCoordinates] = useState({
-    lat: null,
-    lng: null
-  });
-
-  const [journeyResults, setJourneyResults] = useState();
-
-  const [isThinking, setIsThinking] = useState(false);
-
-  const handleSubmit = async () => {
-    setIsThinking(true);
-    const resultsJson = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
-    const results = await resultsJson.json();
-
-    setJourneyResults(results.journeys);
-    setIsThinking(false);
+const Planner = ({
+  fromCoordinates,
+  toCoordinates,
+  fromAddress,
+  toAddress,
+  loading,
+  results,
+  onFetchSuggestions,
+  onSetFromLocation,
+  onSetToLocation,
+}) => {
+  const handleSubmit = () => {
+    onFetchSuggestions(fromCoordinates, toCoordinates);
   };
 
   return (
@@ -145,12 +137,12 @@ const Planner = () => {
           <form>
             <InputWrapper>
               <label>From</label>
-              <GooglePlacesInput coordinates={fromCoordinates} setCoordinates={setFromCoordinates} placeholder="Where are you coming from?" />
+              <GooglePlacesInput setLocation={onSetFromLocation} address={fromAddress} placeholder="Where are you coming from?" />
             </InputWrapper>
             <hr />
             <InputWrapper>
               <label>To</label>
-              <GooglePlacesInput coordinates={toCoordinates} setCoordinates={setToCoordinates} placeholder="Where are you going to?" />
+              <GooglePlacesInput setLocation={onSetToLocation} address={toAddress}  placeholder="Where are you going to?" />
             </InputWrapper>
           </form>
         </FormWrapper>
@@ -163,9 +155,9 @@ const Planner = () => {
           />
         </Leaving>
         <Button onClick={handleSubmit}>
-          { `Search${isThinking ? "ing" : ""}` }
+          { `Search${loading ? "ing" : ""}` }
           {
-            isThinking && (
+            loading && (
               <FontAwesomeIcon
                 icon={["fad", "spinner-third"]}
                 color="var(--color-white)"
@@ -176,11 +168,29 @@ const Planner = () => {
         </Button>
       </JourneyInput>
       {
-        // journeyResults && <JourneyResults results={journeyResults} />
-        journeyResults && <JourneySummary journeys={journeyResults} />
+        results && <JourneySummary journeys={results} />
       }
     </Wrapper>
   );
 };
 
-export default Planner;
+const mapDispatchToProps = dispatch => (
+  {
+    onFetchSuggestions: (fromCoordinates, toCoordinates) => dispatch(fetchSuggestion(fromCoordinates, toCoordinates)),
+    onSetFromLocation: value => dispatch(setFromLocation(value)),
+    onSetToLocation: value => dispatch(setToLocation(value)),
+  }
+);
+
+const mapStateToProps = ({ location, suggestion }) => (
+  {
+    fromCoordinates: location.from.coordinates,
+    fromAddress: location.from.address,
+    toCoordinates: location.to.coordinates,
+    toAddress: location.to.address,
+    results: suggestion.results,
+    loading: suggestion.loading
+  }
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Planner);

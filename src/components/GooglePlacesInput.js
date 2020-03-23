@@ -3,6 +3,7 @@ import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-au
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { rotate } from "../GlobalStyle";
+import { setToLocation } from "../redux/actions";
 
 const Input = styled.input`
   font-size: 1.6rem;
@@ -69,19 +70,15 @@ const List = styled.div`
   }
 `;
 
-const GooglePlacesInput = ({ coordinates, setCoordinates, placeholder }) => {
+const GooglePlacesInput = ({ setLocation, placeholder }) => {
   const [address, setAddress] = useState("");
 
   const handleSelect = async value => {
     const [results] = await geocodeByAddress(value);
     const latLng = await getLatLng(results);
 
-    console.log({
-      coordinates
-    });
-
     setAddress(value);
-    setCoordinates(latLng);
+    setLocation({ ...latLng, address: value });
   }
 
   const searchOptions = {

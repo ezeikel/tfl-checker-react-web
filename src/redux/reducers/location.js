@@ -7,12 +7,14 @@ import {
 
 const initialState = {
   from: {
+    address: '',
     coordinates: {
       lat: '',
       lng: ''
     }
   },
   to: {
+    address: '',
     coordinates: {
       lat: '',
       lng: ''
@@ -27,6 +29,7 @@ export default function(state = initialState, action) {
         ...state,
         from: {
           ...state.from,
+          address: action.address,
           coordinates: {
             ...state.from.coordinates,
             lat: action.lat,
@@ -40,6 +43,7 @@ export default function(state = initialState, action) {
         ...state,
         to: {
           ...state.to,
+          address: action.address,
           coordinates: {
             ...state.to.coordinates,
             lat: action.lat,
