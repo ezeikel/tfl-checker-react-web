@@ -70,15 +70,13 @@ const List = styled.div`
   }
 `;
 
-const GooglePlacesInput = ({ setLocation, placeholder }) => {
-  const [address, setAddress] = useState("");
-
+const GooglePlacesInput = ({ placeholder, address, setAddress, setLocation }) => {
   const handleSelect = async value => {
     const [results] = await geocodeByAddress(value);
     const latLng = await getLatLng(results);
 
     setAddress(value);
-    setLocation({ ...latLng, address: value });
+    setLocation(latLng);
   }
 
   const searchOptions = {

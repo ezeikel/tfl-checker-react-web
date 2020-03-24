@@ -1,8 +1,12 @@
 import { 
-  SET_FROM_LOCATION,
-  SET_TO_LOCATION,
-  CLEAR_FROM_LOCATION,
-  CLEAR_TO_LOCATION
+  SET_FROM_COORDS,
+  SET_TO_COORDS,
+  CLEAR_FROM_COORDS,
+  CLEAR_TO_COORDS,
+  SET_FROM_ADDRESS,
+  SET_TO_ADDRESS,
+  CLEAR_FROM_ADDRESS,
+  CLEAR_TO_ADDRESS
 } from "../actionTypes";
 
 const initialState = {
@@ -24,12 +28,11 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case SET_FROM_LOCATION: {
+    case SET_FROM_COORDS: {
       return {
         ...state,
         from: {
           ...state.from,
-          address: action.address,
           coordinates: {
             ...state.from.coordinates,
             lat: action.lat,
@@ -38,12 +41,11 @@ export default function(state = initialState, action) {
         }
       };
     }
-    case SET_TO_LOCATION: {
+    case SET_TO_COORDS: {
       return {
         ...state,
         to: {
           ...state.to,
-          address: action.address,
           coordinates: {
             ...state.to.coordinates,
             lat: action.lat,
@@ -52,16 +54,52 @@ export default function(state = initialState, action) {
         }
       };
     }
-    case CLEAR_FROM_LOCATION: {
+    case CLEAR_FROM_COORDS: {
       return {
         ...state,
         from: {}
       };
     }
-    case CLEAR_TO_LOCATION: {
+    case CLEAR_TO_COORDS: {
       return {
         ...state,
         to: {}
+      };
+    }
+    case SET_FROM_ADDRESS: {
+      return {
+        ...state,
+        from: {
+          ...state.from,
+          address: action.address
+        }
+      };
+    }
+    case SET_TO_ADDRESS: {
+      return {
+        ...state,
+        to: {
+          ...state.to,
+          address: action.address
+        }
+      };
+    }
+    case CLEAR_FROM_ADDRESS: {
+      return {
+        ...state,
+        from: {
+          ...state.from,
+          address: ""
+        }
+      };
+    }
+    case CLEAR_TO_ADDRESS: {
+      return {
+        ...state,
+        to: {
+          ...state.to,
+          address: ""
+        }
       };
     }
     default:

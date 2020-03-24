@@ -96,7 +96,7 @@ const renderOptions = leg => leg.routeOptions.map((option, i) => (
   </span>
 ));
 
-const RouteSummary = ({ journeys }) => {
+const JourneySummary = ({ journeys }) => {
     if (!journeys) return <div>Empty.</div>
 
     return (
@@ -170,7 +170,7 @@ const RouteSummary = ({ journeys }) => {
                           );
                         } else {
                           return (
-                            <div>WRONG</div>
+                            <div key={i}>WRONG</div>
                           )
                         }
                       })
@@ -196,4 +196,4 @@ const RouteSummary = ({ journeys }) => {
     );
 };
 
-export default RouteSummary;
+export default JourneySummary;

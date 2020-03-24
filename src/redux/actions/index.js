@@ -1,8 +1,12 @@
 export {
-  setFromLocation,
-  setToLocation,
-  clearFromLocation,
-  clearToLocation
+  setFromCoords,
+  setToCoords,
+  clearFromCoords,
+  clearToCoords,
+  setFromAddress,
+  setToAddress,
+  clearFromAddress,
+  clearToAddress
 } from './location';
 
 export {

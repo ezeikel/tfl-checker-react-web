@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { fetchSuggestion, setFromLocation, setToLocation } from "../redux/actions";
+import { fetchSuggestion, setFromCoords, setToCoords, clearFromAddress, clearToAddress, setFromAddress, setToAddress } from "../redux/actions";
 import GooglePlacesInput from './GooglePlacesInput';
 import JourneySummary from './JourneySummary';
 import { rotate } from "../GlobalStyle";
@@ -101,6 +102,8 @@ const Button = styled.button`
   }
 `;
 
+const useQuery = () => new URLSearchParams(useLocation().search);
+
 const Planner = ({
   fromCoordinates,
   toCoordinates,
@@ -109,10 +112,31 @@ const Planner = ({
   loading,
   results,
   onFetchSuggestions,
-  onSetFromLocation,
-  onSetToLocation,
+  onSetFromCoords,
+  onSetToCoords,
+  onSetFromAddress,
+  onSetToAddress
 }) => {
+  const history = useHistory();
+  const query = useQuery();
+
+  useEffect(() => {
+    if (fromAddress === "" && toAddress === "" && query.get("toCoordinates") && query.get("fromCoordinates")) {
+      const fromCoords = { lat: query.get("fromCoordinates").split(',')[0], lng: query.get("fromCoordinates").split(',')[1] };
+      const toCoords = { lat: query.get("toCoordinates").split(',')[0], lng: query.get("toCoordinates").split(',')[1] };
+      const fromAddress = query.get("fromAddress");
+      const toAddress = query.get("toAddress");
+
+      onFetchSuggestions(fromCoords, toCoords);
+      onSetFromCoords(fromCoords);
+      onSetToCoords(toCoords);
+      onSetFromAddress(fromAddress);
+      onSetToAddress(toAddress);
+    }
+  },[]);
+
   const handleSubmit = () => {
+    history.push(`/planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`);
     onFetchSuggestions(fromCoordinates, toCoordinates);
   };
 
@@ -137,12 +161,12 @@ const Planner = ({
           <form>
             <InputWrapper>
               <label>From</label>
-              <GooglePlacesInput setLocation={onSetFromLocation} address={fromAddress} placeholder="Where are you coming from?" />
+              <GooglePlacesInput setLocation={onSetFromCoords} address={fromAddress} setAddress={onSetFromAddress} placeholder="Where are you coming from?" />
             </InputWrapper>
             <hr />
             <InputWrapper>
               <label>To</label>
-              <GooglePlacesInput setLocation={onSetToLocation} address={toAddress}  placeholder="Where are you going to?" />
+              <GooglePlacesInput setLocation={onSetToCoords} address={toAddress} setAddress={onSetToAddress} placeholder="Where are you going to?" />
             </InputWrapper>
           </form>
         </FormWrapper>
@@ -177,8 +201,12 @@ const Planner = ({
 const mapDispatchToProps = dispatch => (
   {
     onFetchSuggestions: (fromCoordinates, toCoordinates) => dispatch(fetchSuggestion(fromCoordinates, toCoordinates)),
-    onSetFromLocation: value => dispatch(setFromLocation(value)),
-    onSetToLocation: value => dispatch(setToLocation(value)),
+    onSetFromCoords: value => dispatch(setFromCoords(value)),
+    onSetToCoords: value => dispatch(setToCoords(value)),
+    onSetFromAddress: value => dispatch(setFromAddress(value)),
+    onSetToAddress: value => dispatch(setToAddress(value)),
+    onClearFromAddress: () => dispatch(clearFromAddress()),
+    onClearToAddress: () => dispatch(clearToAddress()),
   }
 );
 

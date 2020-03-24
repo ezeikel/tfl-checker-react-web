@@ -14,7 +14,6 @@ export const fetchSuggestion = (fromCoordinates, toCoordinates) => (
 
     const responseJSON = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
     const response = await responseJSON.json();
-    debugger;
 
     dispatch(fetchSuggestionSuccess(response));
   }
