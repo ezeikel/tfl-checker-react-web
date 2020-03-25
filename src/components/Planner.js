@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { fetchSuggestion, setFromCoords, setToCoords, clearFromAddress, clearToAddress, setFromAddress, setToAddress } from "../redux/actions";
+import { fetchSuggestion, setFromCoords, setToCoords, setFromAddress, setToAddress, clearJourney, clearSuggestions } from "../redux/actions";
 import GooglePlacesInput from './GooglePlacesInput';
 import JourneySummary from './JourneySummary';
 import { rotate } from "../GlobalStyle";
@@ -115,7 +115,9 @@ const Planner = ({
   onSetFromCoords,
   onSetToCoords,
   onSetFromAddress,
-  onSetToAddress
+  onSetToAddress,
+  onClearJourney,
+  onClearSuggestions
 }) => {
   const history = useHistory();
   const query = useQuery();
@@ -134,6 +136,14 @@ const Planner = ({
       onSetToAddress(toAddress);
     }
   },[]);
+
+  useEffect(() => {
+
+    return () => {
+      onClearJourney();
+      onClearSuggestions();
+    }
+  }, []);
 
   const handleSubmit = () => {
     history.push(`/planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`);
@@ -205,17 +215,17 @@ const mapDispatchToProps = dispatch => (
     onSetToCoords: value => dispatch(setToCoords(value)),
     onSetFromAddress: value => dispatch(setFromAddress(value)),
     onSetToAddress: value => dispatch(setToAddress(value)),
-    onClearFromAddress: () => dispatch(clearFromAddress()),
-    onClearToAddress: () => dispatch(clearToAddress()),
+    onClearJourney: () => dispatch(clearJourney()),
+    onClearSuggestions: () => dispatch(clearSuggestions()),
   }
 );
 
-const mapStateToProps = ({ location, suggestion }) => (
+const mapStateToProps = ({ journey, suggestion }) => (
   {
-    fromCoordinates: location.from.coordinates,
-    fromAddress: location.from.address,
-    toCoordinates: location.to.coordinates,
-    toAddress: location.to.address,
+    fromCoordinates: journey.from.coordinates,
+    fromAddress: journey.from.address,
+    toCoordinates: journey.to.coordinates,
+    toAddress: journey.to.address,
     results: suggestion.results,
     loading: suggestion.loading
   }

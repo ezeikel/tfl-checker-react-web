@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import location from "./location";
+import journey from "./journey";
 import suggestion from "./suggestion";
 
-export default combineReducers({ location, suggestion });
+export default combineReducers({ journey, suggestion });

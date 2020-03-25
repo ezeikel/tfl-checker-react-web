@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { rotate } from "../GlobalStyle";
-import { setToLocation } from "../redux/actions";
 
 const Input = styled.input`
   font-size: 1.6rem;

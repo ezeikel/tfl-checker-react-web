@@ -1,12 +1,9 @@
 import { 
   SET_FROM_COORDS,
   SET_TO_COORDS,
-  CLEAR_FROM_COORDS,
-  CLEAR_TO_COORDS,
   SET_FROM_ADDRESS,
   SET_TO_ADDRESS,
-  CLEAR_FROM_ADDRESS,
-  CLEAR_TO_ADDRESS
+  CLEAR_JOURNEY
 } from "../actionTypes";
 
 const initialState = {
@@ -54,15 +51,10 @@ export default function(state = initialState, action) {
         }
       };
     }
-    case CLEAR_FROM_COORDS: {
+    case CLEAR_JOURNEY: {
       return {
         ...state,
-        from: {}
-      };
-    }
-    case CLEAR_TO_COORDS: {
-      return {
-        ...state,
+        from: {},
         to: {}
       };
     }
@@ -81,24 +73,6 @@ export default function(state = initialState, action) {
         to: {
           ...state.to,
           address: action.address
-        }
-      };
-    }
-    case CLEAR_FROM_ADDRESS: {
-      return {
-        ...state,
-        from: {
-          ...state.from,
-          address: ""
-        }
-      };
-    }
-    case CLEAR_TO_ADDRESS: {
-      return {
-        ...state,
-        to: {
-          ...state.to,
-          address: ""
         }
       };
     }

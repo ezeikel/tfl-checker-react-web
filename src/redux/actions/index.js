@@ -1,13 +1,10 @@
 export {
   setFromCoords,
   setToCoords,
-  clearFromCoords,
-  clearToCoords,
   setFromAddress,
   setToAddress,
-  clearFromAddress,
-  clearToAddress
-} from './location';
+  clearJourney,
+} from './journey';
 
 export {
   fetchSuggestion,
@@ -16,4 +13,4 @@ export {
   clearSuggestions,
   setSelectedSuggestion,
   clearSelectedSuggestion
-} from './suggestion.js';
+} from './suggestion';
