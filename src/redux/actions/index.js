@@ -11,6 +11,6 @@ export {
   fetchSuggestionStart,
   fetchSuggestionSuccess,
   clearSuggestions,
-  setSelectedSuggestion,
-  clearSelectedSuggestion
+  setSelectedTrip,
+  clearSelectedTrip
 } from './suggestion';

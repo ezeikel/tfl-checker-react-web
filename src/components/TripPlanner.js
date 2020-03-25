@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fetchSuggestion, setFromCoords, setToCoords, setFromAddress, setToAddress, clearJourney, clearSuggestions } from "../redux/actions";
 import GooglePlacesInput from './GooglePlacesInput';
-import JourneySummary from './JourneySummary';
+import TripSummaries from './TripSummaries';
 import { rotate } from "../GlobalStyle";
 
 const Wrapper = styled.div`
@@ -42,6 +42,7 @@ const FormWrapper = styled.div`
   padding: 16px;
   margin-bottom: 32px;
   display: flex;
+  border-radius: 4px;
   form {
     flex: 1 0 auto;
   }
@@ -104,7 +105,7 @@ const Button = styled.button`
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
-const Planner = ({
+const TripPlanner = ({
   fromCoordinates,
   toCoordinates,
   fromAddress,
@@ -146,7 +147,7 @@ const Planner = ({
   }, []);
 
   const handleSubmit = () => {
-    history.push(`/planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`);
+    history.push(`/trip-planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`);
     onFetchSuggestions(fromCoordinates, toCoordinates);
   };
 
@@ -202,11 +203,22 @@ const Planner = ({
         </Button>
       </JourneyInput>
       {
-        results && <JourneySummary journeys={results} />
+        results.length ? <TripSummaries journeys={results} /> : null
       }
     </Wrapper>
   );
 };
+
+const mapStateToProps = ({ journey, suggestion }) => (
+  {
+    fromCoordinates: journey.from.coordinates,
+    fromAddress: journey.from.address,
+    toCoordinates: journey.to.coordinates,
+    toAddress: journey.to.address,
+    results: suggestion.results,
+    loading: suggestion.loading
+  }
+);
 
 const mapDispatchToProps = dispatch => (
   {
@@ -220,15 +232,4 @@ const mapDispatchToProps = dispatch => (
   }
 );
 
-const mapStateToProps = ({ journey, suggestion }) => (
-  {
-    fromCoordinates: journey.from.coordinates,
-    fromAddress: journey.from.address,
-    toCoordinates: journey.to.coordinates,
-    toAddress: journey.to.address,
-    results: suggestion.results,
-    loading: suggestion.loading
-  }
-);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Planner);
+export default connect(mapStateToProps, mapDispatchToProps)(TripPlanner);

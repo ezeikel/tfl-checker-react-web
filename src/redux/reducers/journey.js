@@ -53,9 +53,7 @@ export default function(state = initialState, action) {
     }
     case CLEAR_JOURNEY: {
       return {
-        ...state,
-        from: {},
-        to: {}
+        ...initialState,
       };
     }
     case SET_FROM_ADDRESS: {

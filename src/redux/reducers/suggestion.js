@@ -2,8 +2,8 @@ import {
   FETCH_SUGGESTIONS_START,
   FETCH_SUGGESTIONS_SUCCESS,
   CLEAR_SUGGESTIONS,
-  SET_SELECTED_SUGGESTION,
-  CLEAR_SELECTED_SUGGESTION
+  SET_SELECTED_TRIP,
+  CLEAR_SELECTED_TRIP
 } from "../actionTypes";
 
 const initialState = {
@@ -33,13 +33,13 @@ export default function(state = initialState, action) {
         results: []
       };
     }
-    case SET_SELECTED_SUGGESTION: {
+    case SET_SELECTED_TRIP: {
       return {
         ...state,
         selected: action.selected
       };
     }
-    case CLEAR_SELECTED_SUGGESTION: {
+    case CLEAR_SELECTED_TRIP: {
       return {
         ...state,
         selected: {}

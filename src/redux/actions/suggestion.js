@@ -2,8 +2,8 @@ import {
   FETCH_SUGGESTIONS_START,
   FETCH_SUGGESTIONS_SUCCESS,
   CLEAR_SUGGESTIONS,
-  SET_SELECTED_SUGGESTION,
-  CLEAR_SELECTED_SUGGESTION
+  SET_SELECTED_TRIP,
+  CLEAR_SELECTED_TRIP
 } from "../actionTypes";
 
 const API_ENDPOINT = "https://api.tfl.gov.uk/"
@@ -38,15 +38,15 @@ export const clearSuggestions = () => (
   }
 );
 
-export const setSelectedSuggestion = selected => (
+export const setSelectedTrip = selected => (
   {
-    type: SET_SELECTED_SUGGESTION,
+    type: SET_SELECTED_TRIP,
     selected
   }
 );
 
-export const clearSelectedSuggestion = () => (
+export const clearSelectedTrip = () => (
   {
-    type: CLEAR_SELECTED_SUGGESTION
+    type: CLEAR_SELECTED_TRIP
   }
 );

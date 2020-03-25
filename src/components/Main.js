@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Status from './Status';
-import Planner from './Planner';
-import Result from './Result';
+import TripPlanner from './TripPlanner';
+import Trip from './Trip';
 
 const Main = () => (
   <main>
@@ -10,11 +10,11 @@ const Main = () => (
       <Route exact path='/'>
         <Status />
       </Route>
-      <Route path='/planner'>
-        <Planner />
+      <Route path='/trip-planner'>
+        <TripPlanner />
       </Route>
-      <Route path='/result'>
-        <Result />
+      <Route path='/trip'>
+        <Trip />
       </Route>
     </Switch>
   </main>
