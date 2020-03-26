@@ -1,10 +1,11 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { connect } from "react-redux";
 import Status from './Status';
 import TripPlanner from './TripPlanner';
 import Trip from './Trip';
 
-const Main = () => (
+const Main = ({ selectedTrip }) => (
   <main>
     <Switch>
       <Route exact path='/'>
@@ -14,10 +15,16 @@ const Main = () => (
         <TripPlanner />
       </Route>
       <Route path='/trip'>
-        <Trip />
+        {selectedTrip ? <Trip /> : <Redirect to="/trip-planner" />}
       </Route>
     </Switch>
   </main>
 );
 
-export default Main;
+const mapStateToProps = ({ suggestion }) => (
+  {
+    selectedTrip: suggestion.selected,
+  }
+);
+
+export default connect(mapStateToProps)(Main);

@@ -13,7 +13,7 @@ export default createGlobalStyle`
     --color-dlr: #26AFAC;
     --color-hammersmith-city: #D59AAF;
     --color-jubilee: #6B7278;
-    --color-overground: #E46B24;
+    --color-london-overground: #E46B24;
     --color-metropolitan: #731756;
     --color-northern: #000000;
     --color-piccadilly: #0026A5;

@@ -27,13 +27,17 @@ const Wrapper = styled.section`
   }
 `;
 
+const StyledTripSummary = styled(TripSummary)`
+  border-radius: 0;
+`;
+
 const TripSummaries = ({ journeys, onSetSelectedTrip }) => (
   <Wrapper>
     <span>Suggested</span>
       {
         journeys.map((journey, i) => (
           <Link to="/trip" onClick={() => onSetSelectedTrip(journey)} key={i}>
-            <TripSummary journey={journey}/>
+            <StyledTripSummary journey={journey}/>
           </Link>
         ))
       }
@@ -42,10 +46,7 @@ const TripSummaries = ({ journeys, onSetSelectedTrip }) => (
 
 const mapDispatchToProps = dispatch => (
   {
-    onSetSelectedTrip: value => {
-      debugger;
-      dispatch(setSelectedTrip(value)); 
-    }
+    onSetSelectedTrip: value => dispatch(setSelectedTrip(value))
   }
 );
 

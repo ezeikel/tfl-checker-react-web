@@ -11,6 +11,7 @@ const Wrapper = styled.section`
   width: 100%;
   padding: 32px;
   background-color: #fff;
+  border-radius: 4px;
   &:hover {
     background-color: #F2F2F2;
     cursor: pointer;
@@ -69,9 +70,11 @@ const Duration = styled.div`
     }
 `;
 
-const TripSummary = ({ journey }) => {
+const TripSummary = ({ journey, className }) => {
+  if (Object.keys(journey).length === 0) return null;
+
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       <Legs>
         {
           journey.legs.map((leg, i) => {
