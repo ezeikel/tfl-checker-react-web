@@ -136,7 +136,7 @@ const TripPlanner = ({
       onSetFromAddress(fromAddress);
       onSetToAddress(toAddress);
     }
-  },[]);
+  },[fromAddress, onFetchSuggestions, onSetFromAddress, onSetFromCoords, onSetToAddress, onSetToCoords, query, toAddress]);
 
   useEffect(() => {
 
@@ -144,7 +144,7 @@ const TripPlanner = ({
       onClearJourney();
       onClearSuggestions();
     }
-  }, []);
+  }, [onClearJourney, onClearSuggestions]);
 
   const handleSubmit = () => {
     history.push(`/trip-planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`);

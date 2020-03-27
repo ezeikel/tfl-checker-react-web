@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import convertDateToTime from "../utils/convertDateToTime";
@@ -23,6 +23,10 @@ const MODE_COLOURS = {
   tube: {
     icon: "subway",
     color: "#051EA6"
+  },
+  dlr: {
+    icon: "tram",
+    color: "#26AFAC"
   }
 };
 
@@ -165,6 +169,8 @@ const ModeIcon = styled.div`
 `;
 
 const Trip = ({ trip }) => {
+  const [legs, setLegs] = useState(trip.legs.map(() => ({ expanded: false })));
+  
   if (Object.keys(trip).length === 0) return null;
 
   return (
@@ -189,29 +195,45 @@ const Trip = ({ trip }) => {
                 <Duration>
                   <span>{leg.duration} min</span>
                   {leg.mode.id === "walking" &&
-                    <Toggle>Hide directions</Toggle>
+                    <Toggle onClick={() => setLegs(legs.map((leg, index) => {
+                        if (i === index) {
+                          leg.expanded = !leg.expanded;
+                        }
+
+                        return leg;
+                      }))}
+                    >{`${legs[i].expanded ? "Hide" : "Show"} directions`}</Toggle>
                   }
-                  {(leg.mode.id === "bus" || leg.mode.id === "tube") &&
-                    <Toggle>Hide stops</Toggle>
+                  {(leg.mode.id === "bus" || leg.mode.id === "national-rail" || leg.mode.id === "london-overground" ||  leg.mode.id === "tube") &&
+                    <Toggle onClick={() => setLegs(legs.map((leg, index) => {
+                      if (i === index) {
+                        leg.expanded = !leg.expanded;
+                      }
+
+                      return leg;
+                    }))}
+                    >{`${legs[i].expanded ? "Hide" : "Show"} ${leg.path.stopPoints.length} stop${leg.path.stopPoints.length === 1 ? "" : "s"}`}</Toggle>
                   }
                 </Duration>
-                <Stops>
-                  {leg.mode.id === "walking" &&
-                    leg.instruction.steps.map((step, i) => (
-                      <Direction key={i}>
-                        <span>{step.descriptionHeading}</span>
-                        <span>{step.description}</span>
-                      </Direction>
-                    ))
-                  }
-                  {(leg.mode.id === "bus" || leg.mode.id === "tube") &&
-                    leg.path.stopPoints.map((stopPoint, i) => (
-                      <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
-                        <span>{stopPoint.name}</span>
-                      </Stop>
-                    ))
-                  }
-                </Stops>
+                {legs[i].expanded &&
+                  <Stops>
+                    {leg.mode.id === "walking" &&
+                      leg.instruction.steps.map((step, i) => (
+                        <Direction key={i}>
+                          <span>{step.descriptionHeading}</span>
+                          <span>{step.description}</span>
+                        </Direction>
+                      ))
+                    }
+                    {(leg.mode.id === "bus" || leg.mode.id === "national-rail" || leg.mode.id === "london-overground" ||  leg.mode.id === "tube") &&
+                      leg.path.stopPoints.map((stopPoint, i) => (
+                        <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
+                          <span>{stopPoint.name}</span>
+                        </Stop>
+                      ))
+                    }
+                  </Stops>
+                }
               </div>
             </Content>
           </Leg>

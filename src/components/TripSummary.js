@@ -136,6 +136,36 @@ const TripSummary = ({ journey, className }) => {
                   }
                 </Route>
               );
+            } else if (leg.mode.id === "overground") {
+              return (
+                <Route key={i}>
+                  {
+                    <>
+                      <FontAwesomeIcon
+                        icon={["fad", "train"]}
+                        color="#E46B24"
+                        size="lg"
+                      />
+                      {renderOptions(leg)}
+                    </>
+                  }
+                </Route>
+              );
+            } else if (leg.mode.id === "dlr") {
+              return (
+                <Route key={i}>
+                  {
+                    <>
+                      <FontAwesomeIcon
+                        icon={["fad", "tram"]}
+                        color="#26AFAC"
+                        size="lg"
+                      />
+                      {renderOptions(leg)}
+                    </>
+                  }
+                </Route>
+              );
             } else {
               return (
                 <div key={i}>WRONG</div>

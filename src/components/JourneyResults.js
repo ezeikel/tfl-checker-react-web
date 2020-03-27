@@ -82,7 +82,6 @@ const covertDateToTime = dateString => {
 const formatMoney = (value) => new Intl.NumberFormat('en-GB',  { style: 'currency', currency: 'GBP'}).format(value / 100);
 
 const JourneyResults = ({ results }) => {
-    console.log({ results });
     const { journeys } = results;
 
     if (!journeys) return <div>Empty.</div>

@@ -18,7 +18,7 @@ const Trip = ({ selectedTrip, onClearSelectedTrip }) => {
     return () => {
       onClearSelectedTrip();
     }
-  }, []);
+  }, [onClearSelectedTrip]);
 
   if (Object.keys(selectedTrip).length === 0) {
     history.push("/trip-planner");
