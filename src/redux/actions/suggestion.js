@@ -12,7 +12,7 @@ export const fetchSuggestion = (fromCoordinates, toCoordinates) => (
   async dispatch => {
     dispatch(fetchSuggestionStart());
 
-    const responseJSON = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?time=0900&app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
+    const responseJSON = await fetch(`${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`);
     const response = await responseJSON.json();
 
     dispatch(fetchSuggestionSuccess(response));
