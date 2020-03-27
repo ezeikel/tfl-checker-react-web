@@ -203,7 +203,8 @@ const TripPlanner = ({
         </Button>
       </JourneyInput>
       {
-        results.length ? <TripSummaries journeys={results} /> : null
+        // TODO: Disambiguations cause results to be null. Add a way to get exact location instead
+        results && results.length ? <TripSummaries journeys={results} /> : null
       }
     </Wrapper>
   );
