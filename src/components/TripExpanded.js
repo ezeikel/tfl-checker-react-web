@@ -36,7 +36,6 @@ const Wrapper = styled.section`
   background-color: var(--color-white);
   padding: 32px;
   border-radius: 4px;
-  margin-top: 32px;
 `;
 
 const Leg = styled.section`
@@ -168,13 +167,13 @@ const ModeIcon = styled.div`
   margin-left: -16px;
 `;
 
-const Trip = ({ trip }) => {
+const Trip = ({ className, trip }) => {
   const [legs, setLegs] = useState(trip.legs.map(() => ({ expanded: false })));
-  
+
   if (Object.keys(trip).length === 0) return null;
 
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       {
         trip.legs.map((leg, i) => (
           <Leg key={i}>
