@@ -32,6 +32,10 @@ const MODE_COLOURS = {
     icon: "subway",
     color: "#051EA6"
   },
+  "tfl-rail": {
+    icon: "train",
+    color: "#051EA6"
+  },
   dlr: {
     icon: "tram",
     color: "#26AFAC"

@@ -162,6 +162,21 @@ const TripSummary = ({ journey, className }) => {
                   }
                 </Route>
               );
+            } else if (leg.mode.id === "tfl-rail") {
+              return (
+                <Route key={i}>
+                  {
+                    <>
+                      <FontAwesomeIcon
+                        icon={["fad", "train"]}
+                        color="#0026A5"
+                        size="lg"
+                      />
+                      {renderOptions(leg)}
+                    </>
+                  }
+                </Route>
+              );
             } else if (leg.mode.id === "dlr") {
               return (
                 <Route key={i}>
