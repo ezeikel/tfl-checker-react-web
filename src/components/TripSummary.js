@@ -162,7 +162,7 @@ const TripSummary = ({ journey, className }) => {
                   }
                 </Route>
               );
-            } else if (leg.mode.id === "tfl-rail") {
+            } else if (leg.mode.id === "tflrail") {
               return (
                 <Route key={i}>
                   {
