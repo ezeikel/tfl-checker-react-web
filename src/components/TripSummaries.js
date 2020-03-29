@@ -29,6 +29,10 @@ const Wrapper = styled.section`
 
 const StyledTripSummary = styled(TripSummary)`
   border-radius: 0;
+  &:hover {
+    background-color: #F2F2F2;
+    cursor: pointer;
+  }
 `;
 
 const TripSummaries = ({ journeys, onSetSelectedTrip }) => (

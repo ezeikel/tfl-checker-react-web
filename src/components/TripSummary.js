@@ -12,10 +12,6 @@ const Wrapper = styled.section`
   padding: 32px;
   background-color: #fff;
   border-radius: 4px;
-  &:hover {
-    background-color: #F2F2F2;
-    cursor: pointer;
-  }
   .timing {
     display: flex;
     justify-content: space-between;
@@ -90,8 +86,8 @@ const TripSummary = ({ journey, className }) => {
                     />
                   }
                 </Route>
-              );
-            } else if (leg.mode.id === "bus") {
+              ); // TODO: different icon for replacement-bus
+            } else if (leg.mode.id === "bus" || leg.mode.id === "replacement-bus") {
               return (
                 <Route key={i}>
                   {
@@ -99,6 +95,21 @@ const TripSummary = ({ journey, className }) => {
                       <FontAwesomeIcon
                         icon={["fad", "bus"]}
                         color="#C83638"
+                        size="lg"
+                      />
+                      {renderOptions(leg)}
+                    </>
+                  }
+                </Route>
+              );
+            } else if (leg.mode.id === "coach") {
+              return (
+                <Route key={i}>
+                  {
+                    <>
+                      <FontAwesomeIcon
+                        icon={["fad", "bus-alt"]}
+                        color="#10bd59"
                         size="lg"
                       />
                       {renderOptions(leg)}

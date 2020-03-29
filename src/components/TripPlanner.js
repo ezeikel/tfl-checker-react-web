@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { fetchSuggestion, setFromCoords, setToCoords, setFromAddress, setToAddress, clearJourney, clearSuggestions } from "../redux/actions";
+import { fetchSuggestion, setFromCoords, setToCoords, setFromAddress, setToAddress, clearSuggestions } from "../redux/actions";
 import GooglePlacesInput from './GooglePlacesInput';
 import TripSummaries from './TripSummaries';
 import { rotate } from "../GlobalStyle";
@@ -124,8 +124,8 @@ const TripPlanner = ({
 
   useEffect(() => {
     if (fromAddress === "" && toAddress === "" && query.get("toCoordinates") && query.get("fromCoordinates")) {
-      const fromCoords = { lat: query.get("fromCoordinates").split(',')[0], lng: query.get("fromCoordinates").split(',')[1] };
-      const toCoords = { lat: query.get("toCoordinates").split(',')[0], lng: query.get("toCoordinates").split(',')[1] };
+      const fromCoords = { lat: parseFloat(query.get("fromCoordinates").split(',')[0]), lng: parseFloat(query.get("fromCoordinates").split(',')[1]) };
+      const toCoords = { lat: parseFloat(query.get("toCoordinates").split(',')[0]), lng: parseFloat(query.get("toCoordinates").split(',')[1]) };
       const fromAddress = query.get("fromAddress");
       const toAddress = query.get("toAddress");
 

@@ -12,6 +12,14 @@ const MODE_COLOURS = {
     icon: "bus",
     color: "#C83638"
   },
+  "replacement-bus": {
+    icon: "bus",
+    color: "#C83638"
+  },
+  coach: {
+    icon: "bus-alt",
+    color: "#10bd59"
+  },
   "national-rail": {
     icon: "train",
     color: "#043261"

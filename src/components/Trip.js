@@ -32,15 +32,29 @@ const StyledTripExpanded = styled(TripExpanded)`
   grid-column: 1 / span 1;
 `;
 
-const Trip = ({ selectedTrip, fromCoordinates, onClearSelectedTrip, onClearJourney }) => {
+const Trip = ({ selectedTrip, onClearSelectedTrip, onClearJourney }) => {
   const history = useHistory();
+
+  const path = selectedTrip.legs && selectedTrip.legs.map((leg, i) => {
+    if (i === selectedTrip.legs.length -1) {
+      return {
+        lat: leg.arrivalPoint.lat,
+        lng: leg.arrivalPoint.lon
+      };
+    }
+
+    return {
+      lat: leg.departurePoint.lat,
+      lng: leg.departurePoint.lon
+    };
+  });
 
   useEffect(() => {
     return () => {
       onClearSelectedTrip();
       onClearJourney();
     }
-  }, [onClearSelectedTrip]);
+  }, [onClearSelectedTrip, onClearJourney]);
 
   if (Object.keys(selectedTrip).length === 0) {
     history.push("/trip-planner");
@@ -52,16 +66,15 @@ const Trip = ({ selectedTrip, fromCoordinates, onClearSelectedTrip, onClearJourn
       <StyledTripSummary journey={selectedTrip} />
       <ContentWrap>
         <StyledTripExpanded trip={selectedTrip} />
-        <TripMap center={fromCoordinates} />
+        <TripMap center={{lat: 51.50853, lng: -0.12574}} path={path} />
       </ContentWrap>
     </Wrapper>
   );
 };
 
-const mapStateToProps = ({ suggestion, journey }) => (
+const mapStateToProps = ({ suggestion }) => (
   {
-    selectedTrip: suggestion.selected,
-    fromCoordinates: journey.from.coordinates
+    selectedTrip: suggestion.selected
   }
 );
 
