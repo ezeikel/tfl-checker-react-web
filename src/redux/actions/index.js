@@ -4,7 +4,7 @@ export {
   setFromAddress,
   setToAddress,
   clearJourney,
-} from './journey';
+} from "./journey";
 
 export {
   fetchSuggestion,
@@ -12,5 +12,5 @@ export {
   fetchSuggestionSuccess,
   clearSuggestions,
   setSelectedTrip,
-  clearSelectedTrip
-} from './suggestion';
+  clearSelectedTrip,
+} from "./suggestion";

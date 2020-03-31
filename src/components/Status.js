@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import Card from "./Card";
 
 const Lines = styled.div`
@@ -12,11 +12,13 @@ const Lines = styled.div`
 `;
 
 const Status = () => {
-  const [ status, setStatus ] = useState([]);
+  const [status, setStatus] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const data = await fetch('https://api.tfl.gov.uk/line/mode/tube,overground,dlr,tflrail/status?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5');
+      const data = await fetch(
+        "https://api.tfl.gov.uk/line/mode/tube,overground,dlr,tflrail/status?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5",
+      );
       const json = await data.json();
 
       setStatus(json);
@@ -24,17 +26,10 @@ const Status = () => {
     fetchData();
   }, []);
 
-  const renderLines = () => (
-    status.map(line => (
-      <Card key={line.id} line={line} />
-    ))
-  );
+  const renderLines = () =>
+    status.map(line => <Card key={line.id} line={line} />);
 
-  return (
-    <Lines>
-      {renderLines()}
-    </Lines>
-  )
+  return <Lines>{renderLines()}</Lines>;
 };
 
 export default Status;

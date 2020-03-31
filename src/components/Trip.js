@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useEffect } from "react";
+import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { clearSelectedTrip, clearJourney } from "../redux/actions";
-import TripSummary from './TripSummary';
-import TripExpanded from './TripExpanded';
-import TripMap from './TripMap';
+import TripSummary from "./TripSummary";
+import TripExpanded from "./TripExpanded";
+import TripMap from "./TripMap";
 
 const Wrapper = styled.div`
   display: grid;
@@ -35,25 +35,27 @@ const StyledTripExpanded = styled(TripExpanded)`
 const Trip = ({ selectedTrip, onClearSelectedTrip, onClearJourney }) => {
   const history = useHistory();
 
-  const path = selectedTrip.legs && selectedTrip.legs.map((leg, i) => {
-    if (i === selectedTrip.legs.length -1) {
-      return {
-        lat: leg.arrivalPoint.lat,
-        lng: leg.arrivalPoint.lon
-      };
-    }
+  const path =
+    selectedTrip.legs &&
+    selectedTrip.legs.map((leg, i) => {
+      if (i === selectedTrip.legs.length - 1) {
+        return {
+          lat: leg.arrivalPoint.lat,
+          lng: leg.arrivalPoint.lon,
+        };
+      }
 
-    return {
-      lat: leg.departurePoint.lat,
-      lng: leg.departurePoint.lon
-    };
-  });
+      return {
+        lat: leg.departurePoint.lat,
+        lng: leg.departurePoint.lon,
+      };
+    });
 
   useEffect(() => {
     return () => {
       onClearSelectedTrip();
       onClearJourney();
-    }
+    };
   }, [onClearSelectedTrip, onClearJourney]);
 
   if (Object.keys(selectedTrip).length === 0) {
@@ -66,23 +68,19 @@ const Trip = ({ selectedTrip, onClearSelectedTrip, onClearJourney }) => {
       <StyledTripSummary journey={selectedTrip} />
       <ContentWrap>
         <StyledTripExpanded trip={selectedTrip} />
-        <TripMap center={{lat: 51.50853, lng: -0.12574}} path={path} />
+        <TripMap center={{ lat: 51.50853, lng: -0.12574 }} path={path} />
       </ContentWrap>
     </Wrapper>
   );
 };
 
-const mapStateToProps = ({ suggestion }) => (
-  {
-    selectedTrip: suggestion.selected
-  }
-);
+const mapStateToProps = ({ suggestion }) => ({
+  selectedTrip: suggestion.selected,
+});
 
-const mapDispatchToProps = dispatch => (
-  {
-    onClearSelectedTrip: () => dispatch(clearSelectedTrip()),
-    onClearJourney: () => dispatch(clearJourney()),
-  }
-);
+const mapDispatchToProps = dispatch => ({
+  onClearSelectedTrip: () => dispatch(clearSelectedTrip()),
+  onClearJourney: () => dispatch(clearJourney()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Trip);

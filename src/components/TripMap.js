@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import GoogleMapReact from 'google-map-react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from "react";
+import styled from "styled-components";
+import GoogleMapReact from "google-map-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Wrapper = styled.section`
   height: 100%;
@@ -17,7 +17,7 @@ const IconWrapper = styled.span`
 `;
 
 const defaultProps = {
-  zoom: 11
+  zoom: 11,
 };
 
 const handleGoogleMapApi = (google, path) => {
@@ -26,18 +26,18 @@ const handleGoogleMapApi = (google, path) => {
   var tripPath = new google.maps.Polyline({
     path,
     geodesic: true,
-    strokeColor: '#00BCD4',
+    strokeColor: "#00BCD4",
     strokeOpacity: 1,
-    strokeWeight: 5
+    strokeWeight: 5,
   });
 
   tripPath.setMap(google.map);
 
   bounds.extend(path[0]);
-  bounds.extend(path[path.length -1]);
+  bounds.extend(path[path.length - 1]);
 
   google.map.fitBounds(bounds);
-}
+};
 
 const TripMap = ({ center, path }) => (
   <Wrapper>
@@ -47,10 +47,7 @@ const TripMap = ({ center, path }) => (
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={google => handleGoogleMapApi(google, path)}
     >
-      <IconWrapper
-        lat={path[0].lat}
-        lng={path[0].lng}
-      >
+      <IconWrapper lat={path[0].lat} lng={path[0].lng}>
         <FontAwesomeIcon
           icon={["fas", "map-marker-alt"]}
           color="#31CC71"
@@ -58,8 +55,8 @@ const TripMap = ({ center, path }) => (
         />
       </IconWrapper>
       <IconWrapper
-        lat={path[path.length -1].lat}
-        lng={path[path.length -1].lng}
+        lat={path[path.length - 1].lat}
+        lng={path[path.length - 1].lng}
       >
         <FontAwesomeIcon
           icon={["fas", "map-marker-alt"]}

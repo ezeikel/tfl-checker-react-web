@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import formatMoney from "../utils/formatMoney";
 import renderOptions from "../utils/renderOptions";
@@ -32,7 +32,7 @@ const Legs = styled.div`
 const Route = styled.div`
   display: flex;
   align-items: center;
-  border: 1px solid #D9D9D9;
+  border: 1px solid #d9d9d9;
   padding: 8px;
   border-radius: 4px;
   font-size: 1.4rem;
@@ -43,27 +43,27 @@ const Route = styled.div`
 `;
 
 const TotalFare = styled.div`
-    flex: 0 0 auto;
-    display: flex;
-    font-size: 16px;
-    font-weight: bold;
-    color: #31CC71;
-    margin-right: 32px;
+  flex: 0 0 auto;
+  display: flex;
+  font-size: 16px;
+  font-weight: bold;
+  color: #31cc71;
+  margin-right: 32px;
 `;
 
 const Duration = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    span {
-      &:first-of-type {
-        font-size: 2.4rem;
-        font-weight: bold;
-      }
-      &:last-of-type {
-        font-size: 1.6rem;
-      }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  span {
+    &:first-of-type {
+      font-size: 2.4rem;
+      font-weight: bold;
     }
+    &:last-of-type {
+      font-size: 1.6rem;
+    }
+  }
 `;
 
 const TripSummary = ({ journey, className }) => {
@@ -72,144 +72,139 @@ const TripSummary = ({ journey, className }) => {
   return (
     <Wrapper className={className}>
       <Legs>
-        {
-          journey.legs.map((leg, i) => {
-            if (leg.mode.id === "walking") {
-              return (
-                /* TODO: Do one for 'overground' */
-                <Route key={i}>
-                  {
+        {journey.legs.map((leg, i) => {
+          if (leg.mode.id === "walking") {
+            return (
+              /* TODO: Do one for 'overground' */
+              <Route key={i}>
+                {
+                  <FontAwesomeIcon
+                    icon={["fad", "walking"]}
+                    color="#34495E"
+                    size="lg"
+                  />
+                }
+              </Route>
+            ); // TODO: different icon for replacement-bus
+          } else if (
+            leg.mode.id === "bus" ||
+            leg.mode.id === "replacement-bus"
+          ) {
+            return (
+              <Route key={i}>
+                {
+                  <>
                     <FontAwesomeIcon
-                      icon={["fad", "walking"]}
+                      icon={["fad", "bus"]}
+                      color="#C83638"
+                      size="lg"
+                    />
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else if (leg.mode.id === "coach") {
+            return (
+              <Route key={i}>
+                {
+                  <>
+                    <FontAwesomeIcon
+                      icon={["fad", "bus-alt"]}
+                      color="#10bd59"
+                      size="lg"
+                    />
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else if (leg.mode.id === "tube") {
+            return (
+              <Route key={i}>
+                {
+                  <>
+                    <FontAwesomeIcon
+                      icon={["fad", "subway"]}
                       color="#34495E"
                       size="lg"
                     />
-                  }
-                </Route>
-              ); // TODO: different icon for replacement-bus
-            } else if (leg.mode.id === "bus" || leg.mode.id === "replacement-bus") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "bus"]}
-                        color="#C83638"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else if (leg.mode.id === "coach") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "bus-alt"]}
-                        color="#10bd59"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else if (leg.mode.id === "tube") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "subway"]}
-                        color="#34495E"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else if (leg.mode.id === "national-rail") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "train"]}
-                        color="#34495E"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else if (leg.mode.id === "overground") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "train"]}
-                        color="#E46B24"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else if (leg.mode.id === "tflrail") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "train"]}
-                        color="#0026A5"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else if (leg.mode.id === "dlr") {
-              return (
-                <Route key={i}>
-                  {
-                    <>
-                      <FontAwesomeIcon
-                        icon={["fad", "tram"]}
-                        color="#26AFAC"
-                        size="lg"
-                      />
-                      {renderOptions(leg)}
-                    </>
-                  }
-                </Route>
-              );
-            } else {
-              return (
-                <div key={i}>WRONG</div>
-              )
-            }
-          })
-        }
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else if (leg.mode.id === "national-rail") {
+            return (
+              <Route key={i}>
+                {
+                  <>
+                    <FontAwesomeIcon
+                      icon={["fad", "train"]}
+                      color="#34495E"
+                      size="lg"
+                    />
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else if (leg.mode.id === "overground") {
+            return (
+              <Route key={i}>
+                {
+                  <>
+                    <FontAwesomeIcon
+                      icon={["fad", "train"]}
+                      color="#E46B24"
+                      size="lg"
+                    />
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else if (leg.mode.id === "tflrail") {
+            return (
+              <Route key={i}>
+                {
+                  <>
+                    <FontAwesomeIcon
+                      icon={["fad", "train"]}
+                      color="#0026A5"
+                      size="lg"
+                    />
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else if (leg.mode.id === "dlr") {
+            return (
+              <Route key={i}>
+                {
+                  <>
+                    <FontAwesomeIcon
+                      icon={["fad", "tram"]}
+                      color="#26AFAC"
+                      size="lg"
+                    />
+                    {renderOptions(leg)}
+                  </>
+                }
+              </Route>
+            );
+          } else {
+            return <div key={i}>WRONG</div>;
+          }
+        })}
       </Legs>
       <TotalFare>
         {formatMoney(journey.fare ? journey.fare.totalCost : 0)}
       </TotalFare>
       <Duration>
-        <span>
-          {journey.duration}
-        </span>
-        <span>
-          min
-        </span>
+        <span>{journey.duration}</span>
+        <span>min</span>
       </Duration>
     </Wrapper>
   );

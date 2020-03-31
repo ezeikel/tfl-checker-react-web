@@ -1,29 +1,29 @@
-import { 
+import {
   SET_FROM_COORDS,
   SET_TO_COORDS,
   SET_FROM_ADDRESS,
   SET_TO_ADDRESS,
-  CLEAR_JOURNEY
+  CLEAR_JOURNEY,
 } from "../actionTypes";
 
 const initialState = {
   from: {
-    address: '',
+    address: "",
     coordinates: {
-      lat: '',
-      lng: ''
-    }
+      lat: "",
+      lng: "",
+    },
   },
   to: {
-    address: '',
+    address: "",
     coordinates: {
-      lat: '',
-      lng: ''
-    }
+      lat: "",
+      lng: "",
+    },
   },
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case SET_FROM_COORDS: {
       return {
@@ -33,9 +33,9 @@ export default function(state = initialState, action) {
           coordinates: {
             ...state.from.coordinates,
             lat: action.lat,
-            lng: action.lng
-          }
-        }
+            lng: action.lng,
+          },
+        },
       };
     }
     case SET_TO_COORDS: {
@@ -46,9 +46,9 @@ export default function(state = initialState, action) {
           coordinates: {
             ...state.to.coordinates,
             lat: action.lat,
-            lng: action.lng
-          }
-        }
+            lng: action.lng,
+          },
+        },
       };
     }
     case CLEAR_JOURNEY: {
@@ -61,8 +61,8 @@ export default function(state = initialState, action) {
         ...state,
         from: {
           ...state.from,
-          address: action.address
-        }
+          address: action.address,
+        },
       };
     }
     case SET_TO_ADDRESS: {
@@ -70,8 +70,8 @@ export default function(state = initialState, action) {
         ...state,
         to: {
           ...state.to,
-          address: action.address
-        }
+          address: action.address,
+        },
       };
     }
     default:

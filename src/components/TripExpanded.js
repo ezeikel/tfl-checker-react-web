@@ -1,45 +1,45 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState } from "react";
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import convertDateToTime from "../utils/convertDateToTime";
 
 const MODE_COLOURS = {
   walking: {
     icon: "walking",
-    color: "#4D4D4D"
+    color: "#4D4D4D",
   },
   bus: {
     icon: "bus",
-    color: "#C83638"
+    color: "#C83638",
   },
   "replacement-bus": {
     icon: "bus",
-    color: "#C83638"
+    color: "#C83638",
   },
   coach: {
     icon: "bus-alt",
-    color: "#10bd59"
+    color: "#10bd59",
   },
   "national-rail": {
     icon: "train",
-    color: "#043261"
+    color: "#043261",
   },
   overground: {
     icon: "train",
-    color: "#E46B24"
+    color: "#E46B24",
   },
   tube: {
     icon: "subway",
-    color: "#051EA6"
+    color: "#051EA6",
   },
-  "tflrail": {
+  tflrail: {
     icon: "train",
-    color: "#051EA6"
+    color: "#051EA6",
   },
   dlr: {
     icon: "tram",
-    color: "#26AFAC"
-  }
+    color: "#26AFAC",
+  },
 };
 
 const Wrapper = styled.section`
@@ -99,8 +99,8 @@ const Stop = styled.div`
     height: 4px;
     width: 12px;
     border-radius: 4px;
-    background-color: #4D4D4D;
-    background-color: ${({ color }) => color };
+    background-color: #4d4d4d;
+    background-color: ${({ color }) => color};
     position: absolute;
     top: 50%;
     left: -4px;
@@ -120,7 +120,7 @@ const Direction = styled.div`
     height: 4px;
     width: 12px;
     border-radius: 4px;
-    background-color: #4D4D4D;
+    background-color: #4d4d4d;
     position: absolute;
     top: 50%;
     left: -4px;
@@ -143,7 +143,7 @@ const Summary = styled.div`
 
 const VerticalLine = styled.div`
   display: flex;
-  background-color: ${({ color }) => color };
+  background-color: ${({ color }) => color};
   width: 4px;
   min-height: 32px;
   border-radius: 4px;
@@ -166,7 +166,7 @@ const Duration = styled.div`
 `;
 
 const Toggle = styled.span`
-  color: #28BCD4;
+  color: #28bcd4;
   cursor: pointer;
 `;
 
@@ -186,70 +186,88 @@ const Trip = ({ className, trip }) => {
 
   return (
     <Wrapper className={className}>
-      {
-        trip.legs.map((leg, i) => (
-          <Leg key={i}>
-            <Header>
-              <ModeIcon>
-                <FontAwesomeIcon
-                  icon={["fad", MODE_COLOURS[leg.mode.id].icon]}
-                  color={MODE_COLOURS[leg.mode.id].color}
-                  size="2x"
-                />
-              </ModeIcon>
-              <Point className="location-name">{`${leg.departurePoint.commonName} at ${convertDateToTime(leg.departureTime)}`}</Point>
-            </Header>
-            <Content>
-              <VerticalLine color={MODE_COLOURS[leg.mode.id].color} />
-              <div>
-                <Summary>{leg.instruction.summary}</Summary>
-                <Duration>
-                  <span>{leg.duration} min</span>
+      {trip.legs.map((leg, i) => (
+        <Leg key={i}>
+          <Header>
+            <ModeIcon>
+              <FontAwesomeIcon
+                icon={["fad", MODE_COLOURS[leg.mode.id].icon]}
+                color={MODE_COLOURS[leg.mode.id].color}
+                size="2x"
+              />
+            </ModeIcon>
+            <Point className="location-name">{`${
+              leg.departurePoint.commonName
+            } at ${convertDateToTime(leg.departureTime)}`}</Point>
+          </Header>
+          <Content>
+            <VerticalLine color={MODE_COLOURS[leg.mode.id].color} />
+            <div>
+              <Summary>{leg.instruction.summary}</Summary>
+              <Duration>
+                <span>{leg.duration} min</span>
+                {leg.mode.id === "walking" && (
+                  <Toggle
+                    onClick={() =>
+                      setLegs(
+                        legs.map((leg, index) => {
+                          if (i === index) {
+                            leg.expanded = !leg.expanded;
+                          }
+
+                          return leg;
+                        }),
+                      )
+                    }
+                  >{`${legs[i].expanded ? "Hide" : "Show"} directions`}</Toggle>
+                )}
+                {(leg.mode.id === "bus" ||
+                  leg.mode.id === "national-rail" ||
+                  leg.mode.id === "london-overground" ||
+                  leg.mode.id === "tube") && (
+                  <Toggle
+                    onClick={() =>
+                      setLegs(
+                        legs.map((leg, index) => {
+                          if (i === index) {
+                            leg.expanded = !leg.expanded;
+                          }
+
+                          return leg;
+                        }),
+                      )
+                    }
+                  >{`${legs[i].expanded ? "Hide" : "Show"} ${
+                    leg.path.stopPoints.length
+                  } stop${
+                    leg.path.stopPoints.length === 1 ? "" : "s"
+                  }`}</Toggle>
+                )}
+              </Duration>
+              {legs[i].expanded && (
+                <Stops>
                   {leg.mode.id === "walking" &&
-                    <Toggle onClick={() => setLegs(legs.map((leg, index) => {
-                        if (i === index) {
-                          leg.expanded = !leg.expanded;
-                        }
-
-                        return leg;
-                      }))}
-                    >{`${legs[i].expanded ? "Hide" : "Show"} directions`}</Toggle>
-                  }
-                  {(leg.mode.id === "bus" || leg.mode.id === "national-rail" || leg.mode.id === "london-overground" ||  leg.mode.id === "tube") &&
-                    <Toggle onClick={() => setLegs(legs.map((leg, index) => {
-                      if (i === index) {
-                        leg.expanded = !leg.expanded;
-                      }
-
-                      return leg;
-                    }))}
-                    >{`${legs[i].expanded ? "Hide" : "Show"} ${leg.path.stopPoints.length} stop${leg.path.stopPoints.length === 1 ? "" : "s"}`}</Toggle>
-                  }
-                </Duration>
-                {legs[i].expanded &&
-                  <Stops>
-                    {leg.mode.id === "walking" &&
-                      leg.instruction.steps.map((step, i) => (
-                        <Direction key={i}>
-                          <span>{step.descriptionHeading}</span>
-                          <span>{step.description}</span>
-                        </Direction>
-                      ))
-                    }
-                    {(leg.mode.id === "bus" || leg.mode.id === "national-rail" || leg.mode.id === "london-overground" ||  leg.mode.id === "tube") &&
-                      leg.path.stopPoints.map((stopPoint, i) => (
-                        <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
-                          <span>{stopPoint.name}</span>
-                        </Stop>
-                      ))
-                    }
-                  </Stops>
-                }
-              </div>
-            </Content>
-          </Leg>
-        ))
-      }
+                    leg.instruction.steps.map((step, i) => (
+                      <Direction key={i}>
+                        <span>{step.descriptionHeading}</span>
+                        <span>{step.description}</span>
+                      </Direction>
+                    ))}
+                  {(leg.mode.id === "bus" ||
+                    leg.mode.id === "national-rail" ||
+                    leg.mode.id === "london-overground" ||
+                    leg.mode.id === "tube") &&
+                    leg.path.stopPoints.map((stopPoint, i) => (
+                      <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
+                        <span>{stopPoint.name}</span>
+                      </Stop>
+                    ))}
+                </Stops>
+              )}
+            </div>
+          </Content>
+        </Leg>
+      ))}
       <Footer>
         <ModeIcon>
           <FontAwesomeIcon
@@ -258,7 +276,11 @@ const Trip = ({ className, trip }) => {
             size="2x"
           />
         </ModeIcon>
-        <Point className="location-name">{`${trip.legs[trip.legs.length -1].arrivalPoint.commonName} at ${convertDateToTime(trip.legs[trip.legs.length -1].departureTime)}`}</Point>
+        <Point className="location-name">{`${
+          trip.legs[trip.legs.length - 1].arrivalPoint.commonName
+        } at ${convertDateToTime(
+          trip.legs[trip.legs.length - 1].departureTime,
+        )}`}</Point>
       </Footer>
     </Wrapper>
   );

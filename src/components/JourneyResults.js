@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Wrapper = styled.section`
@@ -69,7 +69,7 @@ const Step = styled.div`
   }
 `;
 
-const addLeadingZero = value => value < 10 ? '0' + value : value;
+const addLeadingZero = value => (value < 10 ? "0" + value : value);
 
 const covertDateToTime = dateString => {
   const date = new Date(dateString);
@@ -79,91 +79,90 @@ const covertDateToTime = dateString => {
   return `${addLeadingZero(hours)}:${addLeadingZero(minutes)}`;
 };
 
-const formatMoney = (value) => new Intl.NumberFormat('en-GB',  { style: 'currency', currency: 'GBP'}).format(value / 100);
+const formatMoney = value =>
+  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(
+    value / 100,
+  );
 
 const JourneyResults = ({ results }) => {
-    const { journeys } = results;
+  const { journeys } = results;
 
-    if (!journeys) return <div>Empty.</div>
-    return (
-      <Wrapper>
-        {
-          journeys.map((journey, i) => (
-            <Journey key={i}>
-              <TimingFare>
-                <div className="timing">
-                  <span>{covertDateToTime(journey.startDateTime)} - {covertDateToTime(journey.arrivalDateTime)}</span>
-                  <span>
-                    {journey.duration} min
-                  </span>
-                </div>
-                {journey.fare &&
-                  <span className="fare">
-                    {formatMoney(journey.fare.totalCost)}
-                  </span>
-                }
-              </TimingFare>
-              {
-                journey.legs.map((leg, i) => (
-                  <Leg key={i}>
-                    <span className="location-name">{`${leg.departurePoint.commonName} at ${covertDateToTime(leg.departureTime)}`}</span>
-                    <div className="summary">
-                      <FontAwesomeIcon
-                        icon={["fad", leg.mode.id]}
-                        color="var(--color-dark-grey)"
-                        size="2x"
-                      />
-                      <span>{leg.instruction.summary}</span>
-                    </div>
-                    <div className="duration">
-                      <span>{leg.duration} min</span>
-                      {leg.mode.id === "walking" &&
-                        <span>Hide directions</span>
-                      }
-                      {(leg.mode.id === "bus" || leg.mode.id === "tube") &&
-                        <span>Hide stops</span>
-                      }
-                    </div>
-                    {leg.mode.id === "walking" &&
-                      <Steps>
-                        {leg.instruction.steps.map((step, i) => (
-                          <Step key={i}>
-                            <span>{step.descriptionHeading}</span>
-                            <span>{step.description}</span>
-                          </Step>
-                        ))}
-                      </Steps>
-                    }
-                    {(leg.mode.id === "bus" || leg.mode.id === "tube") &&
-                      <Steps>
-                        {leg.path.stopPoints.map((stopPoint, i) => (
-                          <Step key={i}>
-                            <span>{stopPoint.name}</span>
-                          </Step>
-                        ))
-
-                        }
-                      </Steps>
-                    }
-                  </Leg>
-                ))
-              }
-              <Leg>
-                <div className="summary">
-                  <FontAwesomeIcon
-                    icon={["fad", "map-marker-alt"]}
-                    color="var(--color-dark-grey)"
-                    size="2x"
-                  />
-                  <span>{journey.legs[journey.legs.length -1].arrivalPoint.commonName}</span>
-                </div>
-              </Leg>
-            </Journey>
-          ))
-
-        }
-      </Wrapper>
-    );
+  if (!journeys) return <div>Empty.</div>;
+  return (
+    <Wrapper>
+      {journeys.map((journey, i) => (
+        <Journey key={i}>
+          <TimingFare>
+            <div className="timing">
+              <span>
+                {covertDateToTime(journey.startDateTime)} -{" "}
+                {covertDateToTime(journey.arrivalDateTime)}
+              </span>
+              <span>{journey.duration} min</span>
+            </div>
+            {journey.fare && (
+              <span className="fare">
+                {formatMoney(journey.fare.totalCost)}
+              </span>
+            )}
+          </TimingFare>
+          {journey.legs.map((leg, i) => (
+            <Leg key={i}>
+              <span className="location-name">{`${
+                leg.departurePoint.commonName
+              } at ${covertDateToTime(leg.departureTime)}`}</span>
+              <div className="summary">
+                <FontAwesomeIcon
+                  icon={["fad", leg.mode.id]}
+                  color="var(--color-dark-grey)"
+                  size="2x"
+                />
+                <span>{leg.instruction.summary}</span>
+              </div>
+              <div className="duration">
+                <span>{leg.duration} min</span>
+                {leg.mode.id === "walking" && <span>Hide directions</span>}
+                {(leg.mode.id === "bus" || leg.mode.id === "tube") && (
+                  <span>Hide stops</span>
+                )}
+              </div>
+              {leg.mode.id === "walking" && (
+                <Steps>
+                  {leg.instruction.steps.map((step, i) => (
+                    <Step key={i}>
+                      <span>{step.descriptionHeading}</span>
+                      <span>{step.description}</span>
+                    </Step>
+                  ))}
+                </Steps>
+              )}
+              {(leg.mode.id === "bus" || leg.mode.id === "tube") && (
+                <Steps>
+                  {leg.path.stopPoints.map((stopPoint, i) => (
+                    <Step key={i}>
+                      <span>{stopPoint.name}</span>
+                    </Step>
+                  ))}
+                </Steps>
+              )}
+            </Leg>
+          ))}
+          <Leg>
+            <div className="summary">
+              <FontAwesomeIcon
+                icon={["fad", "map-marker-alt"]}
+                color="var(--color-dark-grey)"
+                size="2x"
+              />
+              <span>
+                {journey.legs[journey.legs.length - 1].arrivalPoint.commonName}
+              </span>
+            </div>
+          </Leg>
+        </Journey>
+      ))}
+    </Wrapper>
+  );
 };
 
 export default JourneyResults;

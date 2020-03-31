@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import styled from 'styled-components';
-import TripSummary from './TripSummary';
+import styled from "styled-components";
+import TripSummary from "./TripSummary";
 import { setSelectedTrip } from "../redux/actions";
 
 const Wrapper = styled.section`
@@ -22,15 +22,15 @@ const Wrapper = styled.section`
     align-items: center;
     color: var(--color-text);
     & + a {
-    border-top: 1px solid #eeeeee;
-  }
+      border-top: 1px solid #eeeeee;
+    }
   }
 `;
 
 const StyledTripSummary = styled(TripSummary)`
   border-radius: 0;
   &:hover {
-    background-color: #F2F2F2;
+    background-color: #f2f2f2;
     cursor: pointer;
   }
 `;
@@ -38,20 +38,16 @@ const StyledTripSummary = styled(TripSummary)`
 const TripSummaries = ({ journeys, onSetSelectedTrip }) => (
   <Wrapper>
     <span>Suggested</span>
-      {
-        journeys.map((journey, i) => (
-          <Link to="/trip" onClick={() => onSetSelectedTrip(journey)} key={i}>
-            <StyledTripSummary journey={journey}/>
-          </Link>
-        ))
-      }
+    {journeys.map((journey, i) => (
+      <Link to="/trip" onClick={() => onSetSelectedTrip(journey)} key={i}>
+        <StyledTripSummary journey={journey} />
+      </Link>
+    ))}
   </Wrapper>
 );
 
-const mapDispatchToProps = dispatch => (
-  {
-    onSetSelectedTrip: value => dispatch(setSelectedTrip(value))
-  }
-);
+const mapDispatchToProps = dispatch => ({
+  onSetSelectedTrip: value => dispatch(setSelectedTrip(value)),
+});
 
 export default connect(null, mapDispatchToProps)(TripSummaries);

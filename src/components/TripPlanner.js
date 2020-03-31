@@ -1,11 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { fetchSuggestion, setFromCoords, setToCoords, setFromAddress, setToAddress, clearSuggestions } from "../redux/actions";
-import GooglePlacesInput from './GooglePlacesInput';
-import TripSummaries from './TripSummaries';
+import {
+  fetchSuggestion,
+  setFromCoords,
+  setToCoords,
+  setFromAddress,
+  setToAddress,
+  clearSuggestions,
+} from "../redux/actions";
+import GooglePlacesInput from "./GooglePlacesInput";
+import TripSummaries from "./TripSummaries";
 import { rotate } from "../GlobalStyle";
 
 const Wrapper = styled.div`
@@ -23,7 +30,7 @@ const JourneyInput = styled.section`
   margin-bottom: 64px;
 
   hr {
-    background-color: #AEB8C3;
+    background-color: #aeb8c3;
     height: 1px;
     margin: 16px 0;
   }
@@ -55,7 +62,7 @@ const InputWrapper = styled.div`
   label {
     font-size: 1.4rem;
     margin-bottom: 8px;
-    color: #AEB8C3;
+    color: #aeb8c3;
   }
 `;
 
@@ -71,7 +78,7 @@ const StartEnd = styled.span`
 
 const VerticalLine = styled.span`
   flex: 1 0 auto;
-  background-color: #AEB8C3;
+  background-color: #aeb8c3;
   width: 1px;
 `;
 
@@ -117,15 +124,26 @@ const TripPlanner = ({
   onSetToCoords,
   onSetFromAddress,
   onSetToAddress,
-  onClearSuggestions
+  onClearSuggestions,
 }) => {
   const history = useHistory();
   const query = useQuery();
 
   useEffect(() => {
-    if (fromAddress === "" && toAddress === "" && query.get("toCoordinates") && query.get("fromCoordinates")) {
-      const fromCoords = { lat: parseFloat(query.get("fromCoordinates").split(',')[0]), lng: parseFloat(query.get("fromCoordinates").split(',')[1]) };
-      const toCoords = { lat: parseFloat(query.get("toCoordinates").split(',')[0]), lng: parseFloat(query.get("toCoordinates").split(',')[1]) };
+    if (
+      fromAddress === "" &&
+      toAddress === "" &&
+      query.get("toCoordinates") &&
+      query.get("fromCoordinates")
+    ) {
+      const fromCoords = {
+        lat: parseFloat(query.get("fromCoordinates").split(",")[0]),
+        lng: parseFloat(query.get("fromCoordinates").split(",")[1]),
+      };
+      const toCoords = {
+        lat: parseFloat(query.get("toCoordinates").split(",")[0]),
+        lng: parseFloat(query.get("toCoordinates").split(",")[1]),
+      };
       const fromAddress = query.get("fromAddress");
       const toAddress = query.get("toAddress");
 
@@ -135,17 +153,27 @@ const TripPlanner = ({
       onSetFromAddress(fromAddress);
       onSetToAddress(toAddress);
     }
-  },[fromAddress, onFetchSuggestions, onSetFromAddress, onSetFromCoords, onSetToAddress, onSetToCoords, query, toAddress]);
+  }, [
+    fromAddress,
+    onFetchSuggestions,
+    onSetFromAddress,
+    onSetFromCoords,
+    onSetToAddress,
+    onSetToCoords,
+    query,
+    toAddress,
+  ]);
 
   useEffect(() => {
-
     return () => {
       onClearSuggestions();
-    }
+    };
   }, [onClearSuggestions]);
 
   const handleSubmit = () => {
-    history.push(`/trip-planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`);
+    history.push(
+      `/trip-planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`,
+    );
     onFetchSuggestions(fromCoordinates, toCoordinates);
   };
 
@@ -170,12 +198,22 @@ const TripPlanner = ({
           <form>
             <InputWrapper>
               <label>From</label>
-              <GooglePlacesInput setLocation={onSetFromCoords} address={fromAddress} setAddress={onSetFromAddress} placeholder="Where are you coming from?" />
+              <GooglePlacesInput
+                setLocation={onSetFromCoords}
+                address={fromAddress}
+                setAddress={onSetFromAddress}
+                placeholder="Where are you coming from?"
+              />
             </InputWrapper>
             <hr />
             <InputWrapper>
               <label>To</label>
-              <GooglePlacesInput setLocation={onSetToCoords} address={toAddress} setAddress={onSetToAddress} placeholder="Where are you going to?" />
+              <GooglePlacesInput
+                setLocation={onSetToCoords}
+                address={toAddress}
+                setAddress={onSetToAddress}
+                placeholder="Where are you going to?"
+              />
             </InputWrapper>
           </form>
         </FormWrapper>
@@ -188,46 +226,39 @@ const TripPlanner = ({
           />
         </Leaving>
         <Button onClick={handleSubmit}>
-          { `Search${loading ? "ing" : ""}` }
-          {
-            loading && (
-              <FontAwesomeIcon
-                icon={["fad", "spinner-third"]}
-                color="var(--color-white)"
-                size="lg"
-              />
-            )
-          }
+          {`Search${loading ? "ing" : ""}`}
+          {loading && (
+            <FontAwesomeIcon
+              icon={["fad", "spinner-third"]}
+              color="var(--color-white)"
+              size="lg"
+            />
+          )}
         </Button>
       </JourneyInput>
-      {
-        // TODO: Disambiguations cause results to be null. Add a way to get exact location instead
-        results && results.length ? <TripSummaries journeys={results} /> : null
-      }
+      {// TODO: Disambiguations cause results to be null. Add a way to get exact location instead
+      results && results.length ? <TripSummaries journeys={results} /> : null}
     </Wrapper>
   );
 };
 
-const mapStateToProps = ({ journey, suggestion }) => (
-  {
-    fromCoordinates: journey.from.coordinates,
-    fromAddress: journey.from.address,
-    toCoordinates: journey.to.coordinates,
-    toAddress: journey.to.address,
-    results: suggestion.results,
-    loading: suggestion.loading
-  }
-);
+const mapStateToProps = ({ journey, suggestion }) => ({
+  fromCoordinates: journey.from.coordinates,
+  fromAddress: journey.from.address,
+  toCoordinates: journey.to.coordinates,
+  toAddress: journey.to.address,
+  results: suggestion.results,
+  loading: suggestion.loading,
+});
 
-const mapDispatchToProps = dispatch => (
-  {
-    onFetchSuggestions: (fromCoordinates, toCoordinates) => dispatch(fetchSuggestion(fromCoordinates, toCoordinates)),
-    onSetFromCoords: value => dispatch(setFromCoords(value)),
-    onSetToCoords: value => dispatch(setToCoords(value)),
-    onSetFromAddress: value => dispatch(setFromAddress(value)),
-    onSetToAddress: value => dispatch(setToAddress(value)),
-    onClearSuggestions: () => dispatch(clearSuggestions()),
-  }
-);
+const mapDispatchToProps = dispatch => ({
+  onFetchSuggestions: (fromCoordinates, toCoordinates) =>
+    dispatch(fetchSuggestion(fromCoordinates, toCoordinates)),
+  onSetFromCoords: value => dispatch(setFromCoords(value)),
+  onSetToCoords: value => dispatch(setToCoords(value)),
+  onSetFromAddress: value => dispatch(setFromAddress(value)),
+  onSetToAddress: value => dispatch(setToAddress(value)),
+  onClearSuggestions: () => dispatch(clearSuggestions()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(TripPlanner);

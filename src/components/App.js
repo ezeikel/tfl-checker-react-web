@@ -1,17 +1,47 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faWalking, faBicycle, faBus, faTrain, faSubway, faTram, faShip, faExclamationTriangle, faRoute, faSpinnerThird, faChevronRight, faCircle, faBusAlt } from "@fortawesome/pro-duotone-svg-icons";
-import {  faMapMarkerAlt } from "@fortawesome/pro-solid-svg-icons";
+import {
+  faWalking,
+  faBicycle,
+  faBus,
+  faTrain,
+  faSubway,
+  faTram,
+  faShip,
+  faExclamationTriangle,
+  faRoute,
+  faSpinnerThird,
+  faChevronRight,
+  faCircle,
+  faBusAlt,
+} from "@fortawesome/pro-duotone-svg-icons";
+import { faMapMarkerAlt } from "@fortawesome/pro-solid-svg-icons";
 import store from "../redux/store";
 import GlobalStyle from "../GlobalStyle";
-import Header from './Header';
-import Main from './Main';
+import Header from "./Header";
+import Main from "./Main";
 
-library.add(fab, faWalking, faBicycle, faBus, faBusAlt, faTrain, faSubway, faTram, faShip, faMapMarkerAlt, faExclamationTriangle, faRoute, faSpinnerThird, faChevronRight, faCircle);
+library.add(
+  fab,
+  faWalking,
+  faBicycle,
+  faBus,
+  faBusAlt,
+  faTrain,
+  faSubway,
+  faTram,
+  faShip,
+  faMapMarkerAlt,
+  faExclamationTriangle,
+  faRoute,
+  faSpinnerThird,
+  faChevronRight,
+  faCircle,
+);
 
 const Container = styled.div`
   display: grid;

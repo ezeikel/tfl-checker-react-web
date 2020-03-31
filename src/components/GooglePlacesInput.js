@@ -1,6 +1,9 @@
 import React from "react";
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
-import styled from 'styled-components';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-places-autocomplete";
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { rotate } from "../GlobalStyle";
 
@@ -11,18 +14,20 @@ const Input = styled.input`
   border: 0;
   background-color: transparent;
   font-weight: bold;
-  ::-webkit-input-placeholder { /* Edge */
-    color: #AEB8C3;
+  ::-webkit-input-placeholder {
+    /* Edge */
+    color: #aeb8c3;
     font-weight: bold;
   }
 
-  :-ms-input-placeholder { /* Internet Explorer 10-11 */
-    color: #AEB8C3;
+  :-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #aeb8c3;
     font-weight: bold;
   }
 
   ::placeholder {
-    color: #AEB8C3;
+    color: #aeb8c3;
     font-weight: bold;
   }
 `;
@@ -45,8 +50,9 @@ const SuggestionsWrapper = styled.div`
 const Suggestion = styled.div`
   font-family: var(--primary-font-family);
   font-size: 1.6rem;
-  background-color: ${props => `var(--color-${props.active ? 'background' : 'white'})`};
-  color: ${props => `var(--color-${props.active ? 'white' : 'black'})`};
+  background-color: ${props =>
+    `var(--color-${props.active ? "background" : "white"})`};
+  color: ${props => `var(--color-${props.active ? "white" : "black"})`};
   cursor: pointer;
   padding: 8px;
 `;
@@ -69,17 +75,22 @@ const List = styled.div`
   }
 `;
 
-const GooglePlacesInput = ({ placeholder, address, setAddress, setLocation }) => {
+const GooglePlacesInput = ({
+  placeholder,
+  address,
+  setAddress,
+  setLocation,
+}) => {
   const handleSelect = async value => {
     const [results] = await geocodeByAddress(value);
     const latLng = await getLatLng(results);
 
     setAddress(value);
     setLocation(latLng);
-  }
+  };
 
   const searchOptions = {
-    componentRestrictions: {'country': ['gb']}
+    componentRestrictions: { country: ["gb"] },
   };
 
   return (
@@ -93,24 +104,29 @@ const GooglePlacesInput = ({ placeholder, address, setAddress, setLocation }) =>
         <>
           <Input {...getInputProps({ placeholder })} />
           <SuggestionsWrapper>
-            { loading ? (
-            <Loading>
-              <FontAwesomeIcon
-                icon={["fad", "spinner-third"]}
-                color="var(--color-background)"
-                size="2x"
-              />
-            </Loading>
+            {loading ? (
+              <Loading>
+                <FontAwesomeIcon
+                  icon={["fad", "spinner-third"]}
+                  color="var(--color-background)"
+                  size="2x"
+                />
+              </Loading>
             ) : null}
             <List>
-              { suggestions.map(suggestion => {
+              {suggestions.map(suggestion => {
                 return (
-                  <Suggestion active={suggestion.active} {...getSuggestionItemProps(suggestion)}>
+                  <Suggestion
+                    active={suggestion.active}
+                    {...getSuggestionItemProps(suggestion)}
+                  >
                     {suggestion.description}
                   </Suggestion>
                 );
               })}
-              <PlacesByGoogle>Places by <strong>Google</strong></PlacesByGoogle>
+              <PlacesByGoogle>
+                Places by <strong>Google</strong>
+              </PlacesByGoogle>
             </List>
           </SuggestionsWrapper>
         </>

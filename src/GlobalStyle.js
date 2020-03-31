@@ -1,5 +1,5 @@
 import { createGlobalStyle, keyframes } from "styled-components";
-import { normalize } from 'styled-normalize';
+import { normalize } from "styled-normalize";
 
 export default createGlobalStyle`
   ${normalize}
