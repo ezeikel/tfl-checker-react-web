@@ -1,12 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 import GoogleMapReact from 'google-map-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Wrapper = styled.section`
   height: 100%;
   width: 100%;
   border-radius: 4px;
   overflow: hidden;
+`;
+
+const IconWrapper = styled.span`
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 10;
 `;
 
 const defaultProps = {
@@ -16,28 +23,18 @@ const defaultProps = {
 const handleGoogleMapApi = (google, path) => {
   const bounds = new google.maps.LatLngBounds();
 
-  var flightPath = new google.maps.Polyline({
+  var tripPath = new google.maps.Polyline({
     path,
     geodesic: true,
-    strokeColor: '#33BD4E',
+    strokeColor: '#00BCD4',
     strokeOpacity: 1,
     strokeWeight: 5
   });
 
-  flightPath.setMap(google.map);
+  tripPath.setMap(google.map);
 
-  const startMarker = new google.maps.Marker({
-    position: new google.maps.LatLng(path[0]),
-    map: google.map
-  });
-
-  const endMarker = new google.maps.Marker({
-    position: new google.maps.LatLng(path[path.length -1]),
-    map: google.map
-  });
-
-  bounds.extend(startMarker.position);
-  bounds.extend(endMarker.position);
+  bounds.extend(path[0]);
+  bounds.extend(path[path.length -1]);
 
   google.map.fitBounds(bounds);
 }
@@ -49,7 +46,28 @@ const TripMap = ({ center, path }) => (
       defaultZoom={defaultProps.zoom}
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={google => handleGoogleMapApi(google, path)}
-    />
+    >
+      <IconWrapper
+        lat={path[0].lat}
+        lng={path[0].lng}
+      >
+        <FontAwesomeIcon
+          icon={["fas", "map-marker-alt"]}
+          color="#31CC71"
+          size="3x"
+        />
+      </IconWrapper>
+      <IconWrapper
+        lat={path[path.length -1].lat}
+        lng={path[path.length -1].lng}
+      >
+        <FontAwesomeIcon
+          icon={["fas", "map-marker-alt"]}
+          color="#00BCD4"
+          size="3x"
+        />
+      </IconWrapper>
+    </GoogleMapReact>
   </Wrapper>
 );
 

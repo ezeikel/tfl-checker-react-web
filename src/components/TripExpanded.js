@@ -253,8 +253,8 @@ const Trip = ({ className, trip }) => {
       <Footer>
         <ModeIcon>
           <FontAwesomeIcon
-            icon={["fad", "map-marker-alt"]}
-            color="var(--color-dark-grey)"
+            icon={["fas", "map-marker-alt"]}
+            color="var(--color-background)"
             size="2x"
           />
         </ModeIcon>
