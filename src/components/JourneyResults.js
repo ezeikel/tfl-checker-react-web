@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import formatMoney from "../utils/formatMoney";
+import convertDateToTime from "../utils/convertDateToTime";
 
 const Wrapper = styled.section`
   display: flex;
@@ -69,21 +71,6 @@ const Step = styled.div`
   }
 `;
 
-const addLeadingZero = value => (value < 10 ? "0" + value : value);
-
-const covertDateToTime = dateString => {
-  const date = new Date(dateString);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  return `${addLeadingZero(hours)}:${addLeadingZero(minutes)}`;
-};
-
-const formatMoney = value =>
-  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(
-    value / 100,
-  );
-
 const JourneyResults = ({ results }) => {
   const { journeys } = results;
 
@@ -95,8 +82,8 @@ const JourneyResults = ({ results }) => {
           <TimingFare>
             <div className="timing">
               <span>
-                {covertDateToTime(journey.startDateTime)} -{" "}
-                {covertDateToTime(journey.arrivalDateTime)}
+                {convertDateToTime(journey.startDateTime)} -{" "}
+                {convertDateToTime(journey.arrivalDateTime)}
               </span>
               <span>{journey.duration} min</span>
             </div>
@@ -110,7 +97,7 @@ const JourneyResults = ({ results }) => {
             <Leg key={i}>
               <span className="location-name">{`${
                 leg.departurePoint.commonName
-              } at ${covertDateToTime(leg.departureTime)}`}</span>
+              } at ${convertDateToTime(leg.departureTime)}`}</span>
               <div className="summary">
                 <FontAwesomeIcon
                   icon={["fad", leg.mode.id]}
