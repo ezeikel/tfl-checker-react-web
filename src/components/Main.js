@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import Status from "./Status";
@@ -24,5 +25,18 @@ const Main = ({ selectedTrip }) => (
 const mapStateToProps = ({ suggestion }) => ({
   selectedTrip: suggestion.selected,
 });
+
+Main.defaultProps = {
+  selectedTrip: {},
+};
+
+Main.propTypes = {
+  selectedTrip: PropTypes.shape({
+    duration: PropTypes.number,
+    startDateTime: PropTypes.string,
+    arrivalDateTime: PropTypes.string,
+    legs: PropTypes.array,
+  }),
+};
 
 export default connect(mapStateToProps)(Main);

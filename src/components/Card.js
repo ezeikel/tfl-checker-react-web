@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const Wrapper = styled.section`
@@ -39,18 +40,26 @@ const Status = styled.div`
   justify-content: center;
 `;
 
-const TubeLine = props => (
+const Card = ({ line }) => (
   <Wrapper>
-    <Name id={props.line.id}>{props.line.name}</Name>
+    <Name id={line.id}>{line.name}</Name>
     <Status
       delays={
-        props.line.lineStatuses.filter(status => status.statusSeverity === 9)
-          .length > 0
+        line.lineStatuses.filter(status => status.statusSeverity === 9).length >
+        0
       }
     >
-      {props.line.lineStatuses.map(status => status.statusSeverityDescription)}
+      {line.lineStatuses.map(status => status.statusSeverityDescription)}
     </Status>
   </Wrapper>
 );
 
-export default TubeLine;
+Card.propTypes = {
+  line: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    lineStatuses: PropTypes.array,
+  }).isRequired,
+};
+
+export default Card;
