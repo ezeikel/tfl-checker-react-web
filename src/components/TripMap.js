@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,7 +24,7 @@ const defaultProps = {
 const handleGoogleMapApi = (google, path) => {
   const bounds = new google.maps.LatLngBounds();
 
-  var tripPath = new google.maps.Polyline({
+  const tripPath = new google.maps.Polyline({
     path,
     geodesic: true,
     strokeColor: "#00BCD4",
@@ -67,5 +68,18 @@ const TripMap = ({ center, path }) => (
     </GoogleMapReact>
   </Wrapper>
 );
+
+TripMap.propTypes = {
+  center: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+  }).isRequired,
+  path: PropTypes.arrayOf(
+    PropTypes.shape({
+      lat: PropTypes.number,
+      lng: PropTypes.number,
+    }),
+  ).isRequired,
+};
 
 export default TripMap;

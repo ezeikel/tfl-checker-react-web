@@ -1,1 +1,1 @@
-export default value => (value < 10 ? "0" + value : value);
+export default value => (value < 10 ? `0${value}` : value);

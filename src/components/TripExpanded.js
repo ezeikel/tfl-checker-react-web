@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import convertDateToTime from "../utils/convertDateToTime";
+import ToggleExpand from "./ToggleExpand";
 
 const MODE_COLOURS = {
   walking: {
@@ -187,6 +189,7 @@ const Trip = ({ className, trip }) => {
   return (
     <Wrapper className={className}>
       {trip.legs.map((leg, i) => (
+        // eslint-disable-next-line react/no-array-index-key
         <Leg key={i}>
           <Header>
             <ModeIcon>
@@ -207,47 +210,38 @@ const Trip = ({ className, trip }) => {
               <Duration>
                 <span>{leg.duration} min</span>
                 {leg.mode.id === "walking" && (
-                  <Toggle
-                    onClick={() =>
-                      setLegs(
-                        legs.map((leg, index) => {
-                          if (i === index) {
-                            leg.expanded = !leg.expanded;
-                          }
-
-                          return leg;
-                        }),
-                      )
-                    }
-                  >{`${legs[i].expanded ? "Hide" : "Show"} directions`}</Toggle>
+                  <ToggleExpand
+                    legIndex={i}
+                    legStops={legs}
+                    setLegs={setLegs}
+                  />
                 )}
                 {(leg.mode.id === "bus" ||
                   leg.mode.id === "national-rail" ||
                   leg.mode.id === "london-overground" ||
                   leg.mode.id === "tube") && (
                   <Toggle
-                    onClick={() =>
-                      setLegs(
-                        legs.map((leg, index) => {
-                          if (i === index) {
-                            leg.expanded = !leg.expanded;
-                          }
-
-                          return leg;
-                        }),
-                      )
-                    }
-                  >{`${legs[i].expanded ? "Hide" : "Show"} ${
-                    leg.path.stopPoints.length
-                  } stop${
-                    leg.path.stopPoints.length === 1 ? "" : "s"
-                  }`}</Toggle>
+                    onClick={() => {
+                      const updatedLegs = legs.map(({ expanded }, index) => ({
+                        expanded: i === index ? !expanded : expanded,
+                      }));
+                      setLegs(updatedLegs);
+                    }}
+                  >
+                    {`${legs[i].expanded ? "Hide" : "Show"} ${
+                      leg.path.stopPoints.length
+                    } stop${leg.path.stopPoints.length === 1 ? "" : "s"}`}
+                  </Toggle>
                 )}
               </Duration>
               {legs[i].expanded && (
                 <Stops>
                   {leg.mode.id === "walking" &&
-                    leg.instruction.steps.map((step, i) => (
+                    leg.instruction.steps.map((
+                      step,
+                      i, // eslint-disable-line no-shadow
+                    ) => (
+                      // eslint-disable-next-line react/no-array-index-key
                       <Direction key={i}>
                         <span>{step.descriptionHeading}</span>
                         <span>{step.description}</span>
@@ -257,8 +251,13 @@ const Trip = ({ className, trip }) => {
                     leg.mode.id === "national-rail" ||
                     leg.mode.id === "london-overground" ||
                     leg.mode.id === "tube") &&
-                    leg.path.stopPoints.map((stopPoint, i) => (
+                    leg.path.stopPoints.map((
+                      stopPoint,
+                      i, // eslint-disable-line no-shadow
+                    ) => (
+                      // eslint-disable-next-line react/no-array-index-key
                       <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
+                        {" "}
                         <span>{stopPoint.name}</span>
                       </Stop>
                     ))}
@@ -284,6 +283,25 @@ const Trip = ({ className, trip }) => {
       </Footer>
     </Wrapper>
   );
+};
+
+Trip.defaultProps = {};
+
+Trip.propTypes = {
+  className: PropTypes.string.isRequired,
+  trip: PropTypes.shape({
+    legs: PropTypes.arrayOf(
+      PropTypes.shape({
+        mode: PropTypes.shape({
+          id: PropTypes.string,
+        }),
+        arrivalPoint: PropTypes.shape({
+          commonName: PropTypes.string,
+        }),
+        departureTime: PropTypes.string,
+      }),
+    ),
+  }).isRequired,
 };
 
 export default Trip;

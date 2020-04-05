@@ -35,14 +35,13 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && yarn build"
     }
   },
   "lint-staged": {
     "./src/**/*.+(js|jsx|json|ts|tsx|css|html|md)": [
       "prettier --write"
-    ],
-    "./src/**/*.+(js|jsx)": ["build"]
+    ]
   },
   "eslintConfig": {
     "extends": [

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
@@ -82,5 +83,16 @@ const mapDispatchToProps = dispatch => ({
   onClearSelectedTrip: () => dispatch(clearSelectedTrip()),
   onClearJourney: () => dispatch(clearJourney()),
 });
+
+Trip.propTypes = {
+  selectedTrip: PropTypes.shape({
+    duration: PropTypes.number,
+    startDateTime: PropTypes.string,
+    arrivalDateTime: PropTypes.string,
+    legs: PropTypes.array,
+  }).isRequired,
+  onClearSelectedTrip: PropTypes.func.isRequired,
+  onClearJourney: PropTypes.func.isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Trip);

@@ -8,6 +8,15 @@ import {
 
 const API_ENDPOINT = "https://api.tfl.gov.uk/";
 
+export const fetchSuggestionStart = () => ({
+  type: FETCH_SUGGESTIONS_START,
+});
+
+export const fetchSuggestionSuccess = ({ journeys }) => ({
+  type: FETCH_SUGGESTIONS_SUCCESS,
+  journeys,
+});
+
 export const fetchSuggestion = (
   fromCoordinates,
   toCoordinates,
@@ -21,15 +30,6 @@ export const fetchSuggestion = (
 
   dispatch(fetchSuggestionSuccess(response));
 };
-
-export const fetchSuggestionStart = () => ({
-  type: FETCH_SUGGESTIONS_START,
-});
-
-export const fetchSuggestionSuccess = ({ journeys }) => ({
-  type: FETCH_SUGGESTIONS_SUCCESS,
-  journeys,
-});
 
 export const clearSuggestions = () => ({
   type: CLEAR_SUGGESTIONS,

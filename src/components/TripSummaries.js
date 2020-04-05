@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import styled from "styled-components";
@@ -39,6 +40,7 @@ const TripSummaries = ({ journeys, onSetSelectedTrip }) => (
   <Wrapper>
     <span>Suggested</span>
     {journeys.map((journey, i) => (
+      // eslint-disable-next-line react/no-array-index-key
       <Link to="/trip" onClick={() => onSetSelectedTrip(journey)} key={i}>
         <StyledTripSummary journey={journey} />
       </Link>
@@ -49,5 +51,10 @@ const TripSummaries = ({ journeys, onSetSelectedTrip }) => (
 const mapDispatchToProps = dispatch => ({
   onSetSelectedTrip: value => dispatch(setSelectedTrip(value)),
 });
+
+TripSummaries.propTypes = {
+  journeys: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  onSetSelectedTrip: PropTypes.func.isRequired,
+};
 
 export default connect(null, mapDispatchToProps)(TripSummaries);

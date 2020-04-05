@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -76,6 +77,7 @@ const List = styled.div`
 `;
 
 const GooglePlacesInput = ({
+  inputId,
   placeholder,
   address,
   setAddress,
@@ -102,7 +104,13 @@ const GooglePlacesInput = ({
     >
       {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
         <>
-          <Input {...getInputProps({ placeholder })} />
+          <Input
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...getInputProps({
+              inputId,
+              placeholder,
+            })}
+          />
           <SuggestionsWrapper>
             {loading ? (
               <Loading>
@@ -118,6 +126,7 @@ const GooglePlacesInput = ({
                 return (
                   <Suggestion
                     active={suggestion.active}
+                    // eslint-disable-next-line react/jsx-props-no-spreading
                     {...getSuggestionItemProps(suggestion)}
                   >
                     {suggestion.description}
@@ -133,6 +142,18 @@ const GooglePlacesInput = ({
       )}
     </PlacesAutocomplete>
   );
+};
+
+GooglePlacesInput.defaultProps = {
+  address: "",
+};
+
+GooglePlacesInput.propTypes = {
+  inputId: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  address: PropTypes.string,
+  setAddress: PropTypes.func.isRequired,
+  setLocation: PropTypes.func.isRequired,
 };
 
 export default GooglePlacesInput;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Nav from "./Nav";
 import styled from "styled-components";
+import Nav from "./Nav";
 
 const Wrapper = styled.header`
   display: flex;

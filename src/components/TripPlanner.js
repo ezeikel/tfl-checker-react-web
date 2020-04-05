@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -136,22 +137,22 @@ const TripPlanner = ({
       query.get("toCoordinates") &&
       query.get("fromCoordinates")
     ) {
-      const fromCoords = {
+      const queryParamsFromCoords = {
         lat: parseFloat(query.get("fromCoordinates").split(",")[0]),
         lng: parseFloat(query.get("fromCoordinates").split(",")[1]),
       };
-      const toCoords = {
+      const queryParamsToCoords = {
         lat: parseFloat(query.get("toCoordinates").split(",")[0]),
         lng: parseFloat(query.get("toCoordinates").split(",")[1]),
       };
-      const fromAddress = query.get("fromAddress");
-      const toAddress = query.get("toAddress");
+      const queryParamsFromAddress = query.get("fromAddress");
+      const queryParamsToAddress = query.get("toAddress");
 
-      onFetchSuggestions(fromCoords, toCoords);
-      onSetFromCoords(fromCoords);
-      onSetToCoords(toCoords);
-      onSetFromAddress(fromAddress);
-      onSetToAddress(toAddress);
+      onFetchSuggestions(queryParamsFromCoords, queryParamsToCoords);
+      onSetFromCoords(queryParamsFromCoords);
+      onSetToCoords(queryParamsToCoords);
+      onSetFromAddress(queryParamsFromAddress);
+      onSetToAddress(queryParamsToAddress);
     }
   }, [
     fromAddress,
@@ -180,7 +181,7 @@ const TripPlanner = ({
   return (
     <Wrapper>
       <JourneyInput>
-        <Heading>Let's take a trip!</Heading>
+        <Heading>Let&apos;s take a trip!</Heading>
         <FormWrapper>
           <StartEnd>
             <FontAwesomeIcon
@@ -197,8 +198,10 @@ const TripPlanner = ({
           </StartEnd>
           <form>
             <InputWrapper>
-              <label>From</label>
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label htmlFor="fromAddress">From</label>{" "}
               <GooglePlacesInput
+                inputId="fromAddress"
                 setLocation={onSetFromCoords}
                 address={fromAddress}
                 setAddress={onSetFromAddress}
@@ -207,8 +210,10 @@ const TripPlanner = ({
             </InputWrapper>
             <hr />
             <InputWrapper>
-              <label>To</label>
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label htmlFor="toAddress">To</label>
               <GooglePlacesInput
+                inputId="toAddress"
                 setLocation={onSetToCoords}
                 address={toAddress}
                 setAddress={onSetToAddress}
@@ -260,5 +265,44 @@ const mapDispatchToProps = dispatch => ({
   onSetToAddress: value => dispatch(setToAddress(value)),
   onClearSuggestions: () => dispatch(clearSuggestions()),
 });
+
+TripPlanner.defaultProps = {
+  fromCoordinates: {},
+  toCoordinates: {},
+  fromAddress: "",
+  toAddress: "",
+  results: [],
+  loading: false,
+};
+
+TripPlanner.propTypes = {
+  // TODO: Make sure lat/lng are one type: number
+  fromCoordinates: PropTypes.shape({
+    lat: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    lng: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }),
+  // TODO: Make sure lat/lng are one type: number
+  toCoordinates: PropTypes.shape({
+    lat: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    lng: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }),
+  fromAddress: PropTypes.string,
+  toAddress: PropTypes.string,
+  results: PropTypes.arrayOf(
+    PropTypes.shape({
+      $type: PropTypes.string,
+      startDateTime: PropTypes.string,
+      duration: PropTypes.number,
+      arrivalTime: PropTypes.string,
+    }),
+  ),
+  loading: PropTypes.bool,
+  onFetchSuggestions: PropTypes.func.isRequired,
+  onSetFromCoords: PropTypes.func.isRequired,
+  onSetToCoords: PropTypes.func.isRequired,
+  onSetFromAddress: PropTypes.func.isRequired,
+  onSetToAddress: PropTypes.func.isRequired,
+  onClearSuggestions: PropTypes.func.isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TripPlanner);
