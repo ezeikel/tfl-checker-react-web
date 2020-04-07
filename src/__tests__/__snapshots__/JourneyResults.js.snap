@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <section
+    class="sc-AxjAm iPShpD"
+  >
+    <div
+      class="sc-AxirZ cABoKn"
+    >
+      <div
+        class="sc-AxiKw dnnYPC"
+      >
+        <div
+          class="timing"
+        >
+          <span>
+            NaN:NaN
+             -
+             
+            NaN:NaN
+          </span>
+          <span>
+            20
+             min
+          </span>
+        </div>
+        <span
+          class="fare"
+        >
+          £2.00
+        </span>
+      </div>
+      <div
+        class="sc-AxhCb laZKwl"
+      >
+        <span
+          class="location-name"
+        >
+          undefined at NaN:NaN
+        </span>
+        <div
+          class="summary"
+        >
+          <svg
+            class="svg-inline--fa fad-walking fa-2x"
+            color="var(--color-dark-grey)"
+          />
+          <span />
+        </div>
+        <div
+          class="duration"
+        >
+          <span>
+             min
+          </span>
+          <span>
+            Hide directions
+          </span>
+        </div>
+        <div
+          class="sc-AxhUy gfXgDx"
+        >
+          <div
+            class="sc-AxgMl knUFJD"
+          >
+            <span />
+            <span />
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-AxhCb laZKwl"
+      >
+        <div
+          class="summary"
+        >
+          <svg
+            class="svg-inline--fa fad-map-marker-alt fa-2x"
+            color="var(--color-dark-grey)"
+          />
+          <span />
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`;

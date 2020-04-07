@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <nav
+    class="sc-AxjAm iMxqKn"
+  >
+    <ul
+      class="sc-AxirZ cBkftF"
+    >
+      <li>
+        <a
+          aria-current="page"
+          class="active"
+          href="/"
+        >
+          Status updates
+        </a>
+      </li>
+      <li>
+        <a
+          href="/trip-planner"
+        >
+          Plan a journey
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+`;

@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <section
+    class="sc-AxirZ lfnEPT"
+  >
+    <div
+      class="sc-AxiKw blrKOd"
+    />
+    <div
+      class="sc-AxhCb jQYqSy"
+    >
+      £2.00
+    </div>
+    <div
+      class="sc-AxhUy hEXbAE"
+    >
+      <span>
+        800
+      </span>
+      <span>
+        min
+      </span>
+    </div>
+  </section>
+</div>
+`;

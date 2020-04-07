@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <section
+    class="sc-AxirZ kozsTb className"
+  >
+    <section
+      class="sc-AxiKw jWoTjM"
+    >
+      <section
+        class="sc-AxhCb bPSULX"
+      >
+        <div
+          class="sc-fznKkj czeSxC"
+        >
+          <svg
+            class="svg-inline--fa fad-walking fa-2x"
+            color="#4D4D4D"
+          />
+        </div>
+        <span
+          class="sc-AxheI gmoBoq location-name"
+        >
+           at NaN:NaN
+        </span>
+      </section>
+      <section
+        class="sc-AxgMl bFfuHh"
+      >
+        <div
+          class="sc-fzpans dOLmfv"
+          color="#4D4D4D"
+        />
+        <div>
+          <div
+            class="sc-fzoLsD cicoRi"
+          />
+          <div
+            class="sc-fzplWN grtfvf"
+          >
+            <span>
+               min
+            </span>
+            <span
+              class="sc-AxjAm kvBDzf"
+            />
+          </div>
+        </div>
+      </section>
+    </section>
+    <section
+      class="sc-AxhUy byBNkN"
+    >
+      <div
+        class="sc-fznKkj czeSxC"
+      >
+        <svg
+          class="svg-inline--fa fas-map-marker-alt fa-2x"
+          color="var(--color-background)"
+        />
+      </div>
+      <span
+        class="sc-AxheI gmoBoq location-name"
+      >
+         at NaN:NaN
+      </span>
+    </section>
+  </section>
+</div>
+`;

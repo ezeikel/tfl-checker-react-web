@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <section
+    class="sc-AxjAm bfWoqw"
+  >
+    <div
+      class="sc-AxirZ keQdEk"
+      id="central"
+    >
+      Central
+    </div>
+    <div
+      class="sc-AxiKw kfHmZW"
+    >
+      Part Suspended
+    </div>
+  </section>
+</div>
+`;
+
+exports[`renders without crashing 2`] = `
+<div>
+  <section
+    class="sc-AxjAm bfWoqw"
+  >
+    <div
+      class="sc-AxirZ keQdEk"
+      id="central"
+    >
+      Central
+    </div>
+    <div
+      class="sc-AxiKw kfHmZW"
+    >
+      Part Suspended
+    </div>
+  </section>
+</div>
+`;

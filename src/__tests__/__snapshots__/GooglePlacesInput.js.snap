@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <input
+    aria-autocomplete="list"
+    aria-expanded="false"
+    autocomplete="off"
+    class="sc-AxjAm hhXapv"
+    placeholder="Placeholder"
+    role="combobox"
+    type="text"
+    value=""
+  />
+  <div
+    class="sc-AxiKw jAmDvQ"
+  >
+    <div
+      class="sc-AxgMl jGFEmy"
+    >
+      <div
+        class="sc-AxhUy ixiydF"
+      >
+        Places by 
+        <strong>
+          Google
+        </strong>
+      </div>
+    </div>
+  </div>
+</div>
+`;
