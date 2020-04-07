@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders without crashing 1`] = `
+<div>
+  <footer
+    class="sc-AxjAm bValRD"
+  >
+    <section
+      class="sc-AxirZ byjuni"
+    >
+      <a
+        href="/"
+      >
+        TfL Checker
+      </a>
+    </section>
+    <section
+      class="sc-AxiKw jWoTjM"
+    >
+      <div
+        class="sc-AxhCb czoebq"
+      >
+        <span>
+          This website was built using
+        </span>
+        <span>
+          React
+        </span>
+      </div>
+      <div
+        class="sc-AxhUy eZxepN"
+      >
+        <span>
+          I also made versions using
+        </span>
+        <ul>
+          <li>
+            Vanilla JavaScript (no framework)
+          </li>
+          <li>
+            Angular
+          </li>
+          <li>
+            Vue
+          </li>
+          <li>
+            Svelte
+          </li>
+          <li>
+            AngularJS
+          </li>
+          <li>
+            BackboneJS
+          </li>
+        </ul>
+      </div>
+    </section>
+    <section
+      class="sc-AxgMl jgPTvo"
+    >
+      <div>
+        © TfL Checker. All rights reserved.
+      </div>
+      <div>
+        Made with 
+        <span>
+          ♡
+        </span>
+         in 
+        <span>
+          South London
+        </span>
+      </div>
+    </section>
+  </footer>
+</div>
+`;

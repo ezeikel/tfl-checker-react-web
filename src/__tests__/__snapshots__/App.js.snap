@@ -3,7 +3,7 @@
 exports[`renders without crashing 1`] = `
 <div>
   <div
-    class="sc-fzoYHE dvLYVv"
+    class="sc-fzqAui ePsuXI"
   >
     <header
       class="sc-AxiKw ibtorC"
@@ -44,9 +44,80 @@ exports[`renders without crashing 1`] = `
     </header>
     <main>
       <div
-        class="sc-Axmtr AnPgR"
+        class="sc-fznyAO dEIstO"
       />
     </main>
+    <footer
+      class="sc-AxhUy dXRJpp"
+    >
+      <section
+        class="sc-AxgMl bWmTSR"
+      >
+        <a
+          href="/"
+        >
+          TfL Checker
+        </a>
+      </section>
+      <section
+        class="sc-AxheI ghZMUJ"
+      >
+        <div
+          class="sc-Axmtr gooHpQ"
+        >
+          <span>
+            This website was built using
+          </span>
+          <span>
+            React
+          </span>
+        </div>
+        <div
+          class="sc-AxmLO iKZDqP"
+        >
+          <span>
+            I also made versions using
+          </span>
+          <ul>
+            <li>
+              Vanilla JavaScript (no framework)
+            </li>
+            <li>
+              Angular
+            </li>
+            <li>
+              Vue
+            </li>
+            <li>
+              Svelte
+            </li>
+            <li>
+              AngularJS
+            </li>
+            <li>
+              BackboneJS
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section
+        class="sc-fzozJi iXtalB"
+      >
+        <div>
+          © TfL Checker. All rights reserved.
+        </div>
+        <div>
+          Made with 
+          <span>
+            ♡
+          </span>
+           in 
+          <span>
+            South London
+          </span>
+        </div>
+      </section>
+    </footer>
   </div>
 </div>
 `;
