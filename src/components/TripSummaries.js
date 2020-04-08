@@ -23,6 +23,22 @@ const Wrapper = styled.section`
     width: 100%;
     align-items: center;
     color: var(--color-text);
+    &:first-of-type {
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      section {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+    }
+    &:last-of-type {
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      section {
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
     & + a {
       border-top: 1px solid #eeeeee;
     }

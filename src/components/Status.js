@@ -9,6 +9,7 @@ const Lines = styled.div`
   justify-content: space-between;
   background-color: var(--color-white);
   padding: 32px;
+  border-radius: 4px;
 `;
 
 const Status = () => {

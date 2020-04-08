@@ -3,7 +3,7 @@
 exports[`renders without crashing 1`] = `
 <div>
   <div
-    class="sc-AxhCb bhEpiH"
+    class="sc-AxhCb kicRlZ"
   />
 </div>
 `;
