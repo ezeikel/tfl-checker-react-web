@@ -54,7 +54,6 @@
       "airbnb",
       "plugin:jsx-a11y/recommended",
       "plugin:prettier/recommended",
-      "prettier",
       "prettier/react"
     ],
     "rules": {
@@ -69,8 +68,7 @@
       ]
     },
     "plugins": [
-      "jsx-a11y",
-      "prettier"
+      "jsx-a11y"
     ]
   },
   "jest": {

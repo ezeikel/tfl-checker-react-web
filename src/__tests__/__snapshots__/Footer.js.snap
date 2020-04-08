@@ -3,7 +3,7 @@
 exports[`renders without crashing 1`] = `
 <div>
   <footer
-    class="sc-AxjAm iDpaAT"
+    class="sc-AxjAm gvVALX"
   >
     <section
       class="sc-AxirZ byjuni"
@@ -28,7 +28,7 @@ exports[`renders without crashing 1`] = `
         </span>
       </div>
       <div
-        class="sc-AxhUy eZxepN"
+        class="sc-AxhUy hhcAuJ"
       >
         <span>
           I also made versions using
@@ -56,7 +56,7 @@ exports[`renders without crashing 1`] = `
       </div>
     </section>
     <section
-      class="sc-AxgMl jgPTvo"
+      class="sc-AxgMl gHRCok"
     >
       <div>
         © TfL Checker. All rights reserved.

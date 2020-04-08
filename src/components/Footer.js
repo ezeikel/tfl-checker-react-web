@@ -5,7 +5,7 @@ import styled from "styled-components";
 const Wrapper = styled.footer`
   display: flex;
   flex-direction: column;
-  background-color: #4A4A4A;
+  background-color: #4a4a4a;
   padding: var(--spacing-large);
 `;
 
@@ -48,7 +48,7 @@ const OtherVersions = styled.div`
   span {
     font-size: 2rem;
     font-weight: bold;
-    color: #28BCD4;
+    color: #28bcd4;
     margin-bottom: 16px;
   }
   ul {
@@ -69,7 +69,7 @@ const Copyright = styled.section`
     &:last-of-type {
       span {
         &:first-of-type {
-          color: #E34F42;
+          color: #e34f42;
         }
         &:last-of-type {
           font-weight: bold;
@@ -104,7 +104,9 @@ const Footer = () => {
       </Versions>
       <Copyright>
         <div>&copy; TfL Checker. All rights reserved.</div>
-        <div>Made with <span>♡</span> in <span>South London</span></div>
+        <div>
+          Made with <span>♡</span> in <span>South London</span>
+        </div>
       </Copyright>
     </Wrapper>
   );

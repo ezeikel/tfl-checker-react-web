@@ -50,7 +50,7 @@ exports[`renders without crashing 1`] = `
       />
     </main>
     <footer
-      class="sc-AxhUy cudxrt"
+      class="sc-AxhUy cyseKh"
     >
       <section
         class="sc-AxgMl bWmTSR"
@@ -75,7 +75,7 @@ exports[`renders without crashing 1`] = `
           </span>
         </div>
         <div
-          class="sc-AxmLO iKZDqP"
+          class="sc-AxmLO iZUaIX"
         >
           <span>
             I also made versions using
@@ -103,7 +103,7 @@ exports[`renders without crashing 1`] = `
         </div>
       </section>
       <section
-        class="sc-fzozJi iXtalB"
+        class="sc-fzozJi kuavcF"
       >
         <div>
           © TfL Checker. All rights reserved.
