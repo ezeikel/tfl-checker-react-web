@@ -7,7 +7,8 @@ const Wrapper = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 120px;
+  margin-bottom: 56px;
+  padding: var(--spacing-large);
 `;
 
 const Logo = styled.section`

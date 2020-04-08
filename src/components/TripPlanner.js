@@ -28,7 +28,6 @@ const JourneyInput = styled.section`
   background-color: var(--color-white);
   border-radius: var(--border-radius);
   max-width: 600px;
-  margin-bottom: 64px;
 
   hr {
     background-color: #aeb8c3;

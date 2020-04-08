@@ -2,7 +2,9 @@
 
 exports[`renders without crashing 1`] = `
 <div>
-  <main>
+  <main
+    class="sc-fzqAbL emdVaB"
+  >
     <div
       class="sc-AxhCb bhEpiH"
     />

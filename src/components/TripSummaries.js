@@ -9,6 +9,7 @@ import { setSelectedTrip } from "../redux/actions";
 const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
+  margin-top: var(--spacing-huge);
   > span {
     &:first-of-type {
       font-size: 2.4rem;

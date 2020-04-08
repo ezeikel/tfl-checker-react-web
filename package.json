@@ -32,7 +32,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --watchAll=false",
+    "test:watch": "react-scripts test --env=jsdom",
     "test:coverage": "yarn test --coverage --env=jsdom --watchAll=false",
     "eject": "react-scripts eject"
   },
@@ -44,7 +45,7 @@
   "lint-staged": {
     "./src/**/*.+(js|jsx|json|ts|tsx|css|html|md)": [
       "prettier --ignore-path .gitignore --write",
-      "react-scripts test --env=jsdom --watchAll=false"
+      "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
     ]
   },
   "eslintConfig": {
@@ -52,6 +53,7 @@
       "react-app",
       "airbnb",
       "plugin:jsx-a11y/recommended",
+      "plugin:prettier/recommended",
       "prettier",
       "prettier/react"
     ],

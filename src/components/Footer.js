@@ -6,7 +6,7 @@ const Wrapper = styled.footer`
   display: flex;
   flex-direction: column;
   background-color: #4A4A4A;
-  padding: 32px;
+  padding: var(--spacing-large);
 `;
 
 const Logo = styled.section`

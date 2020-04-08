@@ -48,7 +48,6 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
-  padding: var(--spacing-huge);
   background-color: var(--color-background);
   min-height: 100vh;
 `;

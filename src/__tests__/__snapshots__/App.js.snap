@@ -3,10 +3,10 @@
 exports[`renders without crashing 1`] = `
 <div>
   <div
-    class="sc-fzqAui ePsuXI"
+    class="sc-fzqMdD fuBuAJ"
   >
     <header
-      class="sc-AxiKw ibtorC"
+      class="sc-AxiKw haLAnR"
     >
       <section
         class="sc-AxhCb fmZXwX"
@@ -42,13 +42,15 @@ exports[`renders without crashing 1`] = `
         </ul>
       </nav>
     </header>
-    <main>
+    <main
+      class="sc-fzqAui kdCRTf"
+    >
       <div
         class="sc-fznyAO dEIstO"
       />
     </main>
     <footer
-      class="sc-AxhUy dXRJpp"
+      class="sc-AxhUy cudxrt"
     >
       <section
         class="sc-AxgMl bWmTSR"
