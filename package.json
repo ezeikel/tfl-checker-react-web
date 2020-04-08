@@ -33,6 +33,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
+    "test:coverage": "yarn test --coverage --env=jsdom --watchAll=false",
     "eject": "react-scripts eject"
   },
   "husky": {
@@ -43,7 +44,7 @@
   "lint-staged": {
     "./src/**/*.+(js|jsx|json|ts|tsx|css|html|md)": [
       "prettier --ignore-path .gitignore --write",
-      "react-scripts test --silent --env=jsdom"
+      "react-scripts test --env=jsdom --watchAll=false"
     ]
   },
   "eslintConfig": {
@@ -68,6 +69,12 @@
     "plugins": [
       "jsx-a11y",
       "prettier"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!<rootDir>/node_modules/"
     ]
   },
   "devDependencies": {
