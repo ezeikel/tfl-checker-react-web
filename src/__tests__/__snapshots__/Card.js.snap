@@ -6,15 +6,47 @@ exports[`renders without crashing 1`] = `
     class="sc-AxjAm bfWoqw"
   >
     <div
-      class="sc-AxirZ keQdEk"
+      class="sc-AxirZ jqiuBa"
       id="central"
     >
       Central
     </div>
     <div
-      class="sc-AxiKw kfHmZW"
+      class="sc-AxiKw kTKAoU"
+      id="central"
     >
-      Part Suspended
+      <div
+        class="slick-slider slick-initialized"
+      >
+        
+        <div
+          class="slick-list"
+        >
+          <div
+            class="slick-track"
+            style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+          >
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active slick-current"
+              data-index="0"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  Part Suspended
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      </div>
     </div>
   </section>
 </div>
@@ -26,15 +58,47 @@ exports[`renders without crashing 2`] = `
     class="sc-AxjAm bfWoqw"
   >
     <div
-      class="sc-AxirZ keQdEk"
+      class="sc-AxirZ jqiuBa"
       id="central"
     >
       Central
     </div>
     <div
-      class="sc-AxiKw kfHmZW"
+      class="sc-AxiKw kTKAoU"
+      id="central"
     >
-      Part Suspended
+      <div
+        class="slick-slider slick-initialized"
+      >
+        
+        <div
+          class="slick-list"
+        >
+          <div
+            class="slick-track"
+            style="opacity: 1; transform: translate3d(0px, 0px, 0px);"
+          >
+            <div
+              aria-hidden="false"
+              class="slick-slide slick-active slick-current"
+              data-index="0"
+              style="outline: none; width: 0px;"
+              tabindex="-1"
+            >
+              <div>
+                <div
+                  style="width: 100%; display: inline-block;"
+                  tabindex="-1"
+                >
+                  Part Suspended
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      </div>
     </div>
   </section>
 </div>
