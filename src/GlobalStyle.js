@@ -41,6 +41,7 @@ export default createGlobalStyle`
 
     /* Font */
     --primary-font-family: 'omnes-pro', sans-serif;
+    --secondary-font-family: 'proxima-nova', sans-serif;
     --default-font-size: 10px;
     --font-size-alpha: 1.4rem;
     --font-size-bravo: 1.6rem;
@@ -71,7 +72,7 @@ export default createGlobalStyle`
   body {
     padding: 0;
     margin: 0;
-    font-family: var(--primary-font-family);
+    font-family: var(--secondary-font-family);
     color: var(--color-text);
     line-height: 1.5;
   }

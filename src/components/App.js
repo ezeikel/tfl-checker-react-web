@@ -18,6 +18,8 @@ import {
   faChevronRight,
   faCircle,
   faBusAlt,
+  faArrowRight,
+  faArrowLeft,
 } from "@fortawesome/pro-duotone-svg-icons";
 import { faMapMarkerAlt } from "@fortawesome/pro-solid-svg-icons";
 import store from "../redux/store";
@@ -42,6 +44,8 @@ library.add(
   faSpinnerThird,
   faChevronRight,
   faCircle,
+  faArrowRight,
+  faArrowLeft,
 );
 
 const Container = styled.div`

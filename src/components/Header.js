@@ -14,6 +14,7 @@ const Wrapper = styled.header`
 const Logo = styled.section`
   font-size: 32px;
   font-weight: bold;
+  font-family: var(--primary-font-family);
   a {
     color: var(--color-white);
   }
