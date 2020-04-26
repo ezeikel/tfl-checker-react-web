@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Slider from "react-slick";
@@ -32,7 +32,6 @@ const Name = styled.div`
 
 const Status = styled.div`
   flex: 0 0 50%;
-  background-color: var(--color-white);
   background-color: ${props =>
     `var(--color-${props.delays ? "delay-background" : "white"})`};
   color: ${props => `var(--color-${props.delays ? "delay-text" : "black"})`};
@@ -47,66 +46,103 @@ const Status = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     .slick-arrow {
       background-color: ${props => `var(--color-${props.id})`};
-      padding: 16px;
+      padding: 8px;
       width: 32px;
       height: 32px;
       border-radius: 50%;
+
+      display: flex !important;
+      height: 48px;
+      width: 48px;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      transition: opacity 0.3s ease-in-out;
+      svg {
+        height: 16px;
+        width: 16px;
+      }
+      &:before {
+        display: none;
+      }
       &.slick-next {
         right: 0;
+        opacity: ${({ currentSlide, slideLength }) =>
+          currentSlide === slideLength - 1 ? 0.6 : 1};
       }
       &.slick-prev {
         left: 0;
+        opacity: ${({ currentSlide }) => (currentSlide === 0 ? 0.6 : 1)};
       }
+    }
+    .slick-list {
+      width: 100%;
     }
   }
 `;
 
-const NextArrow = () => (
-  <FontAwesomeIcon
-    icon={["fad", "arrow-right"]}
-    color="var(--color-white)"
-    size="lg"
-  />
+/* eslint-disable-next-line */
+const NextArrow = ({ className, onClick }) => (
+  /* eslint-disable-next-line */
+  <div className={className} onClick={onClick}>
+    <FontAwesomeIcon
+      icon={["fad", "arrow-right"]}
+      color="var(--color-white)"
+      size="1x"
+    />
+  </div>
 );
 
-const PrevArrow = () => (
-  <FontAwesomeIcon
-    icon={["fad", "arrow-left"]}
-    color="var(--color-white)"
-    size="lg"
-  />
+/* eslint-disable-next-line */
+const PrevArrow = ({ className, onClick }) => (
+  /* eslint-disable-next-line */
+  <div className={className} onClick={onClick}>
+    <FontAwesomeIcon
+      icon={["fad", "arrow-left"]}
+      color="var(--color-white)"
+      size="1x"
+    />
+  </div>
 );
 
-const settings = {
-  infinite: true,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  prevArrow: PrevArrow,
-  nextArrow: NextArrow,
+const Card = ({ line }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const settings = {
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    afterChange: current => setCurrentSlide(current),
+  };
+
+  return (
+    <Wrapper>
+      <Name id={line.id}>{line.name}</Name>
+      <Status
+        delays={
+          line.lineStatuses.filter(status => status.statusSeverity > 0).length >
+          0
+        }
+        id={line.id}
+        currentSlide={currentSlide}
+        slideLength={line.lineStatuses.length}
+      >
+        {/* eslint-disable-next-line */}
+        <Slider {...settings}>
+          {line.lineStatuses.map(status => (
+            <div key={status.id}>{status.statusSeverityDescription}</div>
+          ))}
+        </Slider>
+      </Status>
+    </Wrapper>
+  );
 };
-
-const Card = ({ line }) => (
-  <Wrapper>
-    <Name id={line.id}>{line.name}</Name>
-    <Status
-      delays={
-        line.lineStatuses.filter(status => status.statusSeverity === 9).length >
-        0
-      }
-      id={line.id}
-    >
-      {/* eslint-disable-next-line */}
-      <Slider {...settings}>
-        {line.lineStatuses.map(status => (
-          <div key={status.id}>{status.statusSeverityDescription}</div>
-        ))}
-      </Slider>
-    </Status>
-  </Wrapper>
-);
 
 Card.propTypes = {
   line: PropTypes.shape({
