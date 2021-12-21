@@ -103,8 +103,8 @@
               "devDependencies": [
                 ".storybook/**",
                 "stories/**",
-                "**/*.stories.+(ts|tsx)",
-                "**/*.test.+(ts|tsx)"
+                "**/*.stories.ts?(x)",
+                "**/*.test.ts?(x)"
               ]
             }
           ],
@@ -150,7 +150,7 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx}",
+      "src/**/*.{js,jsx,ts,tsx}",
       "!<rootDir>/node_modules/"
     ]
   },
