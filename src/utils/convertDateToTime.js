@@ -1,6 +1,6 @@
 import addLeadingZero from "./addLeadingZero";
 
-export default dateString => {
+export default (dateString) => {
   const date = new Date(dateString);
   const hours = date.getHours();
   const minutes = date.getMinutes();

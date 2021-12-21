@@ -51,9 +51,9 @@ const SuggestionsWrapper = styled.div`
 const Suggestion = styled.div`
   font-family: var(--primary-font-family);
   font-size: 1.6rem;
-  background-color: ${props =>
+  background-color: ${(props) =>
     `var(--color-${props.active ? "background" : "white"})`};
-  color: ${props => `var(--color-${props.active ? "white" : "black"})`};
+  color: ${(props) => `var(--color-${props.active ? "white" : "black"})`};
   cursor: pointer;
   padding: 8px;
 `;
@@ -83,7 +83,7 @@ const GooglePlacesInput = ({
   setAddress,
   setLocation,
 }) => {
-  const handleSelect = async value => {
+  const handleSelect = async (value) => {
     const [results] = await geocodeByAddress(value);
     const latLng = await getLatLng(results);
 
@@ -122,10 +122,11 @@ const GooglePlacesInput = ({
               </Loading>
             ) : null}
             <List>
-              {suggestions.map(suggestion => {
+              {suggestions.map((suggestion) => {
                 return (
                   <Suggestion
                     active={suggestion.active}
+                    key={suggestion.placeId}
                     // eslint-disable-next-line react/jsx-props-no-spreading
                     {...getSuggestionItemProps(suggestion)}
                   >

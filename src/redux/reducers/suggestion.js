@@ -12,7 +12,10 @@ const initialState = {
   selected: {},
 };
 
-export default function (state = initialState, action) {
+// eslint-disable-next-line default-param-last
+const suggestion = (state = initialState, action) => {
+  if (!action) return state;
+
   switch (action.type) {
     case FETCH_SUGGESTIONS_START: {
       return {
@@ -48,4 +51,6 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
-}
+};
+
+export default suggestion;

@@ -47,14 +47,10 @@ const Nav = () => {
     <Wrapper>
       <NavList>
         <li>
-          <NavLink to="/" exact>
-            Status updates
-          </NavLink>
+          <NavLink to="/">Status updates</NavLink>
         </li>
         <li>
-          <NavLink to="/trip-planner" exact>
-            Plan a journey
-          </NavLink>
+          <NavLink to="/trip-planner">Plan a journey</NavLink>
         </li>
       </NavList>
     </Wrapper>

@@ -46,7 +46,7 @@ const TripMap = ({ center, path }) => (
       defaultCenter={center}
       defaultZoom={defaultProps.zoom}
       yesIWantToUseGoogleMapApiInternals
-      onGoogleApiLoaded={google => handleGoogleMapApi(google, path)}
+      onGoogleApiLoaded={(google) => handleGoogleMapApi(google, path)}
     >
       <IconWrapper lat={path[0].lat} lng={path[0].lng}>
         <FontAwesomeIcon

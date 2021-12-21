@@ -65,8 +65,8 @@ const TripSummaries = ({ journeys, onSetSelectedTrip }) => (
   </Wrapper>
 );
 
-const mapDispatchToProps = dispatch => ({
-  onSetSelectedTrip: value => dispatch(setSelectedTrip(value)),
+const mapDispatchToProps = (dispatch) => ({
+  onSetSelectedTrip: (value) => dispatch(setSelectedTrip(value)),
 });
 
 TripSummaries.propTypes = {

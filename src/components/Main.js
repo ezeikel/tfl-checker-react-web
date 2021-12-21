@@ -1,6 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import Status from "./Status";
@@ -13,21 +12,17 @@ const Wrapper = styled.main`
   padding: var(--spacing-large);
 `;
 
-const Main = ({ selectedTrip }) => (
-  <Wrapper>
-    <Switch>
-      <Route exact path="/">
-        <Status />
-      </Route>
-      <Route path="/trip-planner">
-        <TripPlanner />
-      </Route>
-      <Route path="/trip">
-        {selectedTrip ? <Trip /> : <Redirect to="/trip-planner" />}
-      </Route>
-    </Switch>
-  </Wrapper>
-);
+const Main = () => {
+  return (
+    <Wrapper>
+      <Routes>
+        <Route path="/" element={<Status />} />
+        <Route path="/trip-planner" element={<TripPlanner />} />
+        <Route path="/trip" element={<Trip />} />
+      </Routes>
+    </Wrapper>
+  );
+};
 
 const mapStateToProps = ({ suggestion }) => ({
   selectedTrip: suggestion.selected,
@@ -35,15 +30,6 @@ const mapStateToProps = ({ suggestion }) => ({
 
 Main.defaultProps = {
   selectedTrip: {},
-};
-
-Main.propTypes = {
-  selectedTrip: PropTypes.shape({
-    duration: PropTypes.number,
-    startDateTime: PropTypes.string,
-    arrivalDateTime: PropTypes.string,
-    legs: PropTypes.array,
-  }),
 };
 
 export default connect(mapStateToProps)(Main);

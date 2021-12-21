@@ -28,7 +28,7 @@ const Status = () => {
   }, []);
 
   const renderLines = () =>
-    status.map(line => <Card key={line.id} line={line} />);
+    status.map((line) => <Card key={line.id} line={line} />);
 
   return <Lines>{renderLines()}</Lines>;
 };

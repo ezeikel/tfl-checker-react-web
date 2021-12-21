@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -126,7 +126,7 @@ const TripPlanner = ({
   onSetToAddress,
   onClearSuggestions,
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useQuery();
 
   useEffect(() => {
@@ -171,7 +171,7 @@ const TripPlanner = ({
   }, [onClearSuggestions]);
 
   const handleSubmit = () => {
-    history.push(
+    navigate(
       `/trip-planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`,
     );
     onFetchSuggestions(fromCoordinates, toCoordinates);
@@ -240,8 +240,10 @@ const TripPlanner = ({
           )}
         </Button>
       </JourneyInput>
-      {// TODO: Disambiguations cause results to be null. Add a way to get exact location instead
-      results && results.length ? <TripSummaries journeys={results} /> : null}
+      {
+        // TODO: Disambiguations cause results to be null. Add a way to get exact location instead
+        results && results.length ? <TripSummaries journeys={results} /> : null
+      }
     </Wrapper>
   );
 };
@@ -255,13 +257,13 @@ const mapStateToProps = ({ journey, suggestion }) => ({
   loading: suggestion.loading,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onFetchSuggestions: (fromCoordinates, toCoordinates) =>
     dispatch(fetchSuggestion(fromCoordinates, toCoordinates)),
-  onSetFromCoords: value => dispatch(setFromCoords(value)),
-  onSetToCoords: value => dispatch(setToCoords(value)),
-  onSetFromAddress: value => dispatch(setFromAddress(value)),
-  onSetToAddress: value => dispatch(setToAddress(value)),
+  onSetFromCoords: (value) => dispatch(setFromCoords(value)),
+  onSetToCoords: (value) => dispatch(setToCoords(value)),
+  onSetFromAddress: (value) => dispatch(setFromAddress(value)),
+  onSetToAddress: (value) => dispatch(setToAddress(value)),
   onClearSuggestions: () => dispatch(clearSuggestions()),
 });
 

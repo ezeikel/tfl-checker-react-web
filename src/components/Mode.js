@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const convertModeToIcon = mode => {
+const convertModeToIcon = (mode) => {
   const icon = {};
 
   switch (mode) {

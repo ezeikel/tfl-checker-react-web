@@ -17,25 +17,23 @@ export const fetchSuggestionSuccess = ({ journeys }) => ({
   journeys,
 });
 
-export const fetchSuggestion = (
-  fromCoordinates,
-  toCoordinates,
-) => async dispatch => {
-  dispatch(fetchSuggestionStart());
+export const fetchSuggestion =
+  (fromCoordinates, toCoordinates) => async (dispatch) => {
+    dispatch(fetchSuggestionStart());
 
-  const responseJSON = await fetch(
-    `${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`,
-  );
-  const response = await responseJSON.json();
+    const responseJSON = await fetch(
+      `${API_ENDPOINT}journey/journeyresults/${fromCoordinates.lat},${fromCoordinates.lng}/to/${toCoordinates.lat},${toCoordinates.lng}?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5`,
+    );
+    const response = await responseJSON.json();
 
-  dispatch(fetchSuggestionSuccess(response));
-};
+    dispatch(fetchSuggestionSuccess(response));
+  };
 
 export const clearSuggestions = () => ({
   type: CLEAR_SUGGESTIONS,
 });
 
-export const setSelectedTrip = selected => ({
+export const setSelectedTrip = (selected) => ({
   type: SET_SELECTED_TRIP,
   selected,
 });

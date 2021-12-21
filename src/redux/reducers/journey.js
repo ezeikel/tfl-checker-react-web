@@ -23,7 +23,10 @@ const initialState = {
   },
 };
 
-export default function (state = initialState, action) {
+// eslint-disable-next-line default-param-last
+const journey = (state = initialState, action) => {
+  if (!action) return state;
+
   switch (action.type) {
     case SET_FROM_COORDS: {
       return {
@@ -77,4 +80,6 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
-}
+};
+
+export default journey;

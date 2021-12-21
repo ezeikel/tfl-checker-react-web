@@ -18,12 +18,12 @@ export const setToCoords = ({ lat, lng }) => ({
   lng,
 });
 
-export const setFromAddress = address => ({
+export const setFromAddress = (address) => ({
   type: SET_FROM_ADDRESS,
   address,
 });
 
-export const setToAddress = address => ({
+export const setToAddress = (address) => ({
   type: SET_TO_ADDRESS,
   address,
 });

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { clearSelectedTrip, clearJourney } from "../redux/actions";
 import TripSummary from "./TripSummary";
@@ -34,7 +34,8 @@ const StyledTripExpanded = styled(TripExpanded)`
 `;
 
 const Trip = ({ selectedTrip, onClearSelectedTrip, onClearJourney }) => {
-  const history = useHistory();
+  console.warn({ selectedTrip });
+  const navigate = useNavigate();
 
   const path =
     selectedTrip.legs &&
@@ -59,8 +60,8 @@ const Trip = ({ selectedTrip, onClearSelectedTrip, onClearJourney }) => {
     };
   }, [onClearSelectedTrip, onClearJourney]);
 
-  if (Object.keys(selectedTrip).length === 0) {
-    history.push("/trip-planner");
+  if (!selectedTrip) {
+    navigate("/trip-planner");
     return null;
   }
 
@@ -79,7 +80,7 @@ const mapStateToProps = ({ suggestion }) => ({
   selectedTrip: suggestion.selected,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onClearSelectedTrip: () => dispatch(clearSelectedTrip()),
   onClearJourney: () => dispatch(clearJourney()),
 });
@@ -89,7 +90,7 @@ Trip.propTypes = {
     duration: PropTypes.number,
     startDateTime: PropTypes.string,
     arrivalDateTime: PropTypes.string,
-    legs: PropTypes.array,
+    // legs: PropTypes.array,
   }).isRequired,
   onClearSelectedTrip: PropTypes.func.isRequired,
   onClearJourney: PropTypes.func.isRequired,

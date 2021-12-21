@@ -16,7 +16,7 @@ const Wrapper = styled.section`
 
 const Name = styled.div`
   flex: 0 0 50%;
-  background-color: ${props => `var(--color-${props.id})`};
+  background-color: ${(props) => `var(--color-${props.id})`};
   color: var(--color-white);
   display: flex;
   align-content: center;
@@ -32,9 +32,9 @@ const Name = styled.div`
 
 const Status = styled.div`
   flex: 0 0 50%;
-  background-color: ${props =>
+  background-color: ${(props) =>
     `var(--color-${props.delays ? "delay-background" : "white"})`};
-  color: ${props => `var(--color-${props.delays ? "delay-text" : "black"})`};
+  color: ${(props) => `var(--color-${props.delays ? "delay-text" : "black"})`};
   border-bottom-left-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
   font-size: 24px;
@@ -48,7 +48,7 @@ const Status = styled.div`
     align-items: center;
     justify-content: center;
     .slick-arrow {
-      background-color: ${props => `var(--color-${props.id})`};
+      background-color: ${(props) => `var(--color-${props.id})`};
       padding: 8px;
       width: 32px;
       height: 32px;
@@ -118,7 +118,7 @@ const Card = ({ line }) => {
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
-    afterChange: current => setCurrentSlide(current),
+    afterChange: (current) => setCurrentSlide(current),
   };
 
   return (
@@ -126,8 +126,8 @@ const Card = ({ line }) => {
       <Name id={line.id}>{line.name}</Name>
       <Status
         delays={
-          line.lineStatuses.filter(status => status.statusSeverity > 0).length >
-          0
+          line.lineStatuses.filter((status) => status.statusSeverity > 0)
+            .length > 0
         }
         id={line.id}
         currentSlide={currentSlide}
@@ -135,7 +135,7 @@ const Card = ({ line }) => {
       >
         {/* eslint-disable-next-line */}
         <Slider {...settings}>
-          {line.lineStatuses.map(status => (
+          {line.lineStatuses.map((status) => (
             <div key={status.id}>{status.statusSeverityDescription}</div>
           ))}
         </Slider>
@@ -148,7 +148,6 @@ Card.propTypes = {
   line: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
-    lineStatuses: PropTypes.array,
   }).isRequired,
 };
 

@@ -237,30 +237,34 @@ const Trip = ({ className, trip }) => {
               {legs[i].expanded && (
                 <Stops>
                   {leg.mode.id === "walking" &&
-                    leg.instruction.steps.map((
-                      step,
-                      i, // eslint-disable-line no-shadow
-                    ) => (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <Direction key={i}>
-                        <span>{step.descriptionHeading}</span>
-                        <span>{step.description}</span>
-                      </Direction>
-                    ))}
+                    leg.instruction.steps.map(
+                      (
+                        step,
+                        i, // eslint-disable-line no-shadow
+                      ) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <Direction key={i}>
+                          <span>{step.descriptionHeading}</span>
+                          <span>{step.description}</span>
+                        </Direction>
+                      ),
+                    )}
                   {(leg.mode.id === "bus" ||
                     leg.mode.id === "national-rail" ||
                     leg.mode.id === "london-overground" ||
                     leg.mode.id === "tube") &&
-                    leg.path.stopPoints.map((
-                      stopPoint,
-                      i, // eslint-disable-line no-shadow
-                    ) => (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
-                        {" "}
-                        <span>{stopPoint.name}</span>
-                      </Stop>
-                    ))}
+                    leg.path.stopPoints.map(
+                      (
+                        stopPoint,
+                        i, // eslint-disable-line no-shadow
+                      ) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
+                          {" "}
+                          <span>{stopPoint.name}</span>
+                        </Stop>
+                      ),
+                    )}
                 </Stops>
               )}
             </div>
