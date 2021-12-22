@@ -5,16 +5,13 @@
   "scripts": {
     "start": "react-scripts start",
     "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx|html|md)\"",
+    "lint": "node_modules/.bin/eslint --ext .jsx,.js,.tsx,.ts src/",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom --watchAll=false",
     "test:watch": "react-scripts test --env=jsdom",
     "test:coverage": "yarn test --coverage --env=jsdom --watchAll=false",
-    "eject": "react-scripts eject"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged && yarn build"
-    }
+    "eject": "react-scripts eject",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "./src/**/*.+(js|jsx|json|ts|tsx|css|html|md)": [
@@ -59,6 +56,8 @@
         "error",
         {
           "devDependencies": [
+            "**/*.test.{js,jsx,ts,tsx}",
+            "**/setupTests.js",
             ".storybook/**",
             "stories/**"
           ]
@@ -94,29 +93,6 @@
           "**/*.ts?(x)"
         ],
         "rules": {
-          "react/react-in-jsx-scope": 0,
-          "react/prop-types": 0,
-          "react/require-default-props": 0,
-          "import/no-extraneous-dependencies": [
-            "error",
-            {
-              "devDependencies": [
-                ".storybook/**",
-                "stories/**",
-                "**/*.stories.ts?(x)",
-                "**/*.test.ts?(x)"
-              ]
-            }
-          ],
-          "no-console": [
-            2,
-            {
-              "allow": [
-                "warn",
-                "error"
-              ]
-            }
-          ],
           "jsx-a11y/anchor-is-valid": [
             "error",
             {
@@ -130,14 +106,6 @@
               "aspects": [
                 "invalidHref",
                 "preferButton"
-              ]
-            }
-          ],
-          "no-underscore-dangle": [
-            2,
-            {
-              "allow": [
-                "_id"
               ]
             }
           ]
