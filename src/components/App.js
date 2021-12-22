@@ -25,7 +25,7 @@ import { faMapMarkerAlt } from "@fortawesome/pro-solid-svg-icons";
 import store from "../redux/store";
 import GlobalStyle from "../GlobalStyle";
 import Header from "./Header";
-import Footer from "./Footer";
+import Footer from "./Footer/Footer";
 import Main from "./Main";
 
 library.add(
