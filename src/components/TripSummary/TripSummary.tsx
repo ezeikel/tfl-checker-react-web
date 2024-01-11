@@ -1,16 +1,11 @@
 import formatMoney from "../../utils/formatMoney";
 import Mode from "../Mode/Mode";
 import { Wrapper, Legs, TotalFare, Duration } from "./TripSummary.styled";
+import { Journey } from "../../../types";
 
 type TripSummaryProps = {
-  className: string;
-  journey: {
-    fare: {
-      totalCost: number;
-    };
-    duration: number;
-    legs: [];
-  };
+  className?: string;
+  journey: Journey;
 };
 
 const TripSummary = ({ journey, className }: TripSummaryProps) => {

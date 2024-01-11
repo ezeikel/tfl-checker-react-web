@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
-import { setSelectedTrip } from "../../redux/actions";
-import { useAppDispatch } from "../../hooks";
 import { Wrapper, StyledTripSummary } from "./TripSummaries.styled";
+import { Journey } from "../../../types";
+import { useSuggestionsContext } from "../../contexts/suggestions";
 
 type TripSummariesProps = {
-  journeys: any[]; // TODO:
+  journeys: Journey[];
 };
 
 const TripSummaries = ({ journeys }: TripSummariesProps) => {
-  const dispatch = useAppDispatch();
+  const { setSelectedTrip } = useSuggestionsContext();
 
   return (
     <Wrapper>
@@ -17,7 +17,7 @@ const TripSummaries = ({ journeys }: TripSummariesProps) => {
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
         <Link
           to="/trip"
-          onClick={() => dispatch(setSelectedTrip(journey))}
+          onClick={() => setSelectedTrip(journey)}
           key={journey.id}
         >
           <StyledTripSummary journey={journey} />

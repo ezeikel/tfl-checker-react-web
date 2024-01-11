@@ -1,15 +1,7 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  fetchSuggestion,
-  setFromCoords,
-  setToCoords,
-  setFromAddress,
-  setToAddress,
-  clearSuggestions,
-} from "../../redux/actions";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useQuery } from "@tanstack/react-query";
 import GooglePlacesInput from "../GooglePlaceInput/GooglePlacesInput";
 import TripSummaries from "../TripSummaries/TripSummaries";
 import {
@@ -23,58 +15,101 @@ import {
   Leaving,
   Button,
 } from "./TripPlanner.styled";
+import { useJourneyContext } from "../../contexts/journey";
+import { useSuggestionsContext } from "../../contexts/suggestions";
+import { Location } from "../../../types";
 
-const useQuery = () => new URLSearchParams(useLocation().search);
+const useSearchParams = () => new URLSearchParams(useLocation().search);
+
+// TODO: type should be Coordinate
+const fetchSuggestion = async ({
+  from,
+  to,
+}: {
+  from: Location;
+  to: Location;
+}) => {
+  const response = await fetch(
+    `${process.env.TFL_API_URL}/journey/journeyresults/${from.coordinates?.latitude},${from.coordinates?.longitude}/to/${to.coordinates?.latitude},${to.coordinates?.longitude}?app_id=1b83c22c&app_key=${process.env.TFL_API_KEY}`,
+  );
+
+  return response.json();
+};
 
 const TripPlanner = () => {
+  const { from, setFrom, to, setTo } = useJourneyContext();
+  const { results, reset: resetSuggestions } = useSuggestionsContext();
   const navigate = useNavigate();
-  const query = useQuery();
-  const dispatch = useAppDispatch();
-  const {
-    journey: {
-      from: { coordinates: fromCoordinates, address: fromAddress },
-      to: { coordinates: toCoordinates, address: toAddress },
-    },
-    suggestion: { results, loading },
-  } = useAppSelector(({ journey, suggestion }) => ({ journey, suggestion }));
+  const searchParams = useSearchParams();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["journey", { from, to }],
+    queryFn: () => fetchSuggestion({ from: from!, to: to! }),
+    enabled: !!from && !!to,
+  });
+
+  console.log({ data });
 
   useEffect(() => {
     if (
-      fromAddress === "" &&
-      toAddress === "" &&
-      query.get("toCoordinates") &&
-      query.get("fromCoordinates")
+      from?.address === "" &&
+      to?.address === "" &&
+      searchParams.get("toCoordinates") &&
+      searchParams.get("fromCoordinates")
     ) {
       const queryParamsFromCoords = {
-        lat: parseFloat(query.get("fromCoordinates").split(",")[0]),
-        lng: parseFloat(query.get("fromCoordinates").split(",")[1]),
+        lat: parseFloat(
+          searchParams.get("fromCoordinates")?.split(",")[0] as string,
+        ),
+        lon: parseFloat(
+          searchParams.get("fromCoordinates")?.split(",")[1] as string,
+        ),
       };
       const queryParamsToCoords = {
-        lat: parseFloat(query.get("toCoordinates").split(",")[0]),
-        lng: parseFloat(query.get("toCoordinates").split(",")[1]),
+        lat: parseFloat(
+          searchParams.get("toCoordinates")?.split(",")[0] as string,
+        ),
+        lon: parseFloat(
+          searchParams.get("toCoordinates")?.split(",")[1] as string,
+        ),
       };
-      const queryParamsFromAddress = query.get("fromAddress");
-      const queryParamsToAddress = query.get("toAddress");
+      const queryParamsFromAddress = searchParams.get("fromAddress");
+      const queryParamsToAddress = searchParams.get("toAddress");
 
-      dispatch(fetchSuggestion(queryParamsFromCoords, queryParamsToCoords));
-      dispatch(setFromCoords(queryParamsFromCoords));
-      dispatch(setToCoords(queryParamsToCoords));
-      dispatch(setFromAddress(queryParamsFromAddress));
-      dispatch(setToAddress(queryParamsToAddress));
+      // dispatch(fetchSuggestion(queryParamsFromCoords, queryParamsToCoords));
+      setFrom({
+        address: queryParamsFromAddress as string,
+        coordinates: {
+          latitude: queryParamsFromCoords.lat,
+          longitude: queryParamsFromCoords.lon,
+        },
+      });
+      setTo({
+        address: queryParamsToAddress as string,
+        coordinates: {
+          latitude: queryParamsToCoords.lat,
+          longitude: queryParamsToCoords.lon,
+        },
+      });
     }
-  }, [dispatch, query, fromAddress, toAddress]);
+  }, [searchParams, from?.address, to?.address]);
 
   useEffect(() => {
     return () => {
-      dispatch(clearSuggestions());
+      resetSuggestions();
     };
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = () => {
+    if (!from || !to) return;
+
     navigate(
-      `/trip-planner?fromCoordinates=${fromCoordinates.lat},${fromCoordinates.lng}&toCoordinates=${toCoordinates.lat},${toCoordinates.lng}&fromAddress=${fromAddress}&toAddress=${toAddress}`,
+      `/trip-planner?fromCoordinates=${from?.coordinates?.latitude},${from?.coordinates?.longitude}&toCoordinates=${to?.coordinates?.latitude},${to?.coordinates?.longitude}&fromAddress=${from?.address}&toAddress=${to?.address}`,
     );
-    dispatch(fetchSuggestion(fromCoordinates, toCoordinates));
+
+    // dispatch(fetchSuggestion(fromCoordinates, toCoordinates));
+    fetchSuggestion({ from, to });
   };
 
   return (
@@ -101,13 +136,7 @@ const TripPlanner = () => {
               <label htmlFor="fromAddress">From</label>{" "}
               <GooglePlacesInput
                 inputId="fromAddress"
-                setLocation={(value: any) => {
-                  dispatch(setFromCoords(value));
-                }}
-                address={fromAddress}
-                setAddress={(value: any) => {
-                  dispatch(setFromAddress(value));
-                }}
+                address={from?.address}
                 placeholder="Where are you coming from?"
               />
             </InputWrapper>
@@ -117,13 +146,7 @@ const TripPlanner = () => {
               <label htmlFor="toAddress">To</label>
               <GooglePlacesInput
                 inputId="toAddress"
-                setLocation={(value: any) => {
-                  dispatch(setToCoords(value));
-                }}
-                address={toAddress}
-                setAddress={(value: any) => {
-                  dispatch(setToAddress(value));
-                }}
+                address={to?.address}
                 placeholder="Where are you going to?"
               />
             </InputWrapper>
@@ -138,8 +161,8 @@ const TripPlanner = () => {
           />
         </Leaving>
         <Button onClick={handleSubmit}>
-          {`Search${loading ? "ing" : ""}`}
-          {loading && (
+          {`Search${isLoading ? "ing" : ""}`}
+          {isLoading && (
             <FontAwesomeIcon
               icon={["fad", "spinner-third"]}
               color="var(--color-white)"

@@ -11,28 +11,57 @@ import {
   PlacesByGoogle,
   List,
 } from "./GooglePlacesInput.styled";
+import { useJourneyContext } from "../../contexts/journey";
 
 type GooglePlaceInputProps = {
   inputId: string;
   placeholder: string;
   address?: string;
-  setAddress: () => void;
-  setLocation: () => void;
 };
 
 const GooglePlacesInput = ({
   inputId,
   placeholder,
   address = "",
-  setAddress,
-  setLocation,
 }: GooglePlaceInputProps) => {
-  const handleSelect = async (value) => {
-    const [results] = await geocodeByAddress(value);
-    const latLng = await getLatLng(results);
+  const { setFrom, setTo } = useJourneyContext();
 
-    setAddress(value);
-    setLocation(latLng);
+  const handleSelect = async (add: string) => {
+    const [results] = await geocodeByAddress(add);
+    const latLng = await getLatLng(results);
+    if (inputId === "from") {
+      setFrom((prev) => ({
+        ...prev,
+        address: add,
+        coordinates: {
+          latitude: latLng.lat,
+          longitude: latLng.lng,
+        },
+      }));
+    } else {
+      setTo((prev) => ({
+        ...prev,
+        address: add,
+        coordinates: {
+          latitude: latLng.lat,
+          longitude: latLng.lng,
+        },
+      }));
+    }
+  };
+
+  const handeChange = (add: string) => {
+    if (inputId === "from") {
+      setFrom((prev) => ({
+        ...prev,
+        address: add,
+      }));
+    } else {
+      setTo((prev) => ({
+        ...prev,
+        address: add,
+      }));
+    }
   };
 
   const searchOptions = {
@@ -42,7 +71,7 @@ const GooglePlacesInput = ({
   return (
     <PlacesAutocomplete
       value={address}
-      onChange={setAddress}
+      onChange={handeChange}
       onSelect={handleSelect}
       searchOptions={searchOptions}
     >
@@ -70,7 +99,6 @@ const GooglePlacesInput = ({
                 return (
                   <Suggestion
                     active={suggestion.active}
-                    key={suggestion.placeId}
                     // eslint-disable-next-line react/jsx-props-no-spreading
                     {...getSuggestionItemProps(suggestion)}
                   >

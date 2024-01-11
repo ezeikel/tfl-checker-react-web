@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Status from "../Status/Status";
 import TripPlanner from "../TripPlanner/TripPlanner";
-import Trip from "../Trip/Trip";
+import Journey from "../Journey/Journey";
 import { Wrapper } from "./Main.styled";
 
 const Main = () => (
@@ -9,7 +9,7 @@ const Main = () => (
     <Routes>
       <Route path="/" element={<Status />} />
       <Route path="/trip-planner" element={<TripPlanner />} />
-      <Route path="/trip" element={<Trip />} />
+      <Route path="/trip" element={<Journey />} />
     </Routes>
   </Wrapper>
 );

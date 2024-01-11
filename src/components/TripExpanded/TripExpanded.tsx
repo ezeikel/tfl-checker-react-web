@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import convertDateToTime from "../../utils/convertDateToTime";
-import ToggleExpand from "../ToggleExpand/ToggleExpand";
 import {
   Wrapper,
   Leg,
@@ -17,9 +17,16 @@ import {
   Duration,
   Toggle,
   ModeIcon,
+  ToggleExpand,
 } from "./TripExpanded.styled";
+import { Journey } from "../../../types";
 
-const MODE_COLOURS = {
+const MODE_COLOURS: {
+  [key: string]: {
+    icon: string;
+    color: string;
+  };
+} = {
   walking: {
     icon: "walking",
     color: "#4D4D4D",
@@ -59,34 +66,26 @@ const MODE_COLOURS = {
 };
 
 type TripExpandedProps = {
-  className: string;
-  trip: {
-    legs: {
-      mode: {
-        id: string;
-      };
-      arrivalPoint: {
-        commonName: string;
-      };
-      departureTime: string;
-    };
-  };
+  className?: string;
+  journey: Journey;
 };
 
-const TripExpanded = ({ className, trip }: TripExpandedProps) => {
-  const [legs, setLegs] = useState(trip.legs.map(() => ({ expanded: false })));
+const TripExpanded = ({ className, journey }: TripExpandedProps) => {
+  const [legs, setLegs] = useState(
+    journey.legs.map(() => ({ expanded: false })),
+  );
 
-  if (Object.keys(trip).length === 0) return null;
+  if (Object.keys(journey).length === 0) return null;
 
   return (
     <Wrapper className={className}>
-      {trip.legs.map((leg, i) => (
+      {journey.legs.map((leg, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <Leg key={i}>
           <Header>
             <ModeIcon>
               <FontAwesomeIcon
-                icon={["fad", MODE_COLOURS[leg.mode.id].icon]}
+                icon={["fad", MODE_COLOURS[leg.mode.id].icon] as IconProp}
                 color={MODE_COLOURS[leg.mode.id].color}
                 size="2x"
               />
@@ -103,9 +102,12 @@ const TripExpanded = ({ className, trip }: TripExpandedProps) => {
                 <span>{leg.duration} min</span>
                 {leg.mode.id === "walking" && (
                   <ToggleExpand
-                    legIndex={i}
-                    legStops={legs}
-                    setLegs={setLegs}
+                    onClick={() => {
+                      const updatedLegs = legs.map(({ expanded }, index) => ({
+                        expanded: i === index ? !expanded : expanded,
+                      }));
+                      setLegs(updatedLegs);
+                    }}
                   />
                 )}
                 {(leg.mode.id === "bus" ||
@@ -172,9 +174,9 @@ const TripExpanded = ({ className, trip }: TripExpandedProps) => {
           />
         </ModeIcon>
         <Point className="location-name">{`${
-          trip.legs[trip.legs.length - 1].arrivalPoint.commonName
+          journey.legs[journey.legs.length - 1].arrivalPoint.commonName
         } at ${convertDateToTime(
-          trip.legs[trip.legs.length - 1].departureTime,
+          journey.legs[journey.legs.length - 1].departureTime,
         )}`}</Point>
       </Footer>
     </Wrapper>

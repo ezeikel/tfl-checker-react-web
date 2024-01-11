@@ -10,14 +10,24 @@ type TripMapProps = {
   path: {
     lat: number;
     lng: number;
-  };
+  }[];
 };
 
 const defaultProps = {
   zoom: 11,
 };
 
-const handleGoogleMapApi = (google, path) => {
+const handleGoogleMapApi = (
+  google: {
+    map: any;
+    maps: any;
+    ref: Element | null;
+  },
+  path: {
+    lat: number;
+    lng: number;
+  }[],
+) => {
   const bounds = new google.maps.LatLngBounds();
 
   const tripPath = new google.maps.Polyline({
@@ -44,17 +54,14 @@ const TripMap = ({ center, path }: TripMapProps) => (
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={(google) => handleGoogleMapApi(google, path)}
     >
-      <IconWrapper lat={path[0].lat} lng={path[0].lng}>
+      <IconWrapper>
         <FontAwesomeIcon
           icon={["fas", "map-marker-alt"]}
           color="#31CC71"
           size="3x"
         />
       </IconWrapper>
-      <IconWrapper
-        lat={path[path.length - 1].lat}
-        lng={path[path.length - 1].lng}
-      >
+      <IconWrapper>
         <FontAwesomeIcon
           icon={["fas", "map-marker-alt"]}
           color="#00BCD4"

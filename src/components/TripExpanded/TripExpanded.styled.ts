@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
 type StopProps = {
-  color: boolean;
+  color: string;
 };
 
 type VerticalLineProps = {
-  color: boolean;
+  color: string;
 };
 
 export const Wrapper = styled.section`
@@ -143,4 +143,9 @@ export const ModeIcon = styled.div`
   width: 32px;
   height: 32px;
   margin-left: -16px;
+`;
+
+export const ToggleExpand = styled.span`
+  color: #28bcd4;
+  cursor: pointer;
 `;

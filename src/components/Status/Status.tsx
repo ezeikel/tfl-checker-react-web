@@ -8,7 +8,7 @@ const Status = () => {
   useEffect(() => {
     async function fetchData() {
       const data = await fetch(
-        "https://api.tfl.gov.uk/line/mode/tube,overground,dlr,tflrail/status?app_id=1b83c22c&app_key=e5c7b582d0f72a04add248393e939cf5",
+        `${process.env.TFL_API_URL}/line/mode/tube,overground,dlr,tflrail/status?app_id=1b83c22c&app_key=${process.env.TFL_API_KEY}`,
       );
       const json = await data.json();
 
