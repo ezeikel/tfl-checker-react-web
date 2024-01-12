@@ -17,7 +17,7 @@ export default createGlobalStyle`
     --color-metropolitan: #731756;
     --color-northern: #000000;
     --color-piccadilly: #0026A5;
-    --color-tfl-rail: #0026A5;
+    --color-elizabeth: #0026A5;
     --color-tram: #6FC926;
     --color-victoria: #1EA2E0;
     --color-waterloo-city: #7DCFBD;

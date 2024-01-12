@@ -6,7 +6,7 @@ type Mode =
   | "tube"
   | "national-rail"
   | "overground"
-  | "tflrail"
+  | "elizabeth-line"
   | "dlr";
 
 type Icon = {
@@ -43,7 +43,7 @@ const convertModeToIcon = (mode: Mode) => {
       icon.name = "train";
       icon.color = "#E46B24";
       break;
-    case "tflrail":
+    case "elizabeth-line":
       icon.name = "train";
       icon.color = "#0026A5";
       break;

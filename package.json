@@ -1,138 +1,13 @@
 {
   "name": "tfl-checker-react-web",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|jsx|json|ts|tsx|html|md)\"",
-    "lint": "node_modules/.bin/eslint --ext .jsx,.js,.tsx,.ts src/",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom --watchAll=false",
-    "test:watch": "react-scripts test --env=jsdom",
-    "test:coverage": "bun test --coverage --env=jsdom --watchAll=false",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "prepare": "husky install"
-  },
-  "lint-staged": {
-    "./src/**/*.+(js|jsx|json|ts|tsx|css|html|md)": [
-      "prettier --ignore-path .gitignore --write",
-      "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
-    ]
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "airbnb",
-      "plugin:prettier/recommended"
-    ],
-    "rules": {
-      "valid-typeof": "error",
-      "react/react-in-jsx-scope": 0,
-      "react/state-in-constructor": 0,
-      "import/extensions": [
-        "error",
-        "ignorePackages",
-        {
-          "js": "never",
-          "jsx": "never",
-          "ts": "never",
-          "tsx": "never"
-        }
-      ],
-      "react/prop-types": 0,
-      "react/require-default-props": 0,
-      "react/jsx-filename-extension": [
-        2,
-        {
-          "extensions": [
-            ".js",
-            ".jsx",
-            ".ts",
-            ".tsx"
-          ]
-        }
-      ],
-      "import/no-extraneous-dependencies": [
-        "error",
-        {
-          "devDependencies": [
-            "**/*.test.{js,jsx,ts,tsx}",
-            "**/setupTests.js",
-            ".storybook/**",
-            "stories/**"
-          ]
-        }
-      ],
-      "no-console": [
-        2,
-        {
-          "allow": [
-            "warn",
-            "error"
-          ]
-        }
-      ],
-      "no-underscore-dangle": [
-        2,
-        {
-          "allow": [
-            "_id"
-          ]
-        }
-      ],
-      "react/function-component-definition": [
-        0,
-        {
-          "namedComponents": "function-declaration"
-        }
-      ]
-    },
-    "settings": {
-      "import/resolver": {
-        "node": {
-          "extensions": [
-            ".js",
-            ".jsx",
-            ".ts",
-            ".tsx"
-          ]
-        }
-      }
-    },
-    "overrides": [
-      {
-        "files": [
-          "**/*.ts?(x)"
-        ],
-        "rules": {
-          "jsx-a11y/anchor-is-valid": [
-            "error",
-            {
-              "components": [
-                "Link"
-              ],
-              "specialLink": [
-                "hrefLeft",
-                "hrefRight"
-              ],
-              "aspects": [
-                "invalidHref",
-                "preferButton"
-              ]
-            }
-          ]
-        }
-      }
-    ],
-    "plugins": [
-      "jsx-a11y"
-    ]
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}",
-      "!<rootDir>/node_modules/"
-    ]
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -149,7 +24,6 @@
     "react-dom": "^18.2.0",
     "react-places-autocomplete": "^7.3.0",
     "react-router-dom": "^6.21.1",
-    "react-scripts": "^5.0.1",
     "react-slick": "^0.29.0",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.6",
@@ -167,28 +41,22 @@
     "@types/react-places-autocomplete": "^7.2.14",
     "@types/react-slick": "^0.23.13",
     "@types/styled-components": "^5.1.34",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
     "redux-mock-store": "^1.5.4",
-    "typescript": "^5.3.3"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
   }
 }

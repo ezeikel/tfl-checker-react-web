@@ -30,7 +30,11 @@ const fetchSuggestion = async ({
   to: Location;
 }) => {
   const response = await fetch(
-    `${process.env.TFL_API_URL}/journey/journeyresults/${from.coordinates?.latitude},${from.coordinates?.longitude}/to/${to.coordinates?.latitude},${to.coordinates?.longitude}?app_id=1b83c22c&app_key=${process.env.TFL_API_KEY}`,
+    `${import.meta.env.VITE_TFL_API_URL}/journey/journeyresults/${from
+      .coordinates?.latitude},${from.coordinates?.longitude}/to/${to.coordinates
+      ?.latitude},${to.coordinates?.longitude}?app_id=1b83c22c&app_key=${
+      import.meta.env.VITE_TFL_APP_KEY
+    }`,
   );
 
   return response.json();

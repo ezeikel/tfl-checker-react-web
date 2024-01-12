@@ -55,7 +55,7 @@ const MODE_COLOURS: {
     icon: "subway",
     color: "#051EA6",
   },
-  tflrail: {
+  "elizabeth-line": {
     icon: "train",
     color: "#051EA6",
   },
