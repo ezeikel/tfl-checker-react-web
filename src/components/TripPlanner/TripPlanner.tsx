@@ -32,7 +32,7 @@ const fetchSuggestion = async ({
   const response = await fetch(
     `${import.meta.env.VITE_TFL_API_URL}/journey/journeyresults/${from
       .coordinates?.latitude},${from.coordinates?.longitude}/to/${to.coordinates
-      ?.latitude},${to.coordinates?.longitude}?app_id=1b83c22c&app_key=${
+      ?.latitude},${to.coordinates?.longitude}?app_key=${
       import.meta.env.VITE_TFL_APP_KEY
     }`,
   );
@@ -51,8 +51,6 @@ const TripPlanner = () => {
     queryFn: () => fetchSuggestion({ from: from!, to: to! }),
     enabled: !!from && !!to,
   });
-
-  console.log({ data });
 
   useEffect(() => {
     if (

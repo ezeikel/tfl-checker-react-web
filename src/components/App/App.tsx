@@ -1,4 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -51,20 +52,23 @@ library.add(
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <GlobalStyle />
-    <JourneyContextProvider>
-      <SuggestionsContextProvider>
-        <Container>
-          <BrowserRouter>
-            <Header />
-            <Main />
-            <Footer />
-          </BrowserRouter>
-        </Container>
-      </SuggestionsContextProvider>
-    </JourneyContextProvider>
-  </QueryClientProvider>
+  <>
+    <QueryClientProvider client={queryClient}>
+      <GlobalStyle />
+      <JourneyContextProvider>
+        <SuggestionsContextProvider>
+          <Container>
+            <BrowserRouter>
+              <Header />
+              <Main />
+              <Footer />
+            </BrowserRouter>
+          </Container>
+        </SuggestionsContextProvider>
+      </JourneyContextProvider>
+    </QueryClientProvider>
+    <Analytics />
+  </>
 );
 
 export default App;

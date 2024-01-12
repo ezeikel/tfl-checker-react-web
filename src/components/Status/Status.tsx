@@ -6,7 +6,7 @@ const fetchStatus = async () => {
   const response = await fetch(
     `${
       import.meta.env.VITE_TFL_API_URL
-    }/line/mode/tube,overground,dlr,elizabeth-line/status?app_id=1b83c22c&app_key=${
+    }/line/mode/tube,overground,dlr,elizabeth-line/status?app_key=${
       import.meta.env.VITE_TFL_APP_KEY
     }`,
   );
