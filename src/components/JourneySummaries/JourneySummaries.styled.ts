@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import TripSummary from "../TripSummary/TripSummary";
+import JourneySummary from "../JourneySummary/JourneySummary";
 
 export const Wrapper = styled.section`
   display: flex;
@@ -40,7 +40,7 @@ export const Wrapper = styled.section`
   }
 `;
 
-export const StyledTripSummary = styled(TripSummary)`
+export const StyledJourneySummary = styled(JourneySummary)`
   border-radius: 0;
   &:hover {
     background-color: #f2f2f2;

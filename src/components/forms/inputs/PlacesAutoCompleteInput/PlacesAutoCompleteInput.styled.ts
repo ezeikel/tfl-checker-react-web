@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { rotate } from "../../GlobalStyle";
+import { rotate } from "../../../../GlobalStyle";
 
 type SuggestionProps = {
   active: boolean;
@@ -56,12 +56,14 @@ export const Suggestion = styled.div<SuggestionProps>`
 `;
 
 export const PlacesByGoogle = styled.div`
+  display: none;
+  gap: var(--spacing-small);
+  align-items: center;
   font-size: 11px;
   background-color: white;
   padding: 8px;
-  display: none;
   &:not(:only-child) {
-    display: block;
+    display: flex;
   }
 `;
 

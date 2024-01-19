@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import Card from "../Card/Card";
 import { Lines } from "./Status.styled";
 import { useQuery } from "@tanstack/react-query";
@@ -23,11 +24,16 @@ const Status = () => {
   if (isLoading) return null;
 
   return (
-    <Lines>
-      {status.map((line) => (
-        <Card key={line.id} line={line} />
-      ))}
-    </Lines>
+    <>
+      <Helmet>
+        <title>TfL Checker - Status</title>
+      </Helmet>
+      <Lines>
+        {status.map((line) => (
+          <Card key={line.id} line={line} />
+        ))}
+      </Lines>
+    </>
   );
 };
 

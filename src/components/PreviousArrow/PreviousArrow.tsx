@@ -1,3 +1,4 @@
+import { faArrowLeft } from "@fortawesome/pro-duotone-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type PreviousArrowProps = {
@@ -8,11 +9,7 @@ type PreviousArrowProps = {
 const PreviousArrow = ({ className, onClick }: PreviousArrowProps) => (
   /* eslint-disable-next-line */
   <div className={className} onClick={onClick}>
-    <FontAwesomeIcon
-      icon={["fad", "arrow-left"]}
-      color="var(--color-white)"
-      size="1x"
-    />
+    <FontAwesomeIcon icon={faArrowLeft} color="var(--color-white)" size="1x" />
   </div>
 );
 

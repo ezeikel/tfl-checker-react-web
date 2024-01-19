@@ -1,3 +1,21 @@
+export enum Mode {
+  WALKING = "walking",
+  BUS = "bus",
+  REPLACEMENT_BUS = "replacement-bus",
+  COACH = "coach",
+  TUBE = "tube",
+  NATIONAL_RAIL = "national-rail",
+  OVERGROUND = "overground",
+  ELIZABETH_LINE = "elizabeth-line",
+  DLR = "dlr",
+  TRAM = "tram",
+}
+
+export type ModeColour = {
+  icon: string;
+  color: string;
+};
+
 type Coordinate = {
   lat: number;
   lon: number;
@@ -10,7 +28,7 @@ export type CoordinateAlt = {
 
 type Leg = {
   mode: {
-    id: string;
+    id: Mode;
   };
   arrivalPoint: Coordinate & {
     commonName: string;
@@ -47,12 +65,17 @@ export type Journey = {
 
 export type Path = Coordinate[];
 
-type CoordinatesAlt2 = {
+export type CoordinatesAlt2 = {
   latitude: number;
   longitude: number;
 };
 
 export type Location = {
-  address: string;
-  coordinates?: CoordinatesAlt2;
+  coordiantes: CoordinatesAlt2;
+  placeId: string;
+};
+
+export type Journey2 = {
+  from: Location;
+  to: Location;
 };

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import TripSummary from "../TripSummary/TripSummary";
-import TripExpanded from "../TripExpanded/TripExpanded";
+import JourneySummary from "../JourneySummary/JourneySummary";
+import JourneyExpanded from "../JourneyExpanded/JourneyExpanded";
 
 export const Wrapper = styled.div`
   display: grid;
@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
   align-items: start;
 `;
 
-export const StyledTripSummary = styled(TripSummary)`
+export const StyledJourneySummary = styled(JourneySummary)`
   grid-column: 1 / -1;
   grid-row: 1 / span 1;
 `;
@@ -23,6 +23,6 @@ export const ContentWrap = styled.div`
   grid-column-gap: 32px;
 `;
 
-export const StyledTripExpanded = styled(TripExpanded)`
+export const StyledJourneyExpanded = styled(JourneyExpanded)`
   grid-column: 1 / span 1;
 `;

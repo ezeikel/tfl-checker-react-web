@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import ModeIcon from "../ModaIcon/ModeIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type StopProps = {
   color: string;
@@ -38,7 +40,7 @@ export const Content = styled.section`
 
 export const Point = styled.span`
   font-size: 2rem;
-  margin-left: 4px;
+  margin-left: var(--spacing-small);
 `;
 
 export const Stops = styled.div`
@@ -136,16 +138,15 @@ export const Toggle = styled.span`
   cursor: pointer;
 `;
 
-export const ModeIcon = styled.div`
+export const StyledModeIcon = styled(ModeIcon)`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 32px;
-  height: 32px;
-  margin-left: -16px;
 `;
 
 export const ToggleExpand = styled.span`
   color: #28bcd4;
   cursor: pointer;
 `;
+
+export const MarkerIcon = styled(FontAwesomeIcon)``;

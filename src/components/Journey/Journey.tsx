@@ -1,30 +1,27 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import TripMap from "../TripMap/TripMap";
+import { Helmet } from "react-helmet";
+import JourneyMap from "../JourneyMap/JourneyMap";
 import {
   Wrapper,
-  StyledTripSummary,
+  StyledJourneySummary,
   ContentWrap,
-  StyledTripExpanded,
+  StyledJourneyExpanded,
 } from "./Journey.styled";
-import { useJourneyContext } from "../../contexts/journey";
 import { useSuggestionsContext } from "../../contexts/suggestions";
 
 const Journey = () => {
-  const { reset: resetJourney } = useJourneyContext();
-  const { clearSelectedTrip, selectedTrip } = useSuggestionsContext();
+  const { selectedJourney } = useSuggestionsContext();
   const [path, setPath] = useState<{ lat: number; lng: number }[]>([]);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    if (!selectedTrip) {
+    if (!selectedJourney) {
       setPath([]);
+      return;
     }
 
     setPath(
-      selectedTrip!.legs.map((leg, i) => {
-        if (i === selectedTrip!.legs.length - 1) {
+      selectedJourney!.legs.map((leg, i) => {
+        if (i === selectedJourney!.legs.length - 1) {
           return {
             lat: leg.arrivalPoint.lat,
             lng: leg.arrivalPoint.lon,
@@ -37,29 +34,25 @@ const Journey = () => {
         };
       }),
     );
-  }, [selectedTrip]);
+  }, [selectedJourney]);
 
-  useEffect(() => {
-    return () => {
-      clearSelectedTrip();
-      resetJourney();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!selectedTrip) {
-    navigate("/trip-planner");
+  if (!selectedJourney) {
     return null;
   }
 
   return (
-    <Wrapper>
-      <StyledTripSummary journey={selectedTrip} />
-      <ContentWrap>
-        <StyledTripExpanded journey={selectedTrip} />
-        <TripMap center={{ lat: 51.50853, lng: -0.12574 }} path={path} />
-      </ContentWrap>
-    </Wrapper>
+    <>
+      <Helmet>
+        <title>TfL Checker - Your Journey</title>
+      </Helmet>
+      <Wrapper>
+        <StyledJourneySummary journey={selectedJourney} />
+        <ContentWrap>
+          <StyledJourneyExpanded journey={selectedJourney} />
+          <JourneyMap center={{ lat: 51.50853, lng: -0.12574 }} path={path} />
+        </ContentWrap>
+      </Wrapper>
+    </>
   );
 };
 

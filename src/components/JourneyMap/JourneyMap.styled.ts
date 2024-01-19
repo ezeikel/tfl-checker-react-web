@@ -7,7 +7,7 @@ export const Wrapper = styled.section`
   overflow: hidden;
 `;
 
-export const IconWrapper = styled.span`
+export const IconWrapper = styled.span<{ lat: number; lng: number }>`
   position: absolute;
   transform: translate(-50%, -100%);
   z-index: 10;

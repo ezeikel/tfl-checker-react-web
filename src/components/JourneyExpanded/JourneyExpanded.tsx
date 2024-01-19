@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { useEffect, useRef, useState } from "react";
 import convertDateToTime from "../../utils/convertDateToTime";
 import {
   Wrapper,
@@ -16,80 +14,49 @@ import {
   VerticalLine,
   Duration,
   Toggle,
-  ModeIcon,
+  StyledModeIcon,
   ToggleExpand,
-} from "./TripExpanded.styled";
-import { Journey } from "../../../types";
+} from "./JourneyExpanded.styled";
+import { Journey, Mode } from "../../../types";
+import { MODE_COLOURS } from "../../constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkerAlt } from "@fortawesome/pro-solid-svg-icons";
 
-const MODE_COLOURS: {
-  [key: string]: {
-    icon: string;
-    color: string;
-  };
-} = {
-  walking: {
-    icon: "walking",
-    color: "#4D4D4D",
-  },
-  bus: {
-    icon: "bus",
-    color: "#C83638",
-  },
-  "replacement-bus": {
-    icon: "bus",
-    color: "#C83638",
-  },
-  coach: {
-    icon: "bus-alt",
-    color: "#10bd59",
-  },
-  "national-rail": {
-    icon: "train",
-    color: "#043261",
-  },
-  overground: {
-    icon: "train",
-    color: "#E46B24",
-  },
-  tube: {
-    icon: "subway",
-    color: "#051EA6",
-  },
-  "elizabeth-line": {
-    icon: "train",
-    color: "#051EA6",
-  },
-  dlr: {
-    icon: "tram",
-    color: "#26AFAC",
-  },
-};
-
-type TripExpandedProps = {
+type JourneyExpandedProps = {
   className?: string;
   journey: Journey;
 };
 
-const TripExpanded = ({ className, journey }: TripExpandedProps) => {
+const JourneyExpanded = ({ className, journey }: JourneyExpandedProps) => {
   const [legs, setLegs] = useState(
     journey.legs.map(() => ({ expanded: false })),
   );
+  const [marginLeft, setMarginLeft] = useState<string | number>("auto");
+  const markerIconRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (markerIconRef.current) {
+      const iconWidth = markerIconRef.current.getBoundingClientRect().width;
+      setMarginLeft(-iconWidth / 2); // Example: center the icon
+    }
+  }, []);
+
+  // TODO: should really clear selected journey when component unmounts, but this useEffect fires when the component mounts - fine for now as this component only mounts when a new journey is selected
+  // useEffect(() => {
+  //   return () => {
+  //     clearSelectedJourney();
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   if (Object.keys(journey).length === 0) return null;
 
   return (
     <Wrapper className={className}>
       {journey.legs.map((leg, i) => (
-        // eslint-disable-next-line react/no-array-index-key
         <Leg key={i}>
           <Header>
-            <ModeIcon>
-              <FontAwesomeIcon
-                icon={["fad", MODE_COLOURS[leg.mode.id].icon] as IconProp}
-                color={MODE_COLOURS[leg.mode.id].color}
-                size="2x"
-              />
-            </ModeIcon>
+            <StyledModeIcon mode={leg.mode.id} size="2x" minusMarginLeft />
             <Point className="location-name">{`${
               leg.departurePoint.commonName
             } at ${convertDateToTime(leg.departureTime)}`}</Point>
@@ -100,7 +67,7 @@ const TripExpanded = ({ className, journey }: TripExpandedProps) => {
               <Summary>{leg.instruction.summary}</Summary>
               <Duration>
                 <span>{leg.duration} min</span>
-                {leg.mode.id === "walking" && (
+                {leg.mode.id === Mode.WALKING && (
                   <ToggleExpand
                     onClick={() => {
                       const updatedLegs = legs.map(({ expanded }, index) => ({
@@ -110,10 +77,10 @@ const TripExpanded = ({ className, journey }: TripExpandedProps) => {
                     }}
                   />
                 )}
-                {(leg.mode.id === "bus" ||
-                  leg.mode.id === "national-rail" ||
-                  leg.mode.id === "london-overground" ||
-                  leg.mode.id === "tube") && (
+                {(leg.mode.id === Mode.BUS ||
+                  leg.mode.id === Mode.NATIONAL_RAIL ||
+                  leg.mode.id === Mode.OVERGROUND ||
+                  leg.mode.id === Mode.TUBE) && (
                   <Toggle
                     onClick={() => {
                       const updatedLegs = legs.map(({ expanded }, index) => ({
@@ -130,29 +97,27 @@ const TripExpanded = ({ className, journey }: TripExpandedProps) => {
               </Duration>
               {legs[i].expanded && (
                 <Stops>
-                  {leg.mode.id === "walking" &&
+                  {leg.mode.id === Mode.WALKING &&
                     leg.instruction.steps.map(
                       (
                         step,
                         i, // eslint-disable-line no-shadow
                       ) => (
-                        // eslint-disable-next-line react/no-array-index-key
                         <Direction key={i}>
                           <span>{step.descriptionHeading}</span>
                           <span>{step.description}</span>
                         </Direction>
                       ),
                     )}
-                  {(leg.mode.id === "bus" ||
-                    leg.mode.id === "national-rail" ||
-                    leg.mode.id === "london-overground" ||
-                    leg.mode.id === "tube") &&
+                  {(leg.mode.id === Mode.BUS ||
+                    leg.mode.id === Mode.NATIONAL_RAIL ||
+                    leg.mode.id === Mode.OVERGROUND ||
+                    leg.mode.id === Mode.TUBE) &&
                     leg.path.stopPoints.map(
                       (
                         stopPoint,
                         i, // eslint-disable-line no-shadow
                       ) => (
-                        // eslint-disable-next-line react/no-array-index-key
                         <Stop key={i} color={MODE_COLOURS[leg.mode.id].color}>
                           {" "}
                           <span>{stopPoint.name}</span>
@@ -166,13 +131,15 @@ const TripExpanded = ({ className, journey }: TripExpandedProps) => {
         </Leg>
       ))}
       <Footer>
-        <ModeIcon>
-          <FontAwesomeIcon
-            icon={["fas", "map-marker-alt"]}
-            color="var(--color-background)"
-            size="2x"
-          />
-        </ModeIcon>
+        <FontAwesomeIcon
+          icon={faMapMarkerAlt}
+          color="var(--color-background)"
+          size="2x"
+          style={{
+            marginLeft,
+          }}
+          ref={markerIconRef}
+        />
         <Point className="location-name">{`${
           journey.legs[journey.legs.length - 1].arrivalPoint.commonName
         } at ${convertDateToTime(
@@ -183,4 +150,4 @@ const TripExpanded = ({ className, journey }: TripExpandedProps) => {
   );
 };
 
-export default TripExpanded;
+export default JourneyExpanded;

@@ -1,1 +1,1 @@
-# TfL Checker (React)
+# TfL Journey Planner (React)

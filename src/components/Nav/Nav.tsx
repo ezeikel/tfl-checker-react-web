@@ -9,7 +9,7 @@ const Nav = () => {
           <NavLink to="/">Status updates</NavLink>
         </li>
         <li>
-          <NavLink to="/trip-planner">Plan a journey</NavLink>
+          <NavLink to="/journey-planner">Plan a journey</NavLink>
         </li>
       </NavList>
     </Wrapper>

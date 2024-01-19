@@ -1,14 +1,14 @@
 import formatMoney from "../../utils/formatMoney";
 import Mode from "../Mode/Mode";
-import { Wrapper, Legs, TotalFare, Duration } from "./TripSummary.styled";
+import { Wrapper, Legs, TotalFare, Duration } from "./JourneySummary.styled";
 import { Journey } from "../../../types";
 
-type TripSummaryProps = {
+type JourneySummaryProps = {
   className?: string;
   journey: Journey;
 };
 
-const TripSummary = ({ journey, className }: TripSummaryProps) => {
+const JourneySummary = ({ journey, className }: JourneySummaryProps) => {
   if (Object.keys(journey).length === 0) return null;
 
   return (
@@ -32,4 +32,4 @@ const TripSummary = ({ journey, className }: TripSummaryProps) => {
   );
 };
 
-export default TripSummary;
+export default JourneySummary;

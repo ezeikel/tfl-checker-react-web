@@ -1,11 +1,11 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Wrapper } from "./Mode.styled";
-import convertModeToIcon from "../../utils/convertModeToIcon";
+import ModeIcon from "../ModaIcon/ModeIcon";
+import { Mode as ModeType } from "../../../types";
 
 type ModeProps = {
   leg: {
     mode: {
-      id: string;
+      id: ModeType;
     };
     routeOptions: any[];
   };
@@ -16,21 +16,19 @@ const Mode = ({
     routeOptions,
     mode: { id },
   },
-}: ModeProps) => {
-  const { name, color } = convertModeToIcon(id);
-
-  return (
-    <Wrapper>
-      <FontAwesomeIcon icon={["fad", name]} color={color} size="lg" />
-      {routeOptions.map((option, i) => (
-        // eslint-disable-next-line react/no-array-index-key
+}: ModeProps) => (
+  <Wrapper>
+    <ModeIcon mode={id} size="lg" />
+    {routeOptions
+      // some route options are empty e.g walking, so filter them out
+      .filter((option) => option.name !== "")
+      .map((option, i) => (
         <span key={i}>
           {option.name}
           {i < routeOptions.length - 1 ? <span>/</span> : ""}
         </span>
       ))}
-    </Wrapper>
-  );
-};
+  </Wrapper>
+);
 
 export default Mode;
