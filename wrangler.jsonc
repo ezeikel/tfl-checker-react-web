@@ -1,0 +1,25 @@
+// Vite build (dist/) on Workers static assets. worker.ts runs first to keep
+// Vercel's http -> https redirect and HSTS and to add the Web Analytics beacon.
+// Build first: the VITE_* values in .github/workflows/deploy-cloudflare.yml are
+// baked into the bundle by `vite build`.
+{
+  "name": "tfl-checker-react-web",
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-21",
+  "workers_dev": true,
+  "vars": {
+    // Public Web Analytics site token for react.tflchecker.ezeikel.dev. Empty
+    // until the site exists: the account was at its Web Analytics site limit
+    // on 24 Oct 2026. The worker adds no beacon while it is empty.
+    "CF_WEB_ANALYTICS_TOKEN": ""
+  },
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    // Files are served exactly at their own path (/index.html stays 200, as on
+    // Vercel); everything else falls back to index.html with 200.
+    "html_handling": "none",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  }
+}

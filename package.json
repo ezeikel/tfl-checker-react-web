@@ -19,7 +19,6 @@
     "@fortawesome/pro-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@tanstack/react-query": "^5.17.9",
-    "@vercel/analytics": "^1.1.1",
     "@vis.gl/react-google-maps": "^0.4.3",
     "google-map-react": "^2.2.1",
     "google-maps-react-markers": "^2.0.8",
