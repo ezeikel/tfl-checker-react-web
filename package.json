@@ -5,7 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "node scripts/cloudflare/build.mjs",
+    "check-types": "tsc --noEmit",
+    "test": "bun --no-env-file test src/utils/*.test.ts && node --test worker.test.mjs scripts/cloudflare/*.test.mjs",
+    "test:browser": "node scripts/cloudflare/browser-smoke.mjs",
+    "artifact:record": "node scripts/cloudflare/artifact.mjs record",
+    "artifact:verify": "node scripts/cloudflare/artifact.mjs verify",
     "serve": "vite preview",
     "prepare": "husky install"
   },
@@ -35,6 +40,8 @@
     "styled-normalize": "^8.1.0"
   },
   "devDependencies": {
+    "playwright": "1.62.1",
+    "wrangler": "4.151.3",
     "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^14.1.2",
     "@testing-library/react-hooks": "^8.0.1",

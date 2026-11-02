@@ -8,6 +8,7 @@ import {
   StyledJourneyExpanded,
 } from "./Journey.styled";
 import { useSuggestionsContext } from "../../contexts/suggestions";
+import { createJourneyPath } from "../../utils/createJourneyPath";
 
 const Journey = () => {
   const { selectedJourney } = useSuggestionsContext();
@@ -19,21 +20,7 @@ const Journey = () => {
       return;
     }
 
-    setPath(
-      selectedJourney!.legs.map((leg, i) => {
-        if (i === selectedJourney!.legs.length - 1) {
-          return {
-            lat: leg.arrivalPoint.lat,
-            lng: leg.arrivalPoint.lon,
-          };
-        }
-
-        return {
-          lat: leg.departurePoint.lat,
-          lng: leg.departurePoint.lon,
-        };
-      }),
-    );
+    setPath(createJourneyPath(selectedJourney.legs));
   }, [selectedJourney]);
 
   if (!selectedJourney) {

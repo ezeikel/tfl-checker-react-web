@@ -27,6 +27,7 @@ export type CoordinateAlt = {
 };
 
 type Leg = {
+  routeOptions: { name: string }[];
   mode: {
     id: Mode;
   };

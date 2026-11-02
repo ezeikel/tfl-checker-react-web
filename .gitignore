@@ -27,3 +27,10 @@ dist-ssr
 
 # Cloudflare
 .wrangler/
+.cloudflare-artifact.json
+.cloudflare-build-receipt.json
+.cloudflare-verification/
+playwright-report/
+test-results/
+__pycache__/
+*.tsbuildinfo

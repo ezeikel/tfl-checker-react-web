@@ -4,6 +4,7 @@
 // baked into the bundle by `vite build`.
 {
   "name": "tfl-checker-react-web",
+  "account_id": "3b270a88f8cd0aaf0e9f28f6683a7a85",
   "main": "worker.ts",
   "compatibility_date": "2026-10-21",
   "workers_dev": true,
@@ -12,6 +13,16 @@
     // until the site exists: the account was at its Web Analytics site limit
     // on 24 Oct 2026. The worker adds no beacon while it is empty.
     "CF_WEB_ANALYTICS_TOKEN": ""
+  },
+  "env": {
+    // Only the owner cutover and gated post-cutover deploy workflow select this environment.
+    // A default deploy remains workers.dev-only while the hostname is being prepared.
+    "production": {
+      "name": "tfl-checker-react-web",
+      "workers_dev": true,
+      "vars": { "CF_WEB_ANALYTICS_TOKEN": "" },
+      "routes": [{ "pattern": "react.tflchecker.ezeikel.dev", "custom_domain": true }]
+    }
   },
   "assets": {
     "directory": "dist",

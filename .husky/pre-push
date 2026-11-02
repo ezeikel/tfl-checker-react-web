@@ -1,0 +1,19 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+set -eu
+export PATH="$HOME/.nvm/versions/node/v22.23.3/bin:$PATH"
+[ "$(node --version)" = v22.23.3 ] || { echo 'Use the checked Node22.23.3'; exit 1; }
+[ "$(bun --no-env-file --version)" = 1.3.13 ] || { echo 'Use the checked Bun1.3.13'; exit 1; }
+# Finite offline acceptance uses invented public values; every provider request is mocked.
+export VITE_TFL_API_URL=https://tfl.invalid
+export VITE_TFL_APP_ID=synthetic-app-id
+export VITE_TFL_APP_KEY=synthetic-app-key
+export VITE_GOOGLE_MAPS_API_KEY=synthetic-google-key
+export TFL_BUILD_MODE=synthetic
+node scripts/cloudflare/artifact.mjs inputs synthetic
+bun --no-env-file run check-types
+bun --no-env-file run test
+python3 -I -m unittest discover -s docs/cloudflare -p 'test_*.py'
+bun --no-env-file run build
+node scripts/cloudflare/artifact.mjs record synthetic
+bun --no-env-file run test:browser

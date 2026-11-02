@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { rotate } from "../../GlobalStyle";
 
 export const FormWrapper = styled.div`
   background-color: var(--color-input-background);

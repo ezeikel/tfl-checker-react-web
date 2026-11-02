@@ -10,6 +10,11 @@ type CardProps = {
   line: {
     id: string;
     name: string;
+    lineStatuses: {
+      id: string | number;
+      statusSeverity: number;
+      statusSeverityDescription: string;
+    }[];
   };
 };
 
