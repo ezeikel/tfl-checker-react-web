@@ -7,6 +7,7 @@ import json
 import tempfile
 import subprocess
 import base64
+from contextlib import ExitStack
 
 spec = importlib.util.spec_from_file_location('tfl_cutover', Path(__file__).with_name('cutover.py'))
 cutover = importlib.util.module_from_spec(spec)
@@ -19,6 +20,131 @@ class GuardControls(unittest.TestCase):
         self.project = {'id': cutover.PROJECT, 'name': cutover.WORKER, 'accountId': cutover.TEAM, 'paused': None}
         self.project['targets'] = {'production': {'id': cutover.OLD_DEPLOYMENT, 'readyState': 'READY', 'meta': {'githubCommitSha': cutover.OLD_VERCEL_SOURCE}}}
         self.dns = [{'id': 'existing-mail', 'type': 'MX', 'name': 'ezeikel.dev', 'content': 'mail.example.invalid', 'priority': 10, 'ttl': 300}]
+
+    def test_exact_pause_unpause_acknowledgements_accept_empty_text_or_json_only_after_exit_zero(self):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        for action in ('pause', 'unpause'):
+            resource = '/v1/projects/' + cutover.PROJECT + '/' + action
+            for raw in (b'', b'  \n', b'Project acknowledgement\n', b'{"acknowledged":true}'):
+                with self.subTest(action=action, body=raw), patch.object(cutover.subprocess, 'run',
+                        return_value=subprocess.CompletedProcess([], 0, raw, b'')) as command:
+                    self.assertIsNone(owner.vercel(resource, method='POST', acknowledgement_only=True))
+                    self.assertEqual(command.call_args.args[0][2], resource)
+                    self.assertEqual(command.call_args.args[0][-2:], ['-X', 'POST'])
+            with patch.object(cutover.subprocess, 'run', return_value=subprocess.CompletedProcess([], 1, b'', b'controlled failure')):
+                with self.assertRaisesRegex(RuntimeError, 'failed with exit1'):
+                    owner.vercel(resource, method='POST', acknowledgement_only=True)
+
+    def test_acknowledgement_mode_refuses_any_other_method_project_or_resource_before_running(self):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        exact = '/v1/projects/' + cutover.PROJECT + '/pause'
+        for resource, method in ((exact, 'GET'), (exact, 'DELETE'),
+                ('/v1/projects/another-project/pause', 'POST'),
+                (exact + '?unexpected=true', 'POST'),
+                ('/v9/projects/' + cutover.PROJECT, 'POST')):
+            with self.subTest(resource=resource, method=method), patch.object(cutover, 'run') as command:
+                with self.assertRaisesRegex(RuntimeError, 'exact project pause/unpause POST'):
+                    owner.vercel(resource, method=method, acknowledgement_only=True)
+                command.assert_not_called()
+
+    def test_get_metadata_still_requires_nonempty_valid_json_object(self):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        for raw in (b'', b' \n', b'Plain acknowledgement', b'{broken', b'null', b'[]', b'1', b'"text"',
+                b'{}', b'{"result":{}}', b'{"result":null}', b'{"result":[]}'):
+            with self.subTest(body=raw), patch.object(cutover, 'run', return_value=raw):
+                with self.assertRaises((RuntimeError, ValueError)):
+                    owner.vercel('/v9/projects/' + cutover.PROJECT)
+        for raw in (b'{"id":"expected"}', b'{"result":{"id":"expected"}}'):
+            with patch.object(cutover, 'run', return_value=raw):
+                self.assertEqual(owner.vercel('/v9/projects/' + cutover.PROJECT), {'id': 'expected'})
+
+    def execute_pause_fixture(self, acknowledgement, paused):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        version = '00000000-0000-0000-0000-000000000001'
+        events, requests = [], []
+        def command(args, **kwargs):
+            if args[0] == 'bun': return ('Current Version ID: ' + version).encode()
+            self.assertEqual(args[:2], ['vercel', 'api'])
+            method = args[args.index('-X') + 1]
+            requests.append((method, args[2]))
+            if method == 'POST':
+                self.assertEqual(args[2], '/v1/projects/' + cutover.PROJECT + '/pause')
+                return acknowledgement
+            self.assertEqual((method, args[2]), ('GET', '/v9/projects/' + cutover.PROJECT))
+            return json.dumps({'paused': paused}).encode()
+        with ExitStack() as stack:
+            stack.enter_context(patch.object(cutover, 'source_gate'))
+            stack.enter_context(patch.object(cutover, 'git', return_value='git@github.com:' + cutover.REPOSITORY + '.git'))
+            stack.enter_context(patch.object(cutover, 'run', side_effect=command))
+            for method in ('load_cloudflare', 'immutable_build', 'wait_public', 'accept_real_browser', 'publish_source', 'deploy_workflow', 'verify_public'):
+                stack.enter_context(patch.object(owner, method))
+            stack.enter_context(patch.object(owner, 'checkpoint', return_value={'dns': []}))
+            stack.enter_context(patch.object(owner, 'save_inputs', return_value=({}, 'invented')))
+            stack.enter_context(patch.object(owner, 'current_version', return_value=version))
+            stack.enter_context(patch.object(owner, 'cf', return_value={'result': {'id': 'created-domain', 'hostname': cutover.HOST, 'service': cutover.WORKER}}))
+            stack.enter_context(patch.object(owner, 'record', side_effect=lambda step, **_: events.append(step)))
+            error = None
+            try: owner.execute(None)
+            except RuntimeError as failure: error = failure
+        return events, requests, error
+
+    def test_execute_uses_acknowledgement_mode_then_independent_pause_get(self):
+        for acknowledgement in (b'', b'Project paused\n'):
+            with self.subTest(body=acknowledgement):
+                events, requests, error = self.execute_pause_fixture(acknowledgement, True)
+                self.assertIsNone(error)
+                self.assertEqual(requests, [('POST', '/v1/projects/' + cutover.PROJECT + '/pause'),
+                    ('GET', '/v9/projects/' + cutover.PROJECT)])
+                self.assertIn('vercel-paused-after-acceptance-no-deletion', events)
+                self.assertEqual(events[-1], 'cutover-complete-retain-rollback-and-observation')
+        events, requests, error = self.execute_pause_fixture(b'', False)
+        self.assertIn('pause was not read back', str(error))
+        self.assertEqual(len(requests), 2)
+        self.assertNotIn('vercel-paused-after-acceptance-no-deletion', events)
+
+    def rollback_unpause_fixture(self, acknowledgement, paused_after):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        owner.receipt.update(beforeImages={'dns': []}, steps=[{'step': 'exact-host-attached', 'domainId': 'recorded-domain'}])
+        events, requests = [], []
+        gets = 0
+        def command(args, **kwargs):
+            nonlocal gets
+            if args[:2] == ['gh', 'api']: return b'{"workflow_runs":[],"total_count":0}'
+            if args[:3] == ['gh', 'variable', 'set']: return b''
+            self.assertEqual(args[:2], ['vercel', 'api'])
+            method = args[args.index('-X') + 1]
+            requests.append((method, args[2]))
+            if method == 'POST':
+                self.assertEqual(args[2], '/v1/projects/' + cutover.PROJECT + '/unpause')
+                return acknowledgement
+            self.assertEqual(args[2], '/v9/projects/' + cutover.PROJECT)
+            gets += 1
+            return json.dumps({'id': cutover.PROJECT, 'name': cutover.WORKER, 'accountId': cutover.TEAM,
+                'paused': True if gets == 1 else paused_after}).encode()
+        with ExitStack() as stack:
+            stack.enter_context(patch.object(cutover, 'git', side_effect=lambda *args: owner.sha if args == ('rev-parse', 'HEAD') else ''))
+            stack.enter_context(patch.object(cutover, 'run', side_effect=command))
+            stack.enter_context(patch.object(owner, 'load_cloudflare'))
+            stack.enter_context(patch.object(owner, 'pages', return_value=[]))
+            stack.enter_context(patch.object(owner, 'cf', return_value={'result': {'enabled': True}}))
+            stack.enter_context(patch.object(owner, 'record', side_effect=lambda step, **_: events.append(step)))
+            error = None
+            try: owner.rollback()
+            except RuntimeError as failure: error = failure
+        return events, requests, error
+
+    def test_rollback_uses_acknowledgement_mode_then_independent_unpause_get(self):
+        for acknowledgement in (b'', b'Project unpaused\n'):
+            with self.subTest(body=acknowledgement):
+                events, requests, error = self.rollback_unpause_fixture(acknowledgement, False)
+                self.assertIsNone(error)
+                self.assertEqual(requests, [('GET', '/v9/projects/' + cutover.PROJECT),
+                    ('POST', '/v1/projects/' + cutover.PROJECT + '/unpause'), ('GET', '/v9/projects/' + cutover.PROJECT)])
+                self.assertEqual(events[-1], 'owner-rollback-complete-baseline-dns-preserved')
+        events, requests, error = self.rollback_unpause_fixture(b'', True)
+        self.assertIn('unpause not read back', str(error))
+        self.assertEqual(len(requests), 3)
+        self.assertNotIn('owner-rollback-complete-baseline-dns-preserved', events)
 
     def test_positive_empty_intended_host_does_not_require_or_delete_existing_dns(self):
         cutover.validate_checkpoint(self.zone, self.dns, [], self.project)

@@ -332,10 +332,22 @@ class Owner:
                 return result
         raise RuntimeError('Metadata pagination exceeded bound')
 
-    def vercel(self, resource, method='GET'):
+    def vercel(self, resource, method='GET', *, acknowledgement_only=False):
+        if acknowledgement_only:
+            need(method == 'POST' and resource in {
+                '/v1/projects/' + PROJECT + '/pause',
+                '/v1/projects/' + PROJECT + '/unpause',
+            }, 'Acknowledgement-only handling requires the exact project pause/unpause POST')
         raw = run(['vercel', 'api', resource, '--raw', '--scope', 'chewy-bytes', '--non-interactive', '-X', method],
             env={**os.environ, 'VERCEL_TELEMETRY_DISABLED': '1', 'NO_COLOR': '1'}, timeout=self.read_timeout(60))
-        data = json.loads(raw); return data.get('result', data)
+        if acknowledgement_only:
+            return None  # The separate GET/state assertion below remains authoritative.
+        need(raw.strip(), 'Vercel metadata response is empty')
+        data = json.loads(raw)
+        need(isinstance(data, dict) and data, 'Vercel metadata response must be a nonempty JSON object')
+        result = data.get('result', data)
+        need(isinstance(result, dict) and result, 'Vercel metadata result must be a nonempty JSON object')
+        return result
 
     def checkpoint(self, attached=False):
         zone = self.cf('GET', '/zones/' + ZONE)['result']
@@ -638,7 +650,7 @@ class Owner:
         self.wait_public('https://' + HOST, version=deployed_version, doh=True)
         self.wait_public('https://' + HOST, version=deployed_version)
         final = self.checkpoint(attached=True); preserve_unrelated(before['dns'], final['dns'])
-        self.vercel('/v1/projects/' + PROJECT + '/pause', method='POST')
+        self.vercel('/v1/projects/' + PROJECT + '/pause', method='POST', acknowledgement_only=True)
         project = self.vercel('/v9/projects/' + PROJECT)
         need(project.get('paused') is True, 'Vercel pause was not read back')
         self.record('vercel-paused-after-acceptance-no-deletion')
@@ -678,7 +690,7 @@ class Owner:
         project = self.vercel('/v9/projects/' + PROJECT)
         need(project.get('id') == PROJECT and project.get('name') == WORKER and project.get('accountId') == TEAM, 'Rollback Vercel identity differs')
         if project.get('paused') is True:
-            self.vercel('/v1/projects/' + PROJECT + '/unpause', method='POST')
+            self.vercel('/v1/projects/' + PROJECT + '/unpause', method='POST', acknowledgement_only=True)
         need(self.vercel('/v9/projects/' + PROJECT).get('paused') is not True, 'Vercel unpause not read back')
         subdomain = self.cf('GET', f'/accounts/{ACCOUNT}/workers/scripts/{WORKER}/subdomain')['result']
         need(subdomain.get('enabled') is True, 'workers.dev was not preserved')
