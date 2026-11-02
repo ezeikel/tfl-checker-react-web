@@ -49,6 +49,10 @@ class PublicNotReady(RuntimeError):
         self.metadata = metadata
 
 
+class FontawesomeSelectionRequired(RuntimeError):
+    pass
+
+
 def need(ok, message):
     if not ok:
         raise RuntimeError(message)
@@ -153,6 +157,39 @@ def updated_item(original, values):
     return item
 
 
+def fontawesome_reference(item, selection=None):
+    """Use the exact named npm field or an explicit owner-selected existing field."""
+    need(item.get('title') == 'Fontawesome' and item.get('vault', {}).get('name') == VAULT
+         and re.fullmatch(r'[A-Za-z0-9_-]+', item.get('id', '')) is not None, 'Shared Fontawesome item/vault identity differs')
+    fields = item.get('fields', [])
+    need(isinstance(fields, list), 'Shared Fontawesome fields unavailable')
+    sections = {x['id']: x.get('label') for x in item.get('sections', [])}
+    if selection is None:
+        matches = [x for x in fields if x.get('label') == 'FONTAWESOME_NPM_AUTH_TOKEN']
+        if len(matches) != 1 or matches[0].get('type') != 'CONCEALED' or not isinstance(matches[0].get('value'), str) or not matches[0]['value'].strip():
+            metadata = [{'id': x.get('id'), 'label': x.get('label'), 'sectionId': (x.get('section') or {}).get('id')} for x in fields]
+            raise FontawesomeSelectionRequired('No unambiguous exact FONTAWESOME_NPM_AUTH_TOKEN field; select the existing npm-token field. Labels/IDs only: ' + json.dumps(metadata))
+    else:
+        need(isinstance(selection, str) and selection.strip(), 'An existing npm-token field ID or reference is required')
+        if selection.startswith('op://'):
+            prefix = 'op://Chewy Bytes/Fontawesome/'
+            need(selection.startswith(prefix), 'Explicit reference must use the existing shared Fontawesome item')
+            parts = selection[len(prefix):].split('/')
+        else:
+            parts = [selection]
+        need(len(parts) in {1, 2} and all(parts), 'Unexpected shared-field reference shape')
+        matches = [x for x in fields if parts[-1] in {x.get('id'), x.get('label')}]
+        if len(parts) == 2:
+            matches = [x for x in matches if parts[0] in {(x.get('section') or {}).get('id'), sections.get((x.get('section') or {}).get('id'))}]
+        need(len(matches) == 1, 'Explicit shared npm-token field is missing or ambiguous')
+    field = matches[0]
+    need(field.get('type') == 'CONCEALED' and isinstance(field.get('value'), str) and field['value'].strip(), 'Selected shared npm-token field is not a nonempty concealed credential')
+    section = (field.get('section') or {}).get('id')
+    identifiers = [item['id'], *([section] if section else []), field.get('id')]
+    need(all(isinstance(x, str) and re.fullmatch(r'[A-Za-z0-9_-]+', x) for x in identifiers), 'Shared field identifiers are not valid reference segments')
+    return 'op://' + VAULT + '/' + '/'.join(identifiers)
+
+
 class Owner:
     def __init__(self, sha, directory):
         self.sha = sha
@@ -224,7 +261,19 @@ class Owner:
                 'production': {'id': production.get('id'), 'readyState': production.get('readyState'), 'sourceSha': production.get('meta', {}).get('githubCommitSha')}}}
 
     def save_inputs(self, fontawesome_ref):
-        need(fontawesome_ref.startswith('op://Chewy Bytes/Fontawesome/'), 'Use the existing shared Fontawesome item reference')
+        if fontawesome_ref is not None:
+            need(fontawesome_ref.startswith('op://Chewy Bytes/Fontawesome/'), 'Use the existing shared Fontawesome item reference')
+        shared = json.loads(self.op('item', 'get', 'Fontawesome', '--vault', VAULT))
+        try:
+            resolved_reference = fontawesome_reference(shared, fontawesome_ref)
+        except FontawesomeSelectionRequired as error:
+            print(str(error), flush=True)  # Existing labels/IDs only, never field values.
+            selected = input('Enter the existing shared npm-token field ID or op://Chewy Bytes/Fontawesome/... reference: ').strip()
+            resolved_reference = fontawesome_reference(shared, selected)
+        fontawesome = run(['op', 'read', resolved_reference, '--account', OP_ACCOUNT], timeout=1800).decode().strip()
+        need(fontawesome, 'Shared registry credential is empty')
+        REDACT_VALUES.add(fontawesome)
+        del shared
         envs = self.vercel('/v9/projects/' + PROJECT + '/env')['envs']
         values = {}
         for key in INPUTS:
@@ -258,9 +307,6 @@ class Owner:
             need(len(fields) == 1 and fields[0].get('value') == values[key], f'Vault readback differs: {key}')
         self.record('vault-public-inputs-saved-and-read-verified', itemId=saved['id'], names=list(INPUTS))
         # Reads return directly into memory; no shared credential is duplicated into the app item.
-        fontawesome = run(['op', 'read', fontawesome_ref, '--account', OP_ACCOUNT], timeout=1800).decode().strip()
-        need(fontawesome, 'Shared registry credential is empty')
-        REDACT_VALUES.add(fontawesome)
         source_gate(self.sha, OLD_MAIN)
         for key, value in values.items(): run(['gh', 'variable', 'set', key, '--repo', REPOSITORY], input=value.encode())
         run(['gh', 'variable', 'set', 'CLOUDFLARE_ACCOUNT_ID', '--repo', REPOSITORY], input=ACCOUNT.encode())
@@ -522,7 +568,7 @@ def main(argv=None):
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument('--execute', metavar='FULL_SHA')
     action.add_argument('--rollback', metavar='PRIVATE_RECEIPT')
-    parser.add_argument('--fontawesome-ref', help='Exact existing shared Fontawesome field op:// reference; no value in argv')
+    parser.add_argument('--fontawesome-ref', help='Optional explicit existing shared Fontawesome field op:// reference; no value in argv')
     args = parser.parse_args(argv)
     need(sys.stdin.isatty() and sys.stdout.isatty(), 'Run this owner helper in a real Terminal, not an agent or a pipe')
     need(os.geteuid() != 0, 'Run as the signed-in owner, not root')
@@ -534,7 +580,6 @@ def main(argv=None):
     lock_fd = os.open(home / '.react-tfl-completion.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
     fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     if args.execute:
-        need(args.fontawesome_ref, 'A shared Fontawesome field reference is required')
         audit = tempfile.mkdtemp(prefix='react-tfl-', dir=home)
         owner = Owner(args.execute, audit)
     else:

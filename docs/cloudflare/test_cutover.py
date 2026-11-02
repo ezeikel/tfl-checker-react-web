@@ -199,6 +199,37 @@ class GuardControls(unittest.TestCase):
         with patch.object(owner, 'current_version', return_value='pinned'), patch.object(owner, 'checkpoint', return_value=checkpoint), self.assertRaisesRegex(RuntimeError, 'identity changed'):
             owner.public_readiness_guard('https://' + cutover.HOST, 'pinned')
 
+    def test_shared_npm_reference_uses_exact_named_field_and_verified_item_section_ids(self):
+        item = {'title': 'Fontawesome', 'id': 'shared-item-id', 'vault': {'name': cutover.VAULT},
+                'sections': [{'id': 'env-id', 'label': 'env'}], 'fields': [
+                    {'id': 'npm-token-id', 'label': 'FONTAWESOME_NPM_AUTH_TOKEN', 'type': 'CONCEALED', 'value': 'invented-token', 'section': {'id': 'env-id'}},
+                    {'id': 'login', 'label': 'password', 'type': 'CONCEALED', 'value': 'invented-login'}]}
+        before = copy.deepcopy(item)
+        expected = 'op://Chewy Bytes/shared-item-id/env-id/npm-token-id'
+        self.assertEqual(cutover.fontawesome_reference(item), expected)
+        self.assertEqual(cutover.fontawesome_reference(item, 'npm-token-id'), expected)
+        self.assertEqual(cutover.fontawesome_reference(item, 'op://Chewy Bytes/Fontawesome/env/FONTAWESOME_NPM_AUTH_TOKEN'), expected)
+        self.assertEqual(item, before)
+        for selection in ['op://Other Vault/Fontawesome/env/npm-token-id', 'op://Chewy Bytes/Another Item/npm-token-id', 'missing', 'op://Chewy Bytes/Fontawesome/wrong-section/npm-token-id']:
+            with self.subTest(selection=selection), self.assertRaises(RuntimeError): cutover.fontawesome_reference(item, selection)
+        for changes in [{'title': 'other'}, {'id': ''}, {'vault': {'name': 'other'}}]:
+            with self.subTest(changes=changes), self.assertRaises(RuntimeError): cutover.fontawesome_reference({**item, **changes})
+
+    def test_generic_login_password_missing_empty_or_ambiguous_named_field_never_autoselects(self):
+        base = {'title': 'Fontawesome', 'id': 'shared-item-id', 'vault': {'name': cutover.VAULT}, 'fields': []}
+        named = {'id': 'npm', 'label': 'FONTAWESOME_NPM_AUTH_TOKEN', 'type': 'CONCEALED', 'value': 'invented-npm-secret'}
+        generic = {'id': 'password', 'label': 'password', 'type': 'CONCEALED', 'value': 'invented-login-secret'}
+        for fields in [[], [generic], [{**named, 'value': ''}], [named, {**named, 'id': 'npm2'}], [{**named, 'type': 'STRING'}]]:
+            with self.subTest(fields=[x['id'] for x in fields]), self.assertRaises(cutover.FontawesomeSelectionRequired) as error:
+                cutover.fontawesome_reference({**base, 'fields': fields})
+            self.assertNotIn('invented-login-secret', str(error.exception))
+            self.assertNotIn('invented-npm-secret', str(error.exception))
+        # Explicit owner selection can identify a differently named existing npm field;
+        # generic concealment/uniqueness alone never chooses it.
+        self.assertEqual(cutover.fontawesome_reference({**base, 'fields': [generic]}, 'password'), 'op://Chewy Bytes/shared-item-id/password')
+        with self.assertRaises(RuntimeError):
+            cutover.fontawesome_reference({**base, 'fields': [{**named, 'value': ''}]}, 'npm')
+
 
 if __name__ == '__main__':
     unittest.main()

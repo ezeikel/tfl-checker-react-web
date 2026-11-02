@@ -52,15 +52,20 @@ No new tracking/site is introduced and an absent optional beacon does not block 
 ## Owner-only execution
 
 After independent review, normal local gates and the completed branch push, the final command
-must pin the **full reviewed SHA**. The exact existing Fontawesome field reference must first be
-identified from its shared vault item; do not invent a field or copy that credential into the app.
+must pin the **full reviewed SHA**. The helper reads the existing shared Fontawesome item in the
+owner's Terminal. It resolves only an exact nonempty concealed `FONTAWESOME_NPM_AUTH_TOKEN`
+field automatically, using verified item/section/field IDs. Otherwise it shows labels/IDs only
+and asks the owner to select the existing npm-token field. A generic login password is never
+selected merely because it is the only concealed field. Do not invent a field or copy that
+credential into the app. An already known existing reference can be supplied with the optional
+`--fontawesome-ref 'op://Chewy Bytes/Fontawesome/...'` argument.
 
 ```sh
-bash docs/cloudflare/cutover.sh --execute FULL_REVIEWED_SHA --fontawesome-ref 'EXACT_EXISTING_OP_REFERENCE'
+bash docs/cloudflare/cutover.sh --execute FULL_REVIEWED_SHA
 ```
 
 This is a command template, not a ready handoff. The parent migration record will contain the
-concrete SHA/reference once checked. Running the pinned command is the owner's authorization;
+concrete SHA once checked. Running the pinned command is the owner's authorization;
 there is no additional cutover approval phrase. Run in a real Terminal for 1Password and the
 functional attestation. The helper refuses agent/pipe execution. Do not execute it while
 the source/lockfile/browser checks are still draft.
