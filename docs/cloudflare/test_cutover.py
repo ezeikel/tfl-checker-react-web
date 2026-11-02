@@ -6,6 +6,7 @@ from unittest.mock import patch
 import json
 import tempfile
 import subprocess
+import base64
 
 spec = importlib.util.spec_from_file_location('tfl_cutover', Path(__file__).with_name('cutover.py'))
 cutover = importlib.util.module_from_spec(spec)
@@ -229,6 +230,55 @@ class GuardControls(unittest.TestCase):
         self.assertEqual(cutover.fontawesome_reference({**base, 'fields': [generic]}, 'password'), 'op://Chewy Bytes/shared-item-id/password')
         with self.assertRaises(RuntimeError):
             cutover.fontawesome_reference({**base, 'fields': [{**named, 'value': ''}]}, 'npm')
+
+    def test_dedicated_plaintext_response_is_bound_to_exact_listed_production_variable(self):
+        key = cutover.INPUTS[1]
+        listed = {'id': 'pinned-variable', 'key': key, 'target': ['production', 'preview', 'development'], 'type': 'encrypted', 'gitBranch': None, 'value': 'list-value-is-never-used'}
+        dedicated = {**listed, 'value': 'invented-readable-app-id'}
+        self.assertEqual(cutover.readable_production_value(key, listed, dedicated), dedicated['value'])
+        for changed in [{'id': 'another-variable'}, {'key': 'OTHER_KEY'}, {'target': ['preview']}, {'target': ['production']},
+                        {'gitBranch': 'other-branch'}, {'type': 'sensitive'}, {'value': ''}, {'value': None}]:
+            with self.subTest(changed=changed), self.assertRaises(RuntimeError):
+                cutover.readable_production_value(key, listed, {**dedicated, **changed})
+        for changed in [{'id': ''}, {'key': 'OTHER_KEY'}, {'target': ['preview']}, {'gitBranch': 'branch'}, {'type': 'sensitive'}]:
+            with self.subTest(listed=changed), self.assertRaises(RuntimeError):
+                cutover.readable_production_value(key, {**listed, **changed}, dedicated)
+
+    def test_json_and_base64_envelopes_are_rejected_without_value_in_diagnostics(self):
+        row = {'id': 'pinned-variable', 'key': cutover.INPUTS[2], 'target': ['production'], 'type': 'encrypted'}
+        envelope = json.dumps({'v': 1, 'c': 'invented-ciphertext', 'k': 'invented-wrapped-key', 'extra': True})
+        values = [envelope, base64.b64encode(envelope.encode()).decode(), base64.urlsafe_b64encode(envelope.encode()).decode().rstrip('=')]
+        for value in values:
+            with self.subTest(kind='JSON' if value == envelope else 'base64'), self.assertRaisesRegex(RuntimeError, 'envelope refused') as error:
+                cutover.readable_production_value(row['key'], row, {**row, 'value': value})
+            self.assertNotIn(value, str(error.exception))
+            self.assertNotIn('invented-ciphertext', str(error.exception))
+        self.assertFalse(cutover.encrypted_envelope('plain-readable-key'))
+        self.assertFalse(cutover.encrypted_envelope(json.dumps({'v': 1, 'c': 'ordinary JSON without k'})))
+
+    def test_all_four_dedicated_inputs_validate_before_any_vault_or_github_write(self):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        shared = {'title': 'Fontawesome', 'id': 'shared-item', 'vault': {'name': cutover.VAULT},
+                  'fields': [{'id': 'npm', 'label': 'FONTAWESOME_NPM_AUTH_TOKEN', 'type': 'CONCEALED', 'value': 'invented-registry-token'}]}
+        rows = [{'id': 'id-' + key, 'key': key, 'target': ['production'], 'type': 'encrypted'} for key in cutover.INPUTS]
+        fetched = []
+        def vercel(resource):
+            if resource.endswith('/env'): return {'envs': rows}
+            row = next(x for x in rows if resource.endswith('/' + x['id']))
+            fetched.append(row['key'])
+            value = 'https://api.tfl.gov.uk' if row['key'] == cutover.INPUTS[0] else 'invented-readable-value'
+            if row['key'] == cutover.INPUTS[-1]: value = json.dumps({'v': 1, 'c': 'invented-cipher', 'k': 'invented-wrap'})
+            return {**row, 'value': value}
+        def op(*args, **kwargs):
+            self.assertEqual(args, ('item', 'get', 'Fontawesome', '--vault', cutover.VAULT))
+            return json.dumps(shared).encode()
+        def run(args, **kwargs):
+            self.assertEqual(args[:2], ['op', 'read'])
+            return b'invented-registry-token'
+        with patch.object(owner, 'op', side_effect=op), patch.object(owner, 'vercel', side_effect=vercel), patch.object(cutover, 'run', side_effect=run):
+            with self.assertRaisesRegex(RuntimeError, 'envelope refused'):
+                owner.save_inputs(None)
+        self.assertEqual(fetched, list(cutover.INPUTS))
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ Operational commands require a real Terminal and the exact reviewed source SHA.
 No database, mail DNS, other hostname, key rotation or deletion is in scope.
 """
 import argparse
+import base64
 import copy
 import datetime as dt
 import fcntl
@@ -190,6 +191,42 @@ def fontawesome_reference(item, selection=None):
     return 'op://' + VAULT + '/' + '/'.join(identifiers)
 
 
+def encrypted_envelope(value):
+    if not isinstance(value, str):
+        return False
+    candidates = [value]
+    try:
+        normalized = value.strip().replace('-', '+').replace('_', '/')
+        candidates.append(base64.b64decode(normalized + '=' * (-len(normalized) % 4), validate=True).decode('utf-8'))
+    except (ValueError, UnicodeError):
+        pass
+    for candidate in candidates:
+        try:
+            decoded = json.loads(candidate)
+        except (ValueError, TypeError):
+            continue
+        if isinstance(decoded, dict) and {'v', 'c', 'k'} <= decoded.keys():
+            return True
+    return False
+
+
+def readable_production_value(key, listed, dedicated):
+    """Validate dedicated response identity before any public-input write."""
+    need(key in INPUTS and isinstance(listed, dict) and isinstance(dedicated, dict), 'Unexpected production variable response')
+    for row in (listed, dedicated):
+        targets = row.get('target')
+        need(isinstance(targets, list) and all(isinstance(x, str) for x in targets)
+             and len(set(targets)) == len(targets) and 'production' in targets
+             and not row.get('gitBranch') and row.get('key') == key and row.get('type') == 'encrypted',
+             'Production variable key/environment/type differs: ' + key)
+    need(isinstance(listed.get('id'), str) and listed['id'] and dedicated.get('id') == listed['id']
+         and set(dedicated['target']) == set(listed['target']), 'Dedicated variable identity/environment differs: ' + key)
+    value = dedicated.get('value')
+    need(isinstance(value, str) and value.strip(), 'Unreadable production input: ' + key)
+    need(not encrypted_envelope(value), 'Encrypted production envelope refused: ' + key)
+    return value
+
+
 class Owner:
     def __init__(self, sha, directory):
         self.sha = sha
@@ -279,9 +316,8 @@ class Owner:
         for key in INPUTS:
             matches = [x for x in envs if x.get('key') == key and 'production' in x.get('target', []) and not x.get('gitBranch')]
             need(len(matches) == 1 and matches[0].get('type') == 'encrypted', f'Exact readable production input unavailable: {key}')
-            value = self.vercel(f'/v1/projects/{PROJECT}/env/' + matches[0]['id']).get('value')
-            need(isinstance(value, str) and value.strip(), f'Unreadable production input: {key}')
-            values[key] = value
+            dedicated = self.vercel(f'/v1/projects/{PROJECT}/env/' + matches[0]['id'])
+            values[key] = readable_production_value(key, matches[0], dedicated)
         REDACT_VALUES.update(values.values())
         source_gate(self.sha, OLD_MAIN)
         input_environment = {key: value for key, value in os.environ.items() if key in {'PATH', 'HOME', 'TMPDIR', 'LANG', 'LC_ALL'}}

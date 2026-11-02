@@ -79,6 +79,10 @@ The helper:
    the canonical `TFL Checker Web Prod` item, preserving unrelated fields and sections. Shared
    Cloudflare and Fontawesome credentials stay in their existing items. Values never reach argv,
    terminal output or a committed file. `.env.production.op` contains references only.
+   Each dedicated env response must match its pinned list-row ID, key, exact target set,
+   production scope, encrypted type and absence of a branch override. JSON/base64 encryption
+   envelopes containing `v`, `c`, `k` are refused. All four values validate before any vault or
+   GitHub write, and the artifact input guard independently rejects those envelopes.
 3. Sets/read-verifies GitHub public inputs, uploads the two shared GitHub secret values by stdin,
    and keeps the deploy gate false. The four public build values are intentionally browser-bound;
    the registry and Cloudflare credentials are not Worker runtime bindings.

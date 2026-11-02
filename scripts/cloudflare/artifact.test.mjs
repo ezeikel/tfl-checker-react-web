@@ -16,6 +16,13 @@ test('production inputs are complete, explicit and pinned to the real TfL origin
   for (const url of ['http://api.tfl.gov.uk', 'https://wrong.invalid', 'https://api.tfl.gov.uk/path', 'https://user:password@api.tfl.gov.uk'])
     assert.throws(() => validateInputs({ ...env, VITE_TFL_API_URL: url }, 'production'));
 });
+test('raw JSON and base64 encrypted envelopes never become build inputs', () => {
+  const envelope = JSON.stringify({ v: 1, c: 'invented-encrypted-bytes', k: 'invented-encrypted-key', extra: true });
+  for (const value of [envelope, Buffer.from(envelope).toString('base64'), Buffer.from(envelope).toString('base64url')]) {
+    for (const key of INPUTS) assert.throws(() => validateInputs({ ...env, [key]: value }, 'production'), /Encrypted build input envelope refused/);
+  }
+  validateInputs(env, 'production');
+});
 test('immutable artifact refuses modified, missing, extra or symlinked files and synthetic/source drift', () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'tfl-artifact-control-'));
   try {

@@ -10,11 +10,23 @@ export const INPUTS = ['VITE_TFL_API_URL', 'VITE_TFL_APP_ID', 'VITE_TFL_APP_KEY'
 const hash = value => createHash('sha256').update(value).digest('hex');
 const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 
+export function encryptedEnvelope(value) {
+  const candidates = [value];
+  if (/^[A-Za-z0-9+/_=-]+$/.test(value.trim())) candidates.push(Buffer.from(value.trim().replaceAll('-', '+').replaceAll('_', '/'), 'base64').toString('utf8'));
+  return candidates.some(candidate => {
+    try {
+      const parsed = JSON.parse(candidate);
+      return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed) && ['v', 'c', 'k'].every(key => Object.hasOwn(parsed, key));
+    } catch { return false; }
+  });
+}
+
 export function validateInputs(env, mode) {
   assert(['production', 'synthetic'].includes(mode), 'Explicit production or synthetic build mode required');
   for (const key of INPUTS) {
     assert(typeof env[key] === 'string' && env[key].trim(), `Missing build input: ${key}`);
     assert(!/^(undefined|null|%VITE_.*%)$/.test(env[key]), `Invalid build input: ${key}`);
+    assert(!encryptedEnvelope(env[key]), `Encrypted build input envelope refused: ${key}`);
     if (mode === 'production') assert(!env[key].startsWith('synthetic-'), `Synthetic production input: ${key}`);
   }
   const url = new URL(env.VITE_TFL_API_URL);
