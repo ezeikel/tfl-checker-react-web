@@ -77,7 +77,7 @@ class GuardControls(unittest.TestCase):
 
     def test_agent_or_pipe_refusal_happens_before_any_op_or_provider_command(self):
         with patch.object(cutover.sys.stdin, 'isatty', return_value=False), patch.object(cutover, 'run', side_effect=AssertionError('must not run')):
-            with self.assertRaisesRegex(RuntimeError, 'real Terminal'):
+            with self.assertRaisesRegex(RuntimeError, 'interactive Terminal/PTY'):
                 cutover.main(['--execute', 'a' * 40, '--fontawesome-ref', 'op://Chewy Bytes/Fontawesome/invented-field'])
 
     def test_source_pins_refuse_drift_dirty_wrong_branch_remote_or_unpublished_work(self):
@@ -258,7 +258,7 @@ class GuardControls(unittest.TestCase):
 
     def test_all_four_dedicated_inputs_validate_before_any_vault_or_github_write(self):
         owner = cutover.Owner('a' * 40, '/unused-no-io')
-        shared = {'title': 'Fontawesome', 'id': 'shared-item', 'vault': {'name': cutover.VAULT},
+        shared = {'title': 'Fontawesome', 'id': cutover.FONTAWESOME_ITEM_ID, 'vault': {'name': cutover.VAULT},
                   'fields': [{'id': 'npm', 'label': 'FONTAWESOME_NPM_AUTH_TOKEN', 'type': 'CONCEALED', 'value': 'invented-registry-token'}]}
         rows = [{'id': 'id-' + key, 'key': key, 'target': ['production'], 'type': 'encrypted'} for key in cutover.INPUTS]
         fetched = []
@@ -270,7 +270,9 @@ class GuardControls(unittest.TestCase):
             if row['key'] == cutover.INPUTS[-1]: value = json.dumps({'v': 1, 'c': 'invented-cipher', 'k': 'invented-wrap'})
             return {**row, 'value': value}
         def op(*args, **kwargs):
-            self.assertEqual(args, ('item', 'get', 'Fontawesome', '--vault', cutover.VAULT))
+            if args == ('item', 'list', '--vault', cutover.VAULT):
+                return json.dumps([{'title': 'Fontawesome', 'id': cutover.FONTAWESOME_ITEM_ID}]).encode()
+            self.assertEqual(args, ('item', 'get', cutover.FONTAWESOME_ITEM_ID, '--vault', cutover.VAULT))
             return json.dumps(shared).encode()
         def run(args, **kwargs):
             self.assertEqual(args[:2], ['op', 'read'])
@@ -279,6 +281,103 @@ class GuardControls(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'envelope refused'):
                 owner.save_inputs(None)
         self.assertEqual(fetched, list(cutover.INPUTS))
+
+    def test_structured_env_note_extracts_only_the_exact_named_literal_without_editing(self):
+        item = {'id': cutover.FONTAWESOME_ITEM_ID, 'title': 'Fontawesome', 'category': 'SECURE_NOTE', 'vault': {'name': cutover.VAULT},
+                'fields': [{'id': 'notesPlain', 'label': 'notesPlain', 'type': 'STRING', 'value': ''}]}
+        for text in ['FONTAWESOME_NPM_AUTH_TOKEN=literal-registry-key', 'export FONTAWESOME_NPM_AUTH_TOKEN="literal-registry-key"',
+                     "# retained note\nOTHER_KEY=unchanged\nFONTAWESOME_NPM_AUTH_TOKEN='literal-registry-key'\n"]:
+            candidate = copy.deepcopy(item);candidate['fields'][0]['value'] = text;before = copy.deepcopy(candidate)
+            self.assertEqual(cutover.fontawesome_env_note(candidate), 'literal-registry-key')
+            self.assertEqual(candidate, before)
+            self.assertNotEqual(cutover.fontawesome_env_note(candidate), text)
+        bad = ['literal-registry-key', '', 'FONTAWESOME_NPM_AUTH_TOKEN=', 'FONTAWESOME_NPM_AUTH_TOKEN="unterminated',
+               'FONTAWESOME_NPM_AUTH_TOKEN="value\' ', 'FONTAWESOME_NPM_AUTH_TOKEN=${OTHER_KEY}',
+               'FONTAWESOME_NPM_AUTH_TOKEN=$(command)', 'FONTAWESOME_NPM_AUTH_TOKEN=`command`',
+               'FONTAWESOME_NPM_AUTH_TOKEN="key" # ambiguous comment', 'FONTAWESOME_NPM_AUTH_TOKEN=replace-me',
+               'FONTAWESOME_NPM_AUTH_TOKEN=null', 'FONTAWESOME_NPM_AUTH_TOKEN=synthetic-key',
+               'FONTAWESOME_NPM_AUTH_TOKEN=one\nFONTAWESOME_NPM_AUTH_TOKEN=two',
+               'FONTAWESOME_NPM_AUTH_TOKEN_SUFFIX=wrong', '{"FONTAWESOME_NPM_AUTH_TOKEN":"not-env-syntax"}']
+        for text in bad:
+            candidate = copy.deepcopy(item);candidate['fields'][0]['value'] = text
+            with self.subTest(case=bad.index(text)), self.assertRaises(RuntimeError) as error:
+                cutover.fontawesome_env_note(candidate)
+            if text: self.assertNotIn(text, str(error.exception))
+        for change in [{'id': 'other'}, {'title': 'other'}, {'category': 'LOGIN'}, {'vault': {'name': 'other'}}]:
+            with self.subTest(change=change), self.assertRaises(RuntimeError): cutover.fontawesome_env_note({**item, **change})
+        duplicate = copy.deepcopy(item);duplicate['fields'] *= 2
+        with self.assertRaises(RuntimeError): cutover.fontawesome_env_note(duplicate)
+
+    def test_shared_item_duplicate_or_wrong_identity_stops_before_any_value_read_or_write(self):
+        owner = cutover.Owner('a' * 40, '/unused-no-io')
+        for rows in [[], [{'title': 'Fontawesome', 'id': 'wrong'}], [{'title': 'Fontawesome', 'id': cutover.FONTAWESOME_ITEM_ID}] * 2]:
+            with self.subTest(rows=rows), patch.object(owner, 'op', return_value=json.dumps(rows).encode()) as op, \
+                 patch.object(owner, 'vercel', side_effect=AssertionError('must not reach provider inputs')), \
+                 patch.object(cutover, 'run', side_effect=AssertionError('must not read a credential')):
+                with self.assertRaises(RuntimeError): owner.save_inputs(None)
+                self.assertEqual(op.call_count, 1)
+
+    def test_note_path_uses_parsed_credential_not_the_note_or_op_read_and_never_mutates_shared_item(self):
+        with tempfile.TemporaryDirectory() as directory:
+            owner = cutover.Owner('a' * 40, directory)
+            token = 'literal-note-registry-key'
+            shared = {'id': cutover.FONTAWESOME_ITEM_ID, 'title': 'Fontawesome', 'category': 'SECURE_NOTE', 'vault': {'name': cutover.VAULT},
+                      'fields': [{'id': 'notesPlain', 'type': 'STRING', 'value': 'OTHER_KEY=retained\nFONTAWESOME_NPM_AUTH_TOKEN="' + token + '"\n'}]}
+            before = copy.deepcopy(shared)
+            rows = [{'id': key, 'key': key, 'type': 'encrypted', 'target': ['production']} for key in cutover.INPUTS]
+            def op(*args, **kwargs):
+                if args == ('item', 'list', '--vault', cutover.VAULT): return json.dumps([{'id': cutover.FONTAWESOME_ITEM_ID, 'title': 'Fontawesome'}]).encode()
+                self.assertEqual(args, ('item', 'get', cutover.FONTAWESOME_ITEM_ID, '--vault', cutover.VAULT))
+                return json.dumps(shared).encode()
+            def provider(resource):
+                if resource.endswith('/env'): return {'envs': rows}
+                row = next(x for x in rows if resource.endswith('/' + x['id']))
+                return {**row, 'value': json.dumps({'v': 1, 'c': 'cipher', 'k': 'wrap'})}
+            with patch.object(owner, 'op', side_effect=op), patch.object(owner, 'vercel', side_effect=provider), \
+                 patch.object(cutover, 'run', side_effect=AssertionError('note must not be sent to op read or any mutation')):
+                with self.assertRaisesRegex(RuntimeError, 'envelope refused'): owner.save_inputs(None)
+            self.assertEqual(shared, before)
+            self.assertEqual(owner.receipt['steps'][-1]['step'], 'shared-registry-literal-env-note-read')
+            serialized = json.dumps(owner.receipt)
+            self.assertNotIn(token, serialized)
+            self.assertNotIn('OTHER_KEY=retained', serialized)
+            self.assertFalse(owner.receipt['steps'][-1]['sharedItemChanged'])
+
+    def test_real_browser_receipt_cannot_claim_mock_human_stale_wrong_source_or_incomplete_acceptance(self):
+        now = cutover.dt.datetime(2026, 11, 2, 2, 0, tzinfo=cutover.dt.timezone.utc)
+        evidence = {'schema': 1, 'sourceSha': 'a' * 40, 'origin': 'https://' + cutover.HOST, 'operator': 'agent',
+                    'humanObserved': False, 'mockedProviderCalls': False, 'checkedAt': '2026-11-02T01:59:00Z',
+                    'checks': {x: True for x in ['actualLineStatus', 'placesSelection', 'journeyResults', 'journeyMap']}}
+        result = cutover.verify_agent_browser_evidence(evidence, 'a' * 40, '2026-11-02T01:55:00Z', checked_now=now)
+        self.assertFalse(result['humanObserved'])
+        for changed in [{'sourceSha': 'b' * 40}, {'origin': 'https://wrong.invalid'}, {'operator': 'owner'}, {'humanObserved': True},
+                        {'mockedProviderCalls': True}, {'checkedAt': '2026-11-02T01:54:00Z'}, {'checkedAt': '2026-11-02T02:01:00Z'},
+                        {'checkedAt': '2026-11-02T01:59:00'}, {'checkedAt': 'invalid'}, {'checks': {'actualLineStatus': True}},
+                        {'checks': {**evidence['checks'], 'journeyMap': False}}]:
+            with self.subTest(changed=changed), self.assertRaises(RuntimeError):
+                cutover.verify_agent_browser_evidence({**evidence, **changed}, 'a' * 40, '2026-11-02T01:55:00Z', checked_now=now)
+        with self.assertRaises(RuntimeError):
+            cutover.verify_agent_browser_evidence({**evidence, 'checkedAt': '2026-11-02T01:40:00Z'}, 'a' * 40, '2026-11-02T01:30:00Z', checked_now=now)
+
+    def test_agent_acceptance_requires_private_actual_receipt_and_records_agent_scope(self):
+        with tempfile.TemporaryDirectory() as directory:
+            owner = cutover.Owner('a' * 40, directory, operator='agent')
+            before = cutover.dt.datetime.now(cutover.dt.timezone.utc) - cutover.dt.timedelta(seconds=2)
+            owner.receipt['steps'] = [{'step': 'exact-host-attached', 'at': before.isoformat()}]
+            evidence = {'schema': 1, 'sourceSha': 'a' * 40, 'origin': 'https://' + cutover.HOST, 'operator': 'agent',
+                        'humanObserved': False, 'mockedProviderCalls': False, 'checkedAt': cutover.now(),
+                        'checks': {x: True for x in ['actualLineStatus', 'placesSelection', 'journeyResults', 'journeyMap']}}
+            file = Path(directory) / 'browser-acceptance.private.json'
+            file.write_text(json.dumps(evidence));file.chmod(0o600)
+            with patch('builtins.input', return_value='STATUS AND JOURNEY VERIFIED'):
+                owner.accept_real_browser()
+            self.assertEqual(owner.receipt['steps'][-1]['step'], 'agent-observed-real-browser-status-journey-map-acceptance')
+            self.assertFalse(owner.receipt['steps'][-1]['humanObserved'])
+            file.chmod(0o644)
+            with patch('builtins.input', return_value='STATUS AND JOURNEY VERIFIED'), self.assertRaisesRegex(RuntimeError, 'private regular'):
+                owner.accept_real_browser()
+            with patch('builtins.input', return_value='STATUS AND JOURNEY ACCEPTED'), self.assertRaisesRegex(RuntimeError, 'verification not supplied'):
+                owner.accept_real_browser()
 
 
 if __name__ == '__main__':

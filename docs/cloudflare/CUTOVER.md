@@ -49,7 +49,7 @@ bytes for every asset and SPA path, rather than accepting headers alone.
 Optional Cloudflare analytics stays disabled, exactly as the staged Worker/configuration had it.
 No new tracking/site is introduced and an absent optional beacon does not block this move.
 
-## Owner-only execution
+## Interactive execution
 
 After independent review, normal local gates and the completed branch push, the final command
 must pin the **full reviewed SHA**. The helper reads the existing shared Fontawesome item in the
@@ -60,15 +60,34 @@ selected merely because it is the only concealed field. Do not invent a field or
 credential into the app. An already known existing reference can be supplied with the optional
 `--fontawesome-ref 'op://Chewy Bytes/Fontawesome/...'` argument.
 
+The verified existing Fontawesome Secure Note is `jwxuc5b4lk5i3exf443ee2pyci` in Chewy Bytes.
+Its unique `notesPlain` is an env document, not a credential field. Default resolution may
+extract exactly one literal `FONTAWESOME_NPM_AUTH_TOKEN` assignment from that pinned item;
+closed single/double quotes are allowed, interpolation/evaluation, duplicates, empty values,
+placeholders and ambiguous syntax are refused. The whole note is never used as a token and
+the shared item is not edited. Exact-item duplicates are checked before reading it.
+
 ```sh
 bash docs/cloudflare/cutover.sh --execute FULL_REVIEWED_SHA
 ```
 
 This is a command template, not a ready handoff. The parent migration record will contain the
 concrete SHA once checked. Running the pinned command is the owner's authorization;
-there is no additional cutover approval phrase. Run in a real Terminal for 1Password and the
-functional attestation. The helper refuses agent/pipe execution. Do not execute it while
+there is no additional cutover approval phrase. Use an interactive Terminal for 1Password and
+functional attestation. Pipe execution is refused. Do not execute it while
 the source/lockfile/browser checks are still draft.
+
+The owner explicitly delegated Bash/cutover operation on 2 November. An authorized agent may
+therefore use an owned interactive PTY with `--operator agent`. This mode pauses after host
+attachment and all public readiness checks, then requires actual, unmocked browser observations
+of live status, Places selection, journey results and the map. It reads the private
+`browser-acceptance.private.json` in that attempt directory only after the distinct
+`STATUS AND JOURNEY VERIFIED` prompt. The receipt pins schema/source/origin, an observed time
+after attachment and within fifteen minutes, exactly those four true checks, `operator: agent`,
+`mockedProviderCalls: false`, and `humanObserved: false`. Missing, stale, incomplete, symlinked,
+nonprivate or wrong-source evidence stops before main publication and Vercel pause. Human owner
+mode retains its existing manual acceptance and records human observation separately. Neither
+mode treats the synthetic build smoke as real provider acceptance.
 
 The helper:
 

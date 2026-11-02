@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Owner-only, single-host static cutover. Importing this module performs no I/O.
+"""Interactive operator single-host static cutover. Importing performs no I/O.
 
-Operational commands require a real Terminal and the exact reviewed source SHA.
+Commands require an interactive Terminal/PTY and exact reviewed source SHA.
+Agent mode additionally requires explicit delegation and real-browser evidence.
 No database, mail DNS, other hostname, key rotation or deletion is in scope.
 """
 import argparse
@@ -15,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -38,6 +40,7 @@ INPUTS = ('VITE_TFL_API_URL', 'VITE_TFL_APP_ID', 'VITE_TFL_APP_KEY', 'VITE_GOOGL
 ITEM = 'TFL Checker Web Prod'
 VAULT = 'Chewy Bytes'
 OP_ACCOUNT = 'my.1password.com'
+FONTAWESOME_ITEM_ID = 'jwxuc5b4lk5i3exf443ee2pyci'
 PRIVATE_LOG_DIRECTORY = None
 REDACT_VALUES = set()
 LOG_NUMBER = 0
@@ -191,6 +194,37 @@ def fontawesome_reference(item, selection=None):
     return 'op://' + VAULT + '/' + '/'.join(identifiers)
 
 
+def fontawesome_env_note(item):
+    """Read one exact named literal from the verified existing Secure Note.
+
+    This is an env document, not a token field. Never return the whole note,
+    evaluate shell syntax, or change the shared item.
+    """
+    need(item.get('id') == FONTAWESOME_ITEM_ID and item.get('title') == 'Fontawesome'
+         and item.get('vault', {}).get('name') == VAULT and item.get('category') == 'SECURE_NOTE',
+         'Structured registry note identity differs')
+    fields = [x for x in item.get('fields', []) if x.get('id') == 'notesPlain']
+    need(len(fields) == 1 and fields[0].get('type') == 'STRING' and isinstance(fields[0].get('value'), str),
+         'Structured registry note field is missing or ambiguous')
+    key = 'FONTAWESOME_NPM_AUTH_TOKEN'
+    assignments = []
+    for line in fields[0]['value'].splitlines():
+        match = re.fullmatch(r'\s*(?:export[ \t]+)?' + key + r'[ \t]*=(.*)', line)
+        if match:
+            assignments.append(match[1].strip())
+    need(len(assignments) == 1, 'Structured registry note must have one exact named assignment')
+    value = assignments[0]
+    if value[:1] in {'"', "'"}:
+        need(len(value) >= 2 and value[-1:] == value[:1], 'Structured registry note has unmatched quotes')
+        value = value[1:-1]
+    need(value and re.fullmatch(r'[A-Za-z0-9._~+/=-]+', value) is not None,
+         'Structured registry note requires a nonempty literal credential without interpolation')
+    need(value.lower() not in {'null', 'undefined', 'changeme', 'replace-me', 'your-token', 'placeholder'}
+         and not value.lower().startswith(('synthetic-', 'replace_', 'your_')),
+         'Structured registry note contains a placeholder')
+    return value
+
+
 def encrypted_envelope(value):
     if not isinstance(value, str):
         return False
@@ -227,11 +261,35 @@ def readable_production_value(key, listed, dedicated):
     return value
 
 
+def verify_agent_browser_evidence(evidence, sha, attached_at, *, checked_now=None):
+    """Pin a delegated operator's real-browser receipt without claiming human review."""
+    need(isinstance(evidence, dict) and evidence.get('schema') == 1 and evidence.get('sourceSha') == sha
+         and evidence.get('origin') == 'https://' + HOST and evidence.get('operator') == 'agent'
+         and evidence.get('humanObserved') is False and evidence.get('mockedProviderCalls') is False,
+         'Actual browser evidence identity/scope differs')
+    expected = {'actualLineStatus', 'placesSelection', 'journeyResults', 'journeyMap'}
+    checks = evidence.get('checks')
+    need(isinstance(checks, dict) and set(checks) == expected and all(x is True for x in checks.values()),
+         'Actual status/Places/journey/map evidence is incomplete')
+    try:
+        observed = dt.datetime.fromisoformat(evidence['checkedAt'].replace('Z', '+00:00'))
+        attached = dt.datetime.fromisoformat(attached_at.replace('Z', '+00:00'))
+        current = checked_now or dt.datetime.now(dt.timezone.utc)
+        need(observed.tzinfo is not None and attached.tzinfo is not None
+             and attached <= observed <= current and (current - observed).total_seconds() <= 900,
+             'Actual browser evidence is stale or predates attachment')
+    except (ValueError, KeyError, TypeError):
+        raise RuntimeError('Actual browser evidence timestamp is invalid') from None
+    return {'checkedAt': evidence['checkedAt'], 'checks': sorted(checks), 'operator': 'agent', 'humanObserved': False, 'mockedProviderCalls': False}
+
+
 class Owner:
-    def __init__(self, sha, directory):
+    def __init__(self, sha, directory, *, operator='owner'):
+        need(operator in {'owner', 'agent'}, 'Unexpected operator mode')
         self.sha = sha
         self.directory = Path(directory)
-        self.receipt = {'sourceSha': sha, 'hostname': HOST, 'worker': WORKER, 'account': ACCOUNT, 'zone': ZONE, 'steps': []}
+        self.operator = operator
+        self.receipt = {'sourceSha': sha, 'hostname': HOST, 'worker': WORKER, 'account': ACCOUNT, 'zone': ZONE, 'operator': operator, 'steps': []}
         self.token = None
 
     def record(self, step, **metadata):
@@ -300,14 +358,24 @@ class Owner:
     def save_inputs(self, fontawesome_ref):
         if fontawesome_ref is not None:
             need(fontawesome_ref.startswith('op://Chewy Bytes/Fontawesome/'), 'Use the existing shared Fontawesome item reference')
-        shared = json.loads(self.op('item', 'get', 'Fontawesome', '--vault', VAULT))
+        items = json.loads(self.op('item', 'list', '--vault', VAULT))
+        exact_shared = [x for x in items if x.get('title') == 'Fontawesome']
+        need(len(exact_shared) == 1 and exact_shared[0].get('id') == FONTAWESOME_ITEM_ID,
+             'Shared Fontawesome item is missing, duplicated or different')
+        shared = json.loads(self.op('item', 'get', FONTAWESOME_ITEM_ID, '--vault', VAULT))
+        fontawesome = None
         try:
             resolved_reference = fontawesome_reference(shared, fontawesome_ref)
         except FontawesomeSelectionRequired as error:
-            print(str(error), flush=True)  # Existing labels/IDs only, never field values.
-            selected = input('Enter the existing shared npm-token field ID or op://Chewy Bytes/Fontawesome/... reference: ').strip()
-            resolved_reference = fontawesome_reference(shared, selected)
-        fontawesome = run(['op', 'read', resolved_reference, '--account', OP_ACCOUNT], timeout=1800).decode().strip()
+            if fontawesome_ref is None and shared.get('id') == FONTAWESOME_ITEM_ID and shared.get('category') == 'SECURE_NOTE':
+                fontawesome = fontawesome_env_note(shared)
+                self.record('shared-registry-literal-env-note-read', itemId=FONTAWESOME_ITEM_ID, fieldId='notesPlain', name='FONTAWESOME_NPM_AUTH_TOKEN', sharedItemChanged=False)
+            else:
+                print(str(error), flush=True)  # Existing labels/IDs only, never field values.
+                selected = input('Enter the existing shared npm-token field ID or op://Chewy Bytes/Fontawesome/... reference: ').strip()
+                resolved_reference = fontawesome_reference(shared, selected)
+        if fontawesome is None:
+            fontawesome = run(['op', 'read', resolved_reference, '--account', OP_ACCOUNT], timeout=1800).decode().strip()
         need(fontawesome, 'Shared registry credential is empty')
         REDACT_VALUES.add(fontawesome)
         del shared
@@ -511,6 +579,27 @@ class Owner:
         need(any(step.get('name') == 'Deploy' and step.get('conclusion') == 'success' for job in verified['jobs'] for step in job.get('steps', [])), 'Deploy step did not run')
         self.record('exact-source-production-workflow-passed', runId=selected['databaseId'])
 
+    def accept_real_browser(self):
+        print('Open https://' + HOST + '/ and check actual line status, select a journey and open its map. Mocked checks do not satisfy this acceptance.')
+        if self.operator == 'owner':
+            need(input('After the real client checks pass, type STATUS AND JOURNEY ACCEPTED: ') == 'STATUS AND JOURNEY ACCEPTED', 'Owner functional acceptance not given; Vercel remains available')
+            self.record('owner-manual-status-journey-map-acceptance', attestation=True, automatedProviderAcceptance=False, humanObserved=True)
+            return
+        evidence_path = self.directory / 'browser-acceptance.private.json'
+        print('Delegated agent operator: save actual browser observations to ' + str(evidence_path) + '; no human-observed claim will be recorded.')
+        need(input('After actual browser verification and saving its receipt, type STATUS AND JOURNEY VERIFIED: ') == 'STATUS AND JOURNEY VERIFIED', 'Delegated real-browser verification not supplied; Vercel remains available')
+        fd = os.open(evidence_path, os.O_RDONLY | os.O_NOFOLLOW)
+        with os.fdopen(fd, 'r') as stream:
+            info = os.fstat(stream.fileno())
+            need(stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid() and info.st_mode & 0o077 == 0
+                 and info.st_size <= 65536, 'Use an owner-private regular browser evidence file')
+            raw = stream.read(65537)
+            need(len(raw) <= 65536, 'Browser evidence exceeded its bound')
+        attached = [x['at'] for x in self.receipt['steps'] if x['step'] == 'exact-host-attached']
+        need(len(attached) == 1, 'Attachment time unavailable for actual browser evidence')
+        metadata = verify_agent_browser_evidence(json.loads(raw), self.sha, attached[0])
+        self.record('agent-observed-real-browser-status-journey-map-acceptance', **metadata)
+
     def execute(self, fontawesome_ref):
         source_gate(self.sha, OLD_MAIN)
         need(git('remote', 'get-url', 'origin') in {'git@github.com:' + REPOSITORY + '.git', 'https://github.com/' + REPOSITORY + '.git'}, 'Git remote identity differs')
@@ -542,9 +631,7 @@ class Owner:
         self.record('preexisting-dns-and-workers-dev-preserved')
         self.wait_public('https://' + HOST, version=staged_version, doh=True)
         self.wait_public('https://' + HOST, version=staged_version)
-        print('Open https://' + HOST + '/ and check actual line status, select a journey and open its map. These are owner client checks, not automated provider acceptance.')
-        need(input('After the real client checks pass, type STATUS AND JOURNEY ACCEPTED: ') == 'STATUS AND JOURNEY ACCEPTED', 'Owner functional acceptance not given; Vercel remains available')
-        self.record('owner-manual-status-journey-map-acceptance', attestation=True, automatedProviderAcceptance=False)
+        self.accept_real_browser()
         self.publish_source()
         self.deploy_workflow()
         deployed_version = self.current_version()
@@ -605,8 +692,9 @@ def main(argv=None):
     action.add_argument('--execute', metavar='FULL_SHA')
     action.add_argument('--rollback', metavar='PRIVATE_RECEIPT')
     parser.add_argument('--fontawesome-ref', help='Optional explicit existing shared Fontawesome field op:// reference; no value in argv')
+    parser.add_argument('--operator', choices=['owner', 'agent'], default='owner', help='Agent mode requires delegated authorization and a fresh real-browser receipt; never claims human review')
     args = parser.parse_args(argv)
-    need(sys.stdin.isatty() and sys.stdout.isatty(), 'Run this owner helper in a real Terminal, not an agent or a pipe')
+    need(sys.stdin.isatty() and sys.stdout.isatty(), 'Run this operator helper in an interactive Terminal/PTY, not a pipe')
     need(os.geteuid() != 0, 'Run as the signed-in owner, not root')
     node_bin = Path.home() / '.nvm/versions/node/v22.23.3/bin'
     need((node_bin / 'node').is_file(), 'The checked Node22.23.3 installation is required')
@@ -617,14 +705,14 @@ def main(argv=None):
     fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
     if args.execute:
         audit = tempfile.mkdtemp(prefix='react-tfl-', dir=home)
-        owner = Owner(args.execute, audit)
+        owner = Owner(args.execute, audit, operator=args.operator)
     else:
         receipt = Path(args.rollback).expanduser()
         stat = receipt.lstat()
         need(not receipt.is_symlink() and stat.st_uid == os.getuid() and stat.st_mode & 0o077 == 0, 'Use the original owner-private receipt')
         need(receipt.resolve().parent.parent == home.resolve() and receipt.name == 'receipt.private.json', 'Unexpected receipt location')
         data = json.loads(receipt.read_text())
-        owner = Owner(data['sourceSha'], receipt.parent); owner.receipt = data; audit = str(receipt.parent)
+        owner = Owner(data['sourceSha'], receipt.parent, operator=args.operator); owner.receipt = data; audit = str(receipt.parent)
     print('Private evidence: ' + audit)
     PRIVATE_LOG_DIRECTORY = Path(audit) / 'redacted-tool-logs'
     PRIVATE_LOG_DIRECTORY.mkdir(exist_ok=True, mode=0o700)
