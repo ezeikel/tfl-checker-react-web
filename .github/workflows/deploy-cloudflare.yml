@@ -13,10 +13,52 @@ concurrency:
 env:
   HUSKY: '0'
 jobs:
-  web:
-    if: vars.CLOUDFLARE_CUTOVER == 'true' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+  request-web-build:
+    if: vars.CLOUDFLARE_CUTOVER == 'true' && github.ref_name == 'main'
+    runs-on: ubuntu-slim
+    outputs:
+      build: ${{ steps.start.outputs.build }}
+      attempt: ${{ steps.start.outputs.attempt }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/workers-builds
+      - run: python3 -m pip install --quiet --target "$RUNNER_TEMP/cc-python" boto3==1.42.97
+      - name: Start the exact commit on Workers Builds
+        id: start
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          VITE_TFL_API_URL: ${{ vars.VITE_TFL_API_URL }}
+          VITE_TFL_APP_ID: ${{ vars.VITE_TFL_APP_ID }}
+          VITE_TFL_APP_KEY: ${{ vars.VITE_TFL_APP_KEY }}
+          VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
+          TFL_BUILD_MODE: production
+          FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+        run: PYTHONPATH="$RUNNER_TEMP/cc-python" python3 scripts/workers-builds/handoff.py start
+
+  wait-web-build:
+    needs: request-web-build
+    runs-on: ubuntu-slim
     timeout-minutes: 15
+    outputs:
+      digest: ${{ steps.wait.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/workers-builds
+      - name: Verify Cloudflare finished the matching build
+        id: wait
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          NATIVE_BUILD_ID: ${{ needs.request-web-build.outputs.build }}
+        run: python3 scripts/workers-builds/handoff.py wait-short
+
+  web:
+    needs: [request-web-build, wait-web-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -30,19 +72,30 @@ jobs:
           # Font Awesome Pro registry (bunfig.toml).
           FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
         run: bun --no-env-file install --frozen-lockfile
-      - name: Validate and build exact production artifact
+      - run: python3 -m pip install --quiet --target "$RUNNER_TEMP/cc-python" boto3==1.42.97
+      - name: Finish verifying a longer Cloudflare build
+        if: needs.wait-web-build.outputs.digest == ''
+        id: late
         env:
-          # Public values: vite inlines them into the browser bundle.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          NATIVE_BUILD_ID: ${{ needs.request-web-build.outputs.build }}
+        run: python3 scripts/workers-builds/handoff.py wait
+      - name: Restore and verify the Cloudflare build
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          BUILD_ATTEMPT: ${{ needs.request-web-build.outputs.attempt }}
+          RELEASE_DIGEST: ${{ needs.wait-web-build.outputs.digest || steps.late.outputs.digest }}
+        run: PYTHONPATH="$RUNNER_TEMP/cc-python" python3 scripts/workers-builds/handoff.py restore
+      - name: Verify the restored production artifact in Chromium
+        env:
           VITE_TFL_API_URL: ${{ vars.VITE_TFL_API_URL }}
           VITE_TFL_APP_ID: ${{ vars.VITE_TFL_APP_ID }}
           VITE_TFL_APP_KEY: ${{ vars.VITE_TFL_APP_KEY }}
           VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
           TFL_BUILD_MODE: production
         run: |
-          bun --no-env-file run check-types
-          bun --no-env-file run test
-          bun --no-env-file run build
-          bun --no-env-file run artifact:record production
           bun --no-env-file x playwright install --with-deps chromium
           bun --no-env-file run test:browser
           bun --no-env-file run artifact:verify "$GITHUB_SHA"
